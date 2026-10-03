@@ -84,7 +84,7 @@ export async function BillList({ sortConfig }: { sortConfig: BillSortConfig }) {
                 currentField={sortConfig.field}
                 currentOrder={sortConfig.order}
               >
-                法案提出日
+                議案提出日
               </SortableTableHead>
               <TableHead className="w-[50px]" />
             </TableRow>

@@ -17,7 +17,7 @@ function bill(
       overrides.title === null && overrides.summary === null
         ? undefined
         : ({
-            title: overrides.title ?? "ガソリン税の上乗せをやめる法案",
+            title: overrides.title ?? "ガソリン税の上乗せをやめる議案",
             summary: overrides.summary ?? "暫定税率を廃止します。",
           } as never),
     tags: (overrides.tags ?? ["税金"]).map((label) => ({ id: label, label })),
@@ -58,7 +58,7 @@ describe("searchBills", () => {
 
   // 「AI」を「ＡＩ」と打つ利用者を取りこぼさない。
   it("全角と半角を同一視する", () => {
-    const target = bill("a", { title: "AIの活用を進める法案" });
+    const target = bill("a", { title: "AIの活用を進める議案" });
     expect(ids(searchBills([target], "ＡＩ"))).toEqual(["a"]);
     expect(ids(searchBills([target], "ai"))).toEqual(["a"]);
   });

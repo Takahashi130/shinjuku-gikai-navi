@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import type { Route } from "next";
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import type { BillWithContent } from "@/features/bills/shared/types";
 import { CompactBillCard } from "@/features/bills/client/components/bill-list/compact-bill-card";
+import type { BillWithContent } from "@/features/bills/shared/types";
 import { routes } from "@/lib/routes";
 
 type FilterType = "all" | "enacted" | "rejected" | "other";
@@ -72,10 +72,10 @@ export function BillListWithStatusFilter({ bills }: Props) {
         ))}
       </div>
 
-      {/* 法案リスト */}
+      {/* 議案リスト */}
       {filteredBills.length === 0 ? (
         <p className="text-center py-12 text-muted-foreground">
-          該当する法案がありません
+          該当する議案がありません
         </p>
       ) : (
         <div className="flex flex-col gap-3">

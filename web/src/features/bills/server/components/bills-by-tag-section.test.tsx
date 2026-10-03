@@ -29,29 +29,29 @@ describe("BillsByTagSection", () => {
     render(
       <BillsByTagSection
         billsByTag={[
-          group("暮らし", [billNamed("a", "暮らしの法案")]),
-          group("税金", [billNamed("b", "税金の法案")]),
+          group("暮らし", [billNamed("a", "暮らしの議案")]),
+          group("税金", [billNamed("b", "税金の議案")]),
         ]}
       />
     );
 
     expect(screen.getByRole("heading", { name: "暮らし" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "税金" })).toBeInTheDocument();
-    expect(screen.getByText("暮らしの法案")).toBeInTheDocument();
-    expect(screen.getByText("税金の法案")).toBeInTheDocument();
+    expect(screen.getByText("暮らしの議案")).toBeInTheDocument();
+    expect(screen.getByText("税金の議案")).toBeInTheDocument();
   });
 
   it("説明があれば出し、無ければ出さない", () => {
     const { rerender } = render(
       <BillsByTagSection
-        billsByTag={[group("暮らし", [billNamed("a", "法案")], "暮らしの説明")]}
+        billsByTag={[group("暮らし", [billNamed("a", "議案")], "暮らしの説明")]}
       />
     );
     expect(screen.getByText("暮らしの説明")).toBeInTheDocument();
 
     rerender(
       <BillsByTagSection
-        billsByTag={[group("暮らし", [billNamed("a", "法案")])]}
+        billsByTag={[group("暮らし", [billNamed("a", "議案")])]}
       />
     );
     expect(screen.queryByText("暮らしの説明")).not.toBeInTheDocument();
@@ -66,7 +66,7 @@ describe("BillsByTagSection", () => {
   it("議案詳細へのリンクにする", () => {
     render(
       <BillsByTagSection
-        billsByTag={[group("暮らし", [billNamed("bill-1", "法案")])]}
+        billsByTag={[group("暮らし", [billNamed("bill-1", "議案")])]}
       />
     );
 
@@ -79,14 +79,14 @@ describe("BillsByTagSection", () => {
       <BillsByTagSection
         billsByTag={[
           group("暮らし", [
-            billNamed("a", "1件目の法案"),
-            billNamed("b", "2件目の法案"),
+            billNamed("a", "1件目の議案"),
+            billNamed("b", "2件目の議案"),
           ]),
         ]}
       />
     );
 
-    expect(screen.getByText("1件目の法案の要約")).toBeInTheDocument();
-    expect(screen.queryByText("2件目の法案の要約")).not.toBeInTheDocument();
+    expect(screen.getByText("1件目の議案の要約")).toBeInTheDocument();
+    expect(screen.queryByText("2件目の議案の要約")).not.toBeInTheDocument();
   });
 });

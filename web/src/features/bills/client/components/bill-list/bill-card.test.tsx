@@ -14,16 +14,16 @@ describe("BillCard", () => {
       <BillCard
         bill={createMockBill({
           bill_content: createMockBillContent({
-            title: "ガソリン税を安くする法案",
-            summary: "ガソリンにかかる税金を下げる法案です。",
+            title: "ガソリン税を安くする議案",
+            summary: "ガソリンにかかる税金を下げる議案です。",
           }),
         })}
       />
     );
 
-    expect(screen.getByText("ガソリン税を安くする法案")).toBeInTheDocument();
+    expect(screen.getByText("ガソリン税を安くする議案")).toBeInTheDocument();
     expect(
-      screen.getByText("ガソリンにかかる税金を下げる法案です。")
+      screen.getByText("ガソリンにかかる税金を下げる議案です。")
     ).toBeInTheDocument();
   });
 
@@ -147,7 +147,7 @@ describe("BillCard", () => {
 
   /*
     日付そのものの有無で見る。文字列で否定すると、同じカードにある
-    ステータスバッジの「法案提出前」「法案成立」まで拾ってしまう。
+    ステータスバッジの「議案提出前」「議案成立」まで拾ってしまう。
   */
   it("提出日が無ければ日付を出さない", () => {
     const { container } = render(

@@ -17,7 +17,6 @@ import {
 } from "@/features/chat/server/services/cost-tracker";
 import { ChatError, ChatErrorCode } from "@/features/chat/shared/types/errors";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
-import { resolveInterviewChatLoaders } from "@/features/interview-session/shared/utils/resolve-interview-chat-loaders";
 import type { InterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config-admin";
 import { getInterviewConfigAdmin } from "@/features/interview-config/server/loaders/get-interview-config-admin";
 import { getInterviewQuestions } from "@/features/interview-config/server/loaders/get-interview-questions";
@@ -33,6 +32,7 @@ import type {
   InterviewMessage,
   InterviewSession,
 } from "@/features/interview-session/shared/types";
+import { resolveInterviewChatLoaders } from "@/features/interview-session/shared/utils/resolve-interview-chat-loaders";
 import { DEFAULT_INTERVIEW_CHAT_MODEL } from "@/lib/ai/models";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
@@ -64,7 +64,7 @@ export type InterviewChatDeps = {
   getSession?: (configId: string) => Promise<InterviewSession | null>;
   /** テスト時に認証をバイパスするためのメッセージ取得関数 */
   getMessages?: (sessionId: string) => Promise<InterviewMessage[]>;
-  /** テスト時にcookies依存をバイパスするための法案取得関数 */
+  /** テスト時にcookies依存をバイパスするための議案取得関数 */
   getBill?: (billId: string) => Promise<BillWithContent | null>;
   /** テスト時にnext/cache依存をバイパスするためのインタビュー設定取得関数 */
   getInterviewConfig?: (billId: string) => Promise<InterviewConfig | null>;
@@ -107,7 +107,7 @@ export async function handleInterviewChatRequest({
 
   // TTFB短縮のため、互いに依存しないDBアクセスは並列実行する。
   // 日次コスト制限チェック（fail-closed: エラー時もリクエストをブロック）と
-  // インタビュー設定・法案情報の取得（テスト時はdeps経由でNext.js依存をバイパス）
+  // インタビュー設定・議案情報の取得（テスト時はdeps経由でNext.js依存をバイパス）
   const getInterviewConfigFn =
     deps?.getInterviewConfig ?? loaders.getInterviewConfig;
   const getBillFn = deps?.getBill ?? loaders.getBill;

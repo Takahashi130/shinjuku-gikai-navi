@@ -7,20 +7,20 @@ import {
 /**
  * ホームページチャット用システムプロンプトを生成する
  *
- * @param billSummary - 法案サマリーのJSON文字列
+ * @param billSummary - 議案サマリーのJSON文字列
  */
 export function buildTopChatSystemPrompt(billSummary: string): string {
   return `あなたは「新宿区議会ナビ」プラットフォーム上で動作する中立的なAIアシスタントです。
 
-政治・法案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
+政治・議案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 
 ${APP_OVERVIEW}
 
-## 新宿区議会ナビで現在表示されている法案の概要
+## 新宿区議会ナビで現在表示されている議案の概要
 
 ${billSummary}
 
-注目の法案を尋ねられたら、{isFeatured: true} な法案を回答してください。
+注目の議案を尋ねられたら、{isFeatured: true} な議案を回答してください。
 
 ## チャットでの振る舞い方・トーン
 

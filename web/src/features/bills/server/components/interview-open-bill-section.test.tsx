@@ -22,7 +22,7 @@ describe("InterviewOpenBillSection", () => {
   it("見出しと議案を出す", () => {
     render(
       <InterviewOpenBillSection
-        bills={[billNamed("a", "ガソリン税を安くする法案")]}
+        bills={[billNamed("a", "ガソリン税を安くする議案")]}
       />
     );
 
@@ -30,7 +30,7 @@ describe("InterviewOpenBillSection", () => {
       screen.getByRole("heading", { name: "AIインタビュー受付中" })
     ).toBeInTheDocument();
     expect(screen.getByText("意見募集中のテーマ")).toBeInTheDocument();
-    expect(screen.getByText("ガソリン税を安くする法案")).toBeInTheDocument();
+    expect(screen.getByText("ガソリン税を安くする議案")).toBeInTheDocument();
   });
 
   // 受付中が無い日に見出しだけが残ると、出せる意見があるように見えてしまう。
@@ -42,7 +42,7 @@ describe("InterviewOpenBillSection", () => {
 
   it("議案詳細へのリンクにする", () => {
     render(
-      <InterviewOpenBillSection bills={[billNamed("bill-1", "対象の法案")]} />
+      <InterviewOpenBillSection bills={[billNamed("bill-1", "対象の議案")]} />
     );
 
     expect(screen.getByRole("link")).toHaveAttribute("href", "/bills/bill-1");
@@ -52,15 +52,15 @@ describe("InterviewOpenBillSection", () => {
   it("2件目以降もフルカードにする", () => {
     render(
       <InterviewOpenBillSection
-        bills={[billNamed("a", "1件目の法案"), billNamed("b", "2件目の法案")]}
+        bills={[billNamed("a", "1件目の議案"), billNamed("b", "2件目の議案")]}
       />
     );
 
     expect(screen.getAllByRole("link")).toHaveLength(2);
-    expect(screen.getByText("1件目の法案")).toBeInTheDocument();
-    expect(screen.getByText("2件目の法案")).toBeInTheDocument();
+    expect(screen.getByText("1件目の議案")).toBeInTheDocument();
+    expect(screen.getByText("2件目の議案")).toBeInTheDocument();
 
-    expect(screen.getByText("1件目の法案の要約")).toBeInTheDocument();
-    expect(screen.getByText("2件目の法案の要約")).toBeInTheDocument();
+    expect(screen.getByText("1件目の議案の要約")).toBeInTheDocument();
+    expect(screen.getByText("2件目の議案の要約")).toBeInTheDocument();
   });
 });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { type SuggestableBill, suggestBills } from "./suggest-bills";
 
-function bill(id: string, title = "ガソリン税を安くする法案"): SuggestableBill {
+function bill(id: string, title = "ガソリン税を安くする議案"): SuggestableBill {
   return {
     id,
     name: "揮発油税等の暫定税率の廃止等に関する法律案",

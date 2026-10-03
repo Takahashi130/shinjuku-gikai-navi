@@ -138,7 +138,7 @@ export function StanceForm({ billId, stance, billStatus }: StanceFormProps) {
         </div>
         {isPreparing && (
           <p className="text-sm text-muted-foreground">
-            法案提出前のため、スタンス設定は無効化されています。
+            議案提出前のため、スタンス設定は無効化されています。
           </p>
         )}
       </CardHeader>

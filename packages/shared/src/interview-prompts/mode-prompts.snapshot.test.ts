@@ -17,8 +17,8 @@ const baseInput: InterviewPromptInput = {
     name: "揮発油税等の暫定税率の廃止等に関する法律案",
     knowledge_source: "補足資料",
     bill_content: {
-      title: "ガソリン税を安くする法案",
-      summary: "ガソリンにかかる税金を下げる法案です。",
+      title: "ガソリン税を安くする議案",
+      summary: "ガソリンにかかる税金を下げる議案です。",
       content: "本文",
     },
   },
@@ -26,7 +26,7 @@ const baseInput: InterviewPromptInput = {
   questions: [
     {
       id: "q1",
-      question: "この法案をご存じでしたか？",
+      question: "この議案をご存じでしたか？",
       quick_replies: ["知っていた", "知らなかった"],
       follow_up_guide: "知った経緯を聞く",
     },

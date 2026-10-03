@@ -91,7 +91,7 @@ function ChatMessages({
         {/* 初期メッセージ */}
         <div className="flex flex-col gap-1">
           <p className="text-sm font-bold leading-[1.8] text-mirai-text">
-            国会や法案について、気になることをAIに質問してください。
+            新宿区議会や議案について、気になることをAIに質問してください。
           </p>
           {billContext && (
             <p className="text-sm font-bold leading-[1.8] text-mirai-text">
@@ -103,11 +103,11 @@ function ChatMessages({
         {/* サンプル質問チップ */}
         <div className="flex flex-wrap gap-3">
           {(billContext
-            ? [`この法案のポイントは？`, "この法案は私にどんな影響がある？"]
+            ? [`この議案のポイントは？`, "この議案は私にどんな影響がある？"]
             : [
                 "新宿区議会ナビって何？",
-                "国会って何をするところ？",
-                "注目の法案について教えて",
+                "区議会って何をするところ？",
+                "注目の議案について教えて",
               ]
           ).map((question) => {
             return (
@@ -286,7 +286,7 @@ export function ChatWindow({
   if (isPc) {
     return createPortal(
       <section
-        aria-label="国会や法案についてAIに質問する"
+        aria-label="区議会や議案についてAIに質問する"
         className={`fixed inset-x-0 bottom-0 z-50 bg-white shadow-md rounded-t-2xl flex flex-col pc:h-[70vh] xl:right-[calc(calc(100%-1180px)/2)] ${CHAT_PANEL_RESPONSIVE_CLASSES}`}
       >
         {chatPanelContent}

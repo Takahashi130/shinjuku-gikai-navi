@@ -17,13 +17,13 @@ const bills = [
   {
     id: "bill-gasoline",
     name: "揮発油税等の暫定税率の廃止等に関する法律案",
-    bill_content: { title: "ガソリン税を安くする法案" },
+    bill_content: { title: "ガソリン税を安くする議案" },
     tags: [{ id: "zeikin", label: "税金" }],
   },
   {
     id: "bill-school",
     name: "学校給食法の一部を改正する法律案",
-    bill_content: { title: "給食を無償にする法案" },
+    bill_content: { title: "給食を無償にする議案" },
     tags: [{ id: "kurashi", label: "暮らし" }],
   },
 ];
@@ -31,7 +31,7 @@ const bills = [
 async function open() {
   const user = userEvent.setup();
   render(<BillSearchOverlay tags={tags} bills={bills} />);
-  await user.click(screen.getByRole("button", { name: /法案を検索する/ }));
+  await user.click(screen.getByRole("button", { name: /議案を検索する/ }));
   return user;
 }
 
@@ -57,7 +57,7 @@ describe("BillSearchOverlay", () => {
     await open();
 
     expect(screen.getByText("テーマから探す")).toBeInTheDocument();
-    expect(screen.queryByText(/法案\s*\d+件/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/議案\s*\d+件/)).not.toBeInTheDocument();
   });
 
   /*
@@ -68,7 +68,7 @@ describe("BillSearchOverlay", () => {
     await open();
 
     expect(screen.getByRole("dialog")).toHaveAccessibleDescription(
-      "キーワードやテーマから法案を探せます。"
+      "キーワードやテーマから議案を探せます。"
     );
   });
 
@@ -77,11 +77,11 @@ describe("BillSearchOverlay", () => {
 
     await user.type(screen.getByRole("searchbox"), "ガソリン");
 
-    expect(screen.getByText(/法案\s*1件/)).toBeInTheDocument();
+    expect(screen.getByText(/議案\s*1件/)).toBeInTheDocument();
 
     const links = linkTo("/bills/bill-gasoline");
     expect(links).toHaveLength(1);
-    expect(links[0]).toHaveTextContent("ガソリン税を安くする法案");
+    expect(links[0]).toHaveTextContent("ガソリン税を安くする議案");
   });
 
   // 候補は名称・タイトル・タグ名だけを見る。要約は渡していない。
@@ -102,7 +102,7 @@ describe("BillSearchOverlay", () => {
     expect(
       screen.getByText(/「宇宙」に一致する候補はありません/)
     ).toBeInTheDocument();
-    expect(screen.queryByText(/法案\s*\d+件/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/議案\s*\d+件/)).not.toBeInTheDocument();
   });
 
   it("送信すると前後の空白を落として一覧へ渡す", async () => {

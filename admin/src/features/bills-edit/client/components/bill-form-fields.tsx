@@ -169,11 +169,11 @@ export function BillFormFields({
         name="submitted_date"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>法案提出日 *</FormLabel>
+            <FormLabel>議案提出日 *</FormLabel>
             <FormControl>
               <Input type="date" {...field} />
             </FormControl>
-            <FormDescription>法案の提出日を設定してください</FormDescription>
+            <FormDescription>議案の提出日を設定してください</FormDescription>
             <FormMessage />
           </FormItem>
         )}
@@ -236,7 +236,7 @@ export function BillFormFields({
               />
             </FormControl>
             <FormDescription>
-              衆議院の議案ページURLを入力してください（「これから掲載される法案」表示時に外部リンクとして使用）
+              衆議院の議案ページURLを入力してください（「これから掲載される議案」表示時に外部リンクとして使用）
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -253,7 +253,7 @@ export function BillFormFields({
               <Input
                 {...field}
                 value={field.value || ""}
-                placeholder="221-kaku-1-mof-法案名"
+                placeholder="221-kaku-1-mof-議案名"
               />
             </FormControl>
             <FormDescription>

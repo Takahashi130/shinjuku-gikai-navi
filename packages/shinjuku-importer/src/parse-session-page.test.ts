@@ -55,3 +55,38 @@ describe("parseSessionPage", () => {
     expect(() => parseSessionPage("<p>なし</p>", "https://example.com/")).toThrow("会期名");
   });
 });
+
+describe("parseSessionPage（臨時会・その他の議案）", () => {
+  const page = parseSessionPage(
+    `<h1>令和7年 第1回臨時会</h1><p>会期</p><p>令和7年3月31日（月曜日）［1日間］</p>
+     <p>第46号議案　新宿区特別区税条例の一部を改正する条例<br>
+     同意第1号　新宿区副区長選任の同意について<br>
+     認定第1号　令和5年度新宿区一般会計歳入歳出決算<br>
+     諮問第1号 人権擁護委員候補者の推薦に関する意見の聴取について<br>
+     第3回定例会の日程</p>`,
+    "https://example.com/"
+  );
+
+  it("1日だけの会期を読む", () => {
+    expect(page).toMatchObject({ type: "extraordinary", startDate: "2025-03-31", endDate: "2025-03-31" });
+  });
+
+  it("「・」のない行や、同意・認定・諮問の議案を読む", () => {
+    expect(page.bills.map((b) => [b.kind, b.label])).toEqual([
+      ["mayor", "第46号議案"],
+      ["consent", "同意第1号"],
+      ["accounts", "認定第1号"],
+      ["inquiry", "諮問第1号"],
+    ]);
+  });
+});
+
+describe("parseSessionPage（令和元年）", () => {
+  it("「令和元年」を令和1年として読む", () => {
+    const p = parseSessionPage(
+      "<h1>令和元年 第2回定例会</h1><p>令和元年6月4日（火曜日）から6月14日（金曜日）まで</p>",
+      "https://example.com/"
+    );
+    expect(p).toMatchObject({ reiwaYear: 1, startDate: "2019-06-04", endDate: "2019-06-14" });
+  });
+});

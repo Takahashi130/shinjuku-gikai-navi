@@ -48,7 +48,7 @@ export function CurrentDietSession({
                 : "bg-mirai-surface-muted text-mirai-text-secondary"
             }`}
           >
-            {inSession ? "国会会期中" : "国会閉会中"}
+            {inSession ? "区議会 会期中" : "区議会 閉会中"}
           </span>
           {inSession && (
             <span className="text-[15px] font-bold text-mirai-brand-teal-deep md:ml-auto">

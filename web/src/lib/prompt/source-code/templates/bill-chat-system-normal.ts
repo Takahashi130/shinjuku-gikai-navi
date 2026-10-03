@@ -6,7 +6,7 @@ import {
 } from "./shared-sections";
 
 /**
- * 法案チャット（ふつう難易度）用システムプロンプトを生成する
+ * 議案チャット（ふつう難易度）用システムプロンプトを生成する
  */
 export function buildBillChatSystemNormalPrompt(
   billName: string,
@@ -16,7 +16,7 @@ export function buildBillChatSystemNormalPrompt(
   knowledgeSource = ""
 ): string {
   return `あなたは「新宿区議会ナビ」プラットフォーム上で動作する中立的なAIアシスタントです。
-政治・法案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
+政治・議案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 
 ---
 ${APP_OVERVIEW}

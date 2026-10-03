@@ -88,19 +88,13 @@ export function getBillStatusLabel(
       return "準備中";
     case "introduced":
       return "提出済み";
+    // 区議会では「発議院→受領院」を「委員会審査→本会議」に読み替える
     case "in_originating_house":
-      if (originatingHouse) {
-        return `${HOUSE_LABELS[originatingHouse]}審議中`;
-      }
-      return "審議中"; // フォールバック
+      return "委員会審査中";
     case "in_receiving_house":
-      if (originatingHouse) {
-        const receivingHouse = originatingHouse === "HR" ? "HC" : "HR";
-        return `${HOUSE_LABELS[receivingHouse]}審議中`;
-      }
-      return "審議中"; // フォールバック
+      return "本会議審議中";
     case "enacted":
-      return "成立";
+      return "可決";
     case "rejected":
       return "否決";
     default:

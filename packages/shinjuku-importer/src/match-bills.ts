@@ -8,7 +8,8 @@ export function normalizeName(s: string): string {
   return s
     .replace(/[ⅠⅡⅢⅣⅤⅥⅦⅧⅨ]/g, (c) => String(ROMAN.indexOf(c) + 1))
     .normalize("NFKC")
-    .replace(/\s/g, "");
+    // 区のページには「第1)期」のような表記の揺れ・誤記があるため、括弧類と空白は無視する
+    .replace(/[\s()（）「」『』]/g, "");
 }
 
 export type MatchedBill = SessionBill & { result: ResultRow };

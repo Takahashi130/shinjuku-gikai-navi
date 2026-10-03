@@ -3,7 +3,7 @@ import { matchBills, normalizeName } from "./match-bills";
 import type { ResultRow } from "./parse-results-pdf";
 import type { SessionBill } from "./parse-session-page";
 
-const row = (name: string): ResultRow => ({ name, summary: "", votes: {}, result: "可決" });
+const row = (name: string): ResultRow => ({ name, summary: "", votes: {}, voteNotes: {}, result: "可決" });
 const bill = (label: string, name: string): SessionBill => ({ kind: "mayor", number: 1, label, name });
 
 describe("normalizeName", () => {

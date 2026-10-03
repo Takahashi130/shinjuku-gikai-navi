@@ -9,8 +9,8 @@ const bill = (name: string, title?: string) =>
 
 describe("chatBillName", () => {
   it("タイトルと正式名称を併記する", () => {
-    expect(chatBillName(bill("揮発油税等の…法律案", "ガソリン税の法案"))).toBe(
-      "ガソリン税の法案（揮発油税等の…法律案）"
+    expect(chatBillName(bill("揮発油税等の…法律案", "ガソリン税の議案"))).toBe(
+      "ガソリン税の議案（揮発油税等の…法律案）"
     );
   });
 

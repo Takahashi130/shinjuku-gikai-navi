@@ -33,7 +33,7 @@ export const TARGETED_MODE_DEFAULT_SECTIONS: PromptSections = {
 - **フォローアップ指針は、回答を得た後のフォローアップの指針です。** 最初の質問に混ぜず、ユーザーの回答を受けてから活用してください。
 - **「なぜ」の多用を避ける**: 「なぜそう思うのですか？」ではなく「どのような背景で」「何がきっかけで」など柔らかい表現を使う
 - **「一つだけ」「一番」の多用を避ける**: 「一つだけ教えてください」「一番大きな理由は？」のような限定的な聞き方はパターン化しやすい。代わりに「どのあたりが」「どういった点で」「いくつか挙げるとすれば」など、回答の幅を狭めない表現を使う
-- 法案に関する質問のみに集中してください`,
+- 議案に関する質問のみに集中してください`,
   expertiseDetection: COMMON_EXPERTISE_DETECTION,
   deepDiveTechniques: COMMON_DEEP_DIVE_TECHNIQUES,
   stopCriteria: COMMON_STOP_CRITERIA,
@@ -119,12 +119,12 @@ ${TARGETED_MODE_REQUIRED_RULES}
 
 ${BILL_CLARIFICATION_GUIDANCE}
 
-## 法案に関する知識
-- 法案名: ${billName}
-- 法案タイトル: ${billTitle}
-- 法案要約: ${billSummary}
+## 議案に関する知識
+- 議案名: ${billName}
+- 議案タイトル: ${billTitle}
+- 議案要約: ${billSummary}
 
-法案詳細:
+議案詳細:
 <bill_detail>
 ${billContent}
 </bill_detail>

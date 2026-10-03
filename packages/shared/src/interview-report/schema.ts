@@ -22,7 +22,7 @@ export const opinionSchema = z
       .enum(["期待", "懸念"])
       .nullable()
       .describe(
-        "この意見が法案に対して示す期待か懸念か。どちらでもなければ null"
+        "この意見が議案に対して示す期待か懸念か。どちらでもなければ null"
       ),
     // 意見単位の情報充実度（トピックカードで充実した引用を優先表示するため）
     richness: z
@@ -49,7 +49,7 @@ export const interviewReportSchema = z
       .enum(["for", "against", "neutral"])
       .nullable()
       .describe(
-        "法案に対するユーザーのスタンス。for=賛成、against=反対、neutral=期待と懸念の両方がある"
+        "議案に対するユーザーのスタンス。for=賛成、against=反対、neutral=期待と懸念の両方がある"
       ),
     role: z
       .enum([

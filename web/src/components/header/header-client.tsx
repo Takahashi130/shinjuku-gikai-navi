@@ -3,9 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SITE } from "@/config/site";
 import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import { SITE } from "@/config/site";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
 import { sendDifficultyStateEvent } from "@/lib/analytics/preference-state-events";
 import { useOnPageView } from "@/lib/analytics/use-on-page-view";

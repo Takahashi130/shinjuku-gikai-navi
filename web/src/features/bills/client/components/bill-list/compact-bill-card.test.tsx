@@ -17,14 +17,14 @@ describe("CompactBillCard", () => {
       <CompactBillCard
         bill={createMockBill({
           bill_content: createMockBillContent({
-            title: "給食を無償にする法案",
+            title: "給食を無償にする議案",
           }),
         })}
       />
     );
 
     expect(
-      screen.getByRole("heading", { name: /給食を無償にする法案/ })
+      screen.getByRole("heading", { name: /給食を無償にする議案/ })
     ).toBeInTheDocument();
   });
 
@@ -90,7 +90,7 @@ describe("CompactBillCard", () => {
     expect(screen.getByText(DATE_LINE)).toHaveTextContent("2026.2.3 提出");
   });
 
-  // 成立済みでも日付が無いことはある。バッジの「法案成立」と取り違えない。
+  // 成立済みでも日付が無いことはある。バッジの「議案成立」と取り違えない。
   it("日付が無ければ日付の行を出さない", () => {
     render(
       <CompactBillCard

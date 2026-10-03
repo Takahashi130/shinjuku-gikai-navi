@@ -17,7 +17,7 @@ function makeStance(publishAt: string | null): MiraiStance {
 function makeBill(stance?: MiraiStance): BillWithContent {
   return {
     id: "bill-1",
-    name: "テスト法案",
+    name: "テスト議案",
     tags: [],
     mirai_stance: stance,
   } as unknown as BillWithContent;
@@ -42,7 +42,7 @@ describe("hideUnpublishedStance", () => {
     const bill = makeBill(makeStance("2026-10-01T13:00:00+09:00"));
     const result = hideUnpublishedStance(bill, now);
     expect(result.mirai_stance).toBeUndefined();
-    expect(result.name).toBe("テスト法案");
+    expect(result.name).toBe("テスト議案");
   });
 
   it("賛否がない議案はそのまま返す", () => {

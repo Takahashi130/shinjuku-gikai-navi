@@ -278,13 +278,13 @@ export function DietSessionItem({ session }: DietSessionItemProps) {
                             </p>
                             <ul className="mt-2 list-disc list-inside text-sm">
                               <li>
-                                トップページに表示される法案が、この国会会期の法案に切り替わります
+                                トップページに表示される議案が、この国会会期の議案に切り替わります
                               </li>
                               <li>
                                 現在アクティブな国会会期は非アクティブになります
                               </li>
                               <li>
-                                ユーザーがトップページで確認できる法案が変わります
+                                ユーザーがトップページで確認できる議案が変わります
                               </li>
                             </ul>
                           </div>

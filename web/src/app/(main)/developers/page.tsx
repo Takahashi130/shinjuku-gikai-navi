@@ -101,7 +101,7 @@ export default function DevelopersPage() {
           </header>
 
           <p className="text-[15px] leading-loose tracking-wide text-mirai-text-subtle">
-            新宿区議会ナビでは、AIインタビューに寄せられた法案への意見を、誰でも分析・活用できるオープンデータとして公開しています。
+            新宿区議会ナビでは、AIインタビューに寄せられた議案への意見を、誰でも分析・活用できるオープンデータとして公開しています。
           </p>
 
           <div className="flex flex-col border-t border-neutral-200">
