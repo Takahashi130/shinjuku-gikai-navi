@@ -29,6 +29,25 @@ describe("parseFactionLegend", () => {
     expect(legend.get("民無ク")).toBe("立憲民主党・無所属クラブ");
   });
 
+  it("次の略称の1文字目（「公」＋「明＝…」）を前の正式名称の続きにしない", () => {
+    const legend = parseFactionLegend([
+      t("自民党＝自由民主党新宿区議会議員団", 440, 500, 115),
+      t("公", 563, 500, 8),
+      t("明＝新宿区議会公明党", 576, 500, 70),
+    ]);
+    expect(legend.get("自民党")).toBe("自由民主党新宿区議会議員団");
+    expect(legend.get("公明")).toBe("新宿区議会公明党");
+  });
+
+  it("見出しの「会派名略称」を略称に連結しない", () => {
+    const legend = parseFactionLegend([
+      t("会派名略称", 422, 500, 45),
+      t("共", 484, 500, 8),
+      t("産＝日本共産党新宿区議会議員団", 500, 500, 100),
+    ]);
+    expect(legend.get("共産")).toBe("日本共産党新宿区議会議員団");
+  });
+
   it("正式名称の続きを連結する", () => {
     const legend = parseFactionLegend([t("れいわ＝れいわ新選組", 100, 500, 80), t("新宿", 185, 500, 15)]);
     expect(legend.get("れいわ")).toBe("れいわ新選組 新宿");

@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.18"
+  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -89,6 +94,116 @@ export type Database = {
             columns: ["bill_id"]
             isOneToOne: false
             referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_explainers: {
+        Row: {
+          bill_id: string
+          body: Json
+          content_hash: string
+          created_at: string
+          first_published_at: string | null
+          generated_by: string | null
+          id: string
+          publish_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_path: string | null
+          sources: Json
+          status: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          bill_id: string
+          body: Json
+          content_hash: string
+          created_at?: string
+          first_published_at?: string | null
+          generated_by?: string | null
+          id?: string
+          publish_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_path?: string | null
+          sources?: Json
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          bill_id?: string
+          body?: Json
+          content_hash?: string
+          created_at?: string
+          first_published_at?: string | null
+          generated_by?: string | null
+          id?: string
+          publish_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_path?: string | null
+          sources?: Json
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_explainers_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: true
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_faction_votes: {
+        Row: {
+          bill_id: string
+          faction_abbr: string
+          faction_id: string | null
+          faction_name: string
+          note: string | null
+          sort_order: number
+          updated_at: string
+          vote: string
+        }
+        Insert: {
+          bill_id: string
+          faction_abbr: string
+          faction_id?: string | null
+          faction_name: string
+          note?: string | null
+          sort_order: number
+          updated_at?: string
+          vote: string
+        }
+        Update: {
+          bill_id?: string
+          faction_abbr?: string
+          faction_id?: string | null
+          faction_name?: string
+          note?: string | null
+          sort_order?: number
+          updated_at?: string
+          vote?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_faction_votes_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bill_faction_votes_faction_id_fkey"
+            columns: ["faction_id"]
+            isOneToOne: false
+            referencedRelation: "factions"
             referencedColumns: ["id"]
           },
         ]
@@ -292,7 +407,9 @@ export type Database = {
       diet_sessions: {
         Row: {
           created_at: string
+          early_vote_at: string | null
           end_date: string
+          final_vote_at: string | null
           id: string
           is_active: boolean
           name: string
@@ -303,7 +420,9 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          early_vote_at?: string | null
           end_date: string
+          final_vote_at?: string | null
           id?: string
           is_active?: boolean
           name: string
@@ -314,7 +433,9 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          early_vote_at?: string | null
           end_date?: string
+          final_vote_at?: string | null
           id?: string
           is_active?: boolean
           name?: string
@@ -352,6 +473,235 @@ export type Database = {
           name?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      faction_activity_expenses: {
+        Row: {
+          created_at: string
+          faction_id: string | null
+          faction_name: string
+          fiscal_year: number
+          hearing_expense: number
+          id: string
+          income: number
+          materials_expense: number
+          meeting_expense: number
+          member_count: number | null
+          notes: string[]
+          office_expense: number
+          period_end: string
+          period_label: string
+          period_start: string
+          personnel_expense: number
+          petition_expense: number
+          publicity_expense: number
+          research_expense: number
+          sort_order: number
+          source_title: string
+          source_url: string
+          total_expense: number
+          training_expense: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          faction_id?: string | null
+          faction_name: string
+          fiscal_year: number
+          hearing_expense: number
+          id?: string
+          income: number
+          materials_expense: number
+          meeting_expense: number
+          member_count?: number | null
+          notes?: string[]
+          office_expense: number
+          period_end: string
+          period_label: string
+          period_start: string
+          personnel_expense: number
+          petition_expense: number
+          publicity_expense: number
+          research_expense: number
+          sort_order: number
+          source_title: string
+          source_url: string
+          total_expense: number
+          training_expense: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          faction_id?: string | null
+          faction_name?: string
+          fiscal_year?: number
+          hearing_expense?: number
+          id?: string
+          income?: number
+          materials_expense?: number
+          meeting_expense?: number
+          member_count?: number | null
+          notes?: string[]
+          office_expense?: number
+          period_end?: string
+          period_label?: string
+          period_start?: string
+          personnel_expense?: number
+          petition_expense?: number
+          publicity_expense?: number
+          research_expense?: number
+          sort_order?: number
+          source_title?: string
+          source_url?: string
+          total_expense?: number
+          training_expense?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_activity_expenses_faction_id_fkey"
+            columns: ["faction_id"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_memberships: {
+        Row: {
+          faction_id: string
+          first_seen_on: string
+          id: string
+          is_current: boolean
+          last_seen_on: string
+          member_id: string
+          observation_count: number
+          sources: string[]
+          updated_at: string
+        }
+        Insert: {
+          faction_id: string
+          first_seen_on: string
+          id?: string
+          is_current?: boolean
+          last_seen_on: string
+          member_id: string
+          observation_count?: number
+          sources?: string[]
+          updated_at?: string
+        }
+        Update: {
+          faction_id?: string
+          first_seen_on?: string
+          id?: string
+          is_current?: boolean
+          last_seen_on?: string
+          member_id?: string
+          observation_count?: number
+          sources?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_memberships_faction_id_fkey"
+            columns: ["faction_id"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "faction_memberships_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_names: {
+        Row: {
+          created_at: string
+          faction_id: string
+          name: string
+          name_key: string
+          note: string | null
+          valid_from: string | null
+          valid_to: string | null
+        }
+        Insert: {
+          created_at?: string
+          faction_id: string
+          name: string
+          name_key: string
+          note?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Update: {
+          created_at?: string
+          faction_id?: string
+          name?: string
+          name_key?: string
+          note?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_names_faction_id_fkey"
+            columns: ["faction_id"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      factions: {
+        Row: {
+          created_at: string
+          dissolved_on: string | null
+          formed_on: string | null
+          id: string
+          is_current: boolean
+          member_count: number | null
+          name: string
+          note: string | null
+          short_name: string | null
+          slug: string
+          sort_order: number
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dissolved_on?: string | null
+          formed_on?: string | null
+          id?: string
+          is_current?: boolean
+          member_count?: number | null
+          name: string
+          note?: string | null
+          short_name?: string | null
+          slug: string
+          sort_order?: number
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dissolved_on?: string | null
+          formed_on?: string | null
+          id?: string
+          is_current?: boolean
+          member_count?: number | null
+          name?: string
+          note?: string | null
+          short_name?: string | null
+          slug?: string
+          sort_order?: number
+          source_url?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -709,6 +1059,135 @@ export type Database = {
           },
         ]
       }
+      member_positions: {
+        Row: {
+          body_kind: string
+          body_name: string
+          id: string
+          member_id: string
+          role: string
+          sort_order: number
+          source_url: string
+          updated_at: string
+        }
+        Insert: {
+          body_kind: string
+          body_name: string
+          id?: string
+          member_id: string
+          role: string
+          sort_order?: number
+          source_url: string
+          updated_at?: string
+        }
+        Update: {
+          body_kind?: string
+          body_name?: string
+          id?: string
+          member_id?: string
+          role?: string
+          sort_order?: number
+          source_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_positions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_terms: {
+        Row: {
+          election_date: string | null
+          member_id: string
+          source_url: string
+          term_end: string
+          term_number: number
+          term_start: string
+          updated_at: string
+        }
+        Insert: {
+          election_date?: string | null
+          member_id: string
+          source_url: string
+          term_end: string
+          term_number: number
+          term_start: string
+          updated_at?: string
+        }
+        Update: {
+          election_date?: string | null
+          member_id?: string
+          source_url?: string
+          term_end?: string
+          term_number?: number
+          term_start?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_terms_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      members: {
+        Row: {
+          created_at: string
+          elected_count: number | null
+          faction_id: string | null
+          id: string
+          is_current: boolean
+          name: string
+          name_kana: string | null
+          name_key: string
+          seat_number: number | null
+          source_url: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          elected_count?: number | null
+          faction_id?: string | null
+          id?: string
+          is_current?: boolean
+          name: string
+          name_kana?: string | null
+          name_key: string
+          seat_number?: number | null
+          source_url: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          elected_count?: number | null
+          faction_id?: string | null
+          id?: string
+          is_current?: boolean
+          name?: string
+          name_kana?: string | null
+          name_key?: string
+          seat_number?: number | null
+          source_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "members_faction_id_fkey"
+            columns: ["faction_id"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mirai_stances: {
         Row: {
           bill_id: string
@@ -742,6 +1221,197 @@ export type Database = {
             foreignKeyName: "mirai_stances_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: true
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plenary_questions: {
+        Row: {
+          answer_style: string | null
+          asked_on: string
+          created_at: string
+          diet_session_id: string | null
+          faction_id: string | null
+          faction_name: string | null
+          id: string
+          member_id: string | null
+          question_type: string
+          session_slug: string
+          session_title: string
+          sort_order: number
+          source_url: string
+          speaker_name: string
+          topic_count: number
+          topics: Json
+          updated_at: string
+        }
+        Insert: {
+          answer_style?: string | null
+          asked_on: string
+          created_at?: string
+          diet_session_id?: string | null
+          faction_id?: string | null
+          faction_name?: string | null
+          id?: string
+          member_id?: string | null
+          question_type: string
+          session_slug: string
+          session_title: string
+          sort_order: number
+          source_url: string
+          speaker_name: string
+          topic_count?: number
+          topics?: Json
+          updated_at?: string
+        }
+        Update: {
+          answer_style?: string | null
+          asked_on?: string
+          created_at?: string
+          diet_session_id?: string | null
+          faction_id?: string | null
+          faction_name?: string | null
+          id?: string
+          member_id?: string | null
+          question_type?: string
+          session_slug?: string
+          session_title?: string
+          sort_order?: number
+          source_url?: string
+          speaker_name?: string
+          topic_count?: number
+          topics?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plenary_questions_diet_session_id_fkey"
+            columns: ["diet_session_id"]
+            isOneToOne: false
+            referencedRelation: "diet_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plenary_questions_faction_id_fkey"
+            columns: ["faction_id"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plenary_questions_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      poll_responses: {
+        Row: {
+          choice: string | null
+          created_at: string
+          eligibility: Database["public"]["Enums"]["participant_eligibility"]
+          id: string
+          poll_id: string
+          read_explainer: boolean
+          resident_subject_hash: string | null
+          responded_at: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          choice?: string | null
+          created_at?: string
+          eligibility?: Database["public"]["Enums"]["participant_eligibility"]
+          id?: string
+          poll_id: string
+          read_explainer?: boolean
+          resident_subject_hash?: string | null
+          responded_at?: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          choice?: string | null
+          created_at?: string
+          eligibility?: Database["public"]["Enums"]["participant_eligibility"]
+          id?: string
+          poll_id?: string
+          read_explainer?: boolean
+          resident_subject_hash?: string | null
+          responded_at?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_responses_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      polls: {
+        Row: {
+          accepts_after_close: boolean
+          audience: string
+          bill_id: string | null
+          closes_at: string | null
+          closes_at_source: string
+          created_at: string
+          id: string
+          is_hidden: boolean
+          kind: string
+          opens_at: string
+          options: string[] | null
+          question: string | null
+          response_type: string
+          round: number
+          updated_at: string
+        }
+        Insert: {
+          accepts_after_close?: boolean
+          audience?: string
+          bill_id?: string | null
+          closes_at?: string | null
+          closes_at_source?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          kind: string
+          opens_at?: string
+          options?: string[] | null
+          question?: string | null
+          response_type: string
+          round?: number
+          updated_at?: string
+        }
+        Update: {
+          accepts_after_close?: boolean
+          audience?: string
+          bill_id?: string | null
+          closes_at?: string | null
+          closes_at_source?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          kind?: string
+          opens_at?: string
+          options?: string[] | null
+          question?: string | null
+          response_type?: string
+          round?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "polls_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },
@@ -1153,6 +1823,16 @@ export type Database = {
         }
         Returns: number
       }
+      count_poll_responses_by_bill_ids: {
+        Args: { p_bill_ids: string[]; p_kind?: string }
+        Returns: {
+          bill_id: string
+          cast_before_close: boolean
+          choice: string
+          cnt: number
+          eligibility: Database["public"]["Enums"]["participant_eligibility"]
+        }[]
+      }
       count_public_reports_by_bill_ids: {
         Args: { p_bill_ids: string[] }
         Returns: {
@@ -1415,6 +2095,11 @@ export type Database = {
         | "general_citizen"
       interview_role_enum: "assistant" | "user"
       moderation_status_enum: "ok" | "warning" | "ng"
+      participant_eligibility:
+        | "unverified"
+        | "self_declared_resident"
+        | "self_declared_nonresident"
+        | "verified_resident"
       stance_type_enum:
         | "for"
         | "against"
@@ -1440,12 +2125,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1469,11 +2154,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1494,11 +2179,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1519,11 +2204,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1536,11 +2221,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1584,6 +2269,12 @@ export const Constants = {
       ],
       interview_role_enum: ["assistant", "user"],
       moderation_status_enum: ["ok", "warning", "ng"],
+      participant_eligibility: [
+        "unverified",
+        "self_declared_resident",
+        "self_declared_nonresident",
+        "verified_resident",
+      ],
       stance_type_enum: [
         "for",
         "against",
@@ -1598,4 +2289,3 @@ export const Constants = {
     },
   },
 } as const
-

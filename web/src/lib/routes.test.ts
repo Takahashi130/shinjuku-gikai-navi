@@ -112,3 +112,12 @@ describe("routes", () => {
     }
   });
 });
+
+describe("議員のルート", () => {
+  it("議員の一覧と議員のページ", () => {
+    expect(routes.membersList()).toBe("/members");
+    expect(routes.memberDetail("5f6f8051-4b38-44da-9743-83a8fbc27b44")).toBe(
+      "/members/5f6f8051-4b38-44da-9743-83a8fbc27b44"
+    );
+  });
+});

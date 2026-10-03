@@ -37,7 +37,7 @@ export function extractBillIdFromPath(pathname: string): string | null {
 /**
  * メイン領域の組み方。
  *
- * - wide: 画面幅いっぱいに使うページ（トップ・議案一覧・議案詳細・会期別一覧・規約）。
+ * - wide: 画面幅いっぱいに使うページ（トップ・議案一覧・議案詳細・会期別一覧・議員・規約）。
  *   各ページが自分で最大幅を決める
  * - narrow: 従来の1カラム（最大700px）のページ。インタビュー・意見・レポートなど、
  *   スマホの縦長の画面を前提に作られているもの
@@ -51,6 +51,8 @@ const WIDE_PAGE_PATTERNS: readonly RegExp[] = [
   /^\/bills\/[^/]+$/,
   /^\/preview\/bills\/[^/]+$/,
   /^\/kokkai\/[^/]+\/bills$/,
+  /^\/members$/,
+  /^\/members\/[^/]+$/,
   /^\/terms$/,
   /^\/privacy$/,
 ];

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   BILL_FINDER_LINKS,
   buildHeaderBandLinks,
+  MEMBER_FINDER_LINKS,
   buildSessionLinks,
   buildSessionPill,
   buildThemeLinks,
@@ -37,9 +38,20 @@ describe("buildThemeLinks", () => {
   });
 });
 
+describe("MEMBER_FINDER_LINKS", () => {
+  it("議員の一覧を議席番号順・五十音順で開く", () => {
+    expect(MEMBER_FINDER_LINKS.map((link) => link.href)).toEqual([
+      "/members",
+      "/members?sort=kana",
+    ]);
+  });
+});
+
 describe("buildHeaderBandLinks", () => {
-  it("審議中・賛否が分かれた議案のあとにテーマを並べる", () => {
+  // 議員の一覧は議案とは別の入り口なので、スマホでも見える先頭に置く。
+  it("議員の一覧、審議中・賛否が分かれた議案のあとにテーマを並べる", () => {
     expect(buildHeaderBandLinks(themes).map((link) => link.label)).toEqual([
+      "議員の一覧",
       "審議中の議案",
       "賛否が分かれた議案",
       "予算・お金",
@@ -47,9 +59,9 @@ describe("buildHeaderBandLinks", () => {
     ]);
   });
 
-  // 取得に失敗してテーマが無くても、状況から探すリンクは残す。
-  it("テーマが無くても状況のリンクは出す", () => {
-    expect(buildHeaderBandLinks([])).toHaveLength(2);
+  // 取得に失敗してテーマが無くても、議員と状況から探すリンクは残す。
+  it("テーマが無くても議員と状況のリンクは出す", () => {
+    expect(buildHeaderBandLinks([])).toHaveLength(3);
   });
 });
 

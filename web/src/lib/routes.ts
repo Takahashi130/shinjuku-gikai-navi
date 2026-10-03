@@ -25,6 +25,10 @@ export const routes = {
       ? (`/bills/${billId}/topics/${topicId}?filter=${encodeURIComponent(filter)}` as const)
       : (`/bills/${billId}/topics/${topicId}` as const),
 
+  // ── 議員 ──────────────────────────────────────────
+  membersList: () => "/members" as const,
+  memberDetail: (memberId: string) => `/members/${memberId}` as const,
+
   // ── インタビュー ──────────────────────────────────
   interviewLP: (billId: string) => `/bills/${billId}/interview` as const,
   interviewDisclosure: (billId: string) =>

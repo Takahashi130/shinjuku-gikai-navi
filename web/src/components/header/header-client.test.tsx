@@ -98,6 +98,15 @@ describe("HeaderClient", () => {
     );
   });
 
+  it("帯に議員の一覧へのリンクを出す", () => {
+    renderHeader();
+
+    expect(screen.getByRole("link", { name: "議員の一覧" })).toHaveAttribute(
+      "href",
+      "/members"
+    );
+  });
+
   it("会期中は今の会期のピルを出し、閉会中は出さない", () => {
     const { rerender } = renderHeader();
     // スマホ用と広い画面用の2か所に置いている。見た目は短くしても、
