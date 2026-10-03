@@ -6,6 +6,10 @@
   "scripts": {
     "ingest": "dotenv -e ../../.env -- tsx src/run.ts",
     "materials": "tsx src/materials.ts",
+    "members": "dotenv -e ../../.env -- tsx src/run-members.ts",
+    "questions": "dotenv -e ../../.env -- tsx src/run-questions.ts",
+    "expenses": "dotenv -e ../../.env -- tsx src/run-expenses.ts",
+    "faction-votes": "dotenv -e ../../.env -- tsx src/run-faction-votes.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

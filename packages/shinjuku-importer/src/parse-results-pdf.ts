@@ -48,7 +48,8 @@ export function dedupeCoords(values: number[], tolerance = 1): number[] {
 
 /** 「自参ク＝自民・参政クラブ」形式の凡例を読む。略称が別アイテムに分かれていても連結する */
 export function parseFactionLegend(items: TextItem[]): Map<string, string> {
-  const legendItems = items.filter((i) => i.str.trim());
+  // 見出しの「会派名略称」は略称に連結しない
+  const legendItems = items.filter((i) => i.str.trim() && !/略称$/.test(i.str.trim()));
   const lines = groupByLine(legendItems);
   const legend = new Map<string, string>();
   // 離れた位置にある文字（ページタイトルなど）を連結しないための距離
@@ -57,13 +58,16 @@ export function parseFactionLegend(items: TextItem[]): Map<string, string> {
     let buffer = "";
     let lastKey: string | null = null;
     let prevEnd = Number.NEGATIVE_INFINITY;
-    for (const item of line) {
+    for (const [idx, item] of line.entries()) {
       const s = item.str.replace(/\s/g, "");
       const adjacent = item.x - prevEnd < maxGap;
       prevEnd = item.x + item.width;
       const eq = s.indexOf("＝");
       if (eq === -1) {
-        if (adjacent && lastKey && !buffer) {
+        // すぐ右に「＝」を含む文字が続くなら、次の略称の1文字目（例：「公」＋「明＝…」）
+        const next = line[idx + 1];
+        const startsNextKey = next?.str.includes("＝") && next.x - prevEnd < maxGap;
+        if (adjacent && lastKey && !buffer && !startsNextKey) {
           // 正式名称の続き（例：「れいわ新選組」＋「新宿」）
           legend.set(lastKey, `${legend.get(lastKey)} ${s}`);
         } else {

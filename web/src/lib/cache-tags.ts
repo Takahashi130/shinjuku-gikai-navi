@@ -5,6 +5,8 @@ export const CACHE_TAGS = {
   BILLS: "bills",
   DIET_SESSIONS: "diet-sessions",
   INTERVIEW_CONFIGS: "interview-configs",
+  // 議員・会派・本会議の質問・政務活動費（取り込み処理の members / questions / expenses）
+  MEMBERS: "members",
   // admin のレポート公開操作が revalidate するタグ。
   PUBLIC_INTERVIEW_REPORTS: "public-interview-reports",
   // 議案の解説（navi-ops の explainers:sync が /api/revalidate で更新する）

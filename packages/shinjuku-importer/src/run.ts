@@ -24,6 +24,7 @@ import {
   shortSummary,
   toBillStatus,
 } from "./build-content";
+import { buildFactionVotes, type FactionVoteInput, replaceBillFactionVotes } from "./faction-votes";
 import { fetchBytes, fetchText } from "./fetch";
 import { loadPdfPages } from "./load-pdf";
 import { matchBills } from "./match-bills";
@@ -67,6 +68,7 @@ type BillRecord = {
   featured: boolean;
   summary: string;
   content: string;
+  factionVotes?: FactionVoteInput[];
 };
 
 async function upsertBill(
@@ -112,6 +114,7 @@ async function upsertBill(
     { onConflict: "bill_id,difficulty_level" }
   );
   if (contentError) throw contentError;
+  if (bill.factionVotes) await replaceBillFactionVotes(db, row.id, bill.factionVotes);
 
   // テーマのタグは付け直す（判定ルールを変えたときに古いタグが残らないように）
   const tagId = opts.tagIds.get(theme.label);
@@ -218,6 +221,7 @@ async function recordsFromResults(session: SessionPage, sessionUrl: string, pdfU
       featured: isSplitVote(bill),
       summary: shortSummary(bill.result.summary) || name,
       content: buildContent(session, sessionUrl, bill, factions),
+      factionVotes: buildFactionVotes(bill.result, factions),
     });
   }
   return records;

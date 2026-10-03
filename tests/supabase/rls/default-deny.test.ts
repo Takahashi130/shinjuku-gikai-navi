@@ -28,6 +28,15 @@ const tables = [
   "bill_explainers",
   "polls",
   "poll_responses",
+  "factions",
+  "faction_names",
+  "members",
+  "member_terms",
+  "faction_memberships",
+  "member_positions",
+  "bill_faction_votes",
+  "plenary_questions",
+  "faction_activity_expenses",
 ] as const;
 
 describe("RLS default deny（全テーブル共通）", () => {
