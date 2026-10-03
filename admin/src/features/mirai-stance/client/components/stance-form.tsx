@@ -129,7 +129,7 @@ export function StanceForm({ billId, stance, billStatus }: StanceFormProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <CardTitle>チームみらいのスタンス</CardTitle>
+          <CardTitle>運営者のスタンス</CardTitle>
           {scheduledAt && (
             <Badge variant="secondary">
               公開予約中: {formatJstDateTime(scheduledAt)}

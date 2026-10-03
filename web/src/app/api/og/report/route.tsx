@@ -172,7 +172,7 @@ export async function GET(request: Request) {
               maxHeight: OG_BILL_NAME_MAX_HEIGHT,
               fontSize: 32,
               fontWeight: 800,
-              color: "#0f8472",
+              color: "#9c2a5e",
               lineHeight: 1.5,
               overflow: "hidden",
               wordBreak: "break-all",
@@ -182,7 +182,7 @@ export async function GET(request: Request) {
           </div>
         </div>
 
-        {/* みらい議会バッジ */}
+        {/* 新宿区議会ナビバッジ */}
         <div
           style={{
             position: "absolute",
@@ -209,7 +209,7 @@ export async function GET(request: Request) {
               letterSpacing: "0.03em",
             }}
           >
-            みらい議会
+            新宿区議会ナビ
           </span>
         </div>
 
@@ -217,7 +217,7 @@ export async function GET(request: Request) {
         {logoDataUrl && (
           // biome-ignore lint/performance/noImgElement: ignore
           <img
-            alt="チームみらいロゴ"
+            alt="ロゴ"
             src={logoDataUrl}
             width={189}
             height={160}

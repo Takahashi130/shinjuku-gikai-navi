@@ -293,7 +293,7 @@ function extractGatewayCost(event: {
 const INTERVIEW_AWARENESS_BASE = `
 
 ## AIインタビュー機能について
-みらい議会には「AIインタビュー」機能があります。これは法案ごとに提供される機能で、ユーザーがAIインタビュアーと対話形式で法案に対する意見や知見を共有できる仕組みです。インタビュー結果は分析・レポート化され、政策議論に活用されます。
+新宿区議会ナビには「AIインタビュー」機能があります。これは法案ごとに提供される機能で、ユーザーがAIインタビュアーと対話形式で法案に対する意見や知見を共有できる仕組みです。インタビュー結果は分析・レポート化され、政策議論に活用されます。
 `;
 
 const INTERVIEW_AWARENESS_PROMPT_BILL = `${INTERVIEW_AWARENESS_BASE}

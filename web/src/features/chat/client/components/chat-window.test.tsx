@@ -184,10 +184,10 @@ describe("ChatWindow", () => {
     expect(screen.getAllByRole("button", { name: /何|法案/ })).toHaveLength(3);
 
     await user.click(
-      screen.getByRole("button", { name: "みらい議会って何？" })
+      screen.getByRole("button", { name: "新宿区議会ナビって何？" })
     );
     expect(sendMessage).toHaveBeenCalledWith({
-      text: "みらい議会って何？",
+      text: "新宿区議会ナビって何？",
       metadata: {
         billContext: undefined,
         difficultyLevel: "normal",

@@ -2,7 +2,7 @@ import { isMiraiStancePublished } from "@mirai-gikai/shared/mirai-stance/publish
 import type { BillWithContent } from "../types";
 
 /**
- * 公開日時前のチームみらいの賛否を取り除く。
+ * 公開日時前の運営者の賛否を取り除く。
  * 公開日時前は賛否・コメントとも「未設定」と同じ扱いにする。
  */
 export function hideUnpublishedStance(

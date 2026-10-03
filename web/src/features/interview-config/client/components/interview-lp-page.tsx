@@ -38,12 +38,12 @@ const FEATURES: {
   {
     iconSrc: "/icons/interview-messages.svg",
     iconSize: { w: 33, h: 26 },
-    text: "寄せられた回答はチームみらいの政策検討に活用します",
+    text: "寄せられた回答はアプリの改善や区政への提言に活用します",
   },
   {
     iconSrc: "/icons/interview-landmark.svg",
     iconSize: { w: 30, h: 29 },
-    text: "ご意見はチームみらいを通じて国会に届けられる可能性があります",
+    text: "ご意見は新宿区議会や新宿区に届けられる可能性があります",
   },
 ];
 
@@ -159,7 +159,7 @@ function _InterviewOverviewSection({
           について、AIがあなたの考えを深掘りするチャット型インタビューです
         </p>
         <p>
-          いただいたご意見は、政策研究や国会での審議に活用し、みらい議会上に公開される可能性があります。
+          いただいたご意見は、政策研究や国会での審議に活用し、新宿区議会ナビ上に公開される可能性があります。
         </p>
       </div>
       <div>

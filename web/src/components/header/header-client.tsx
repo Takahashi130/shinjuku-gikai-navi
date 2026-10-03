@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DifficultySelector } from "@/features/bill-difficulty/client/components/difficulty-selector";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { SITE } from "@/config/site";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
 import { sendDifficultyStateEvent } from "@/lib/analytics/preference-state-events";
 import { useOnPageView } from "@/lib/analytics/use-on-page-view";
@@ -40,16 +41,14 @@ export function HeaderClient({ difficultyLevel }: HeaderClientProps) {
             >
               <Image
                 src="/img/logo.svg"
-                alt="みらい議会"
+                alt=""
                 width={42}
                 height={36}
+                className="shrink-0"
               />
-              <Image
-                src="/img/service-logo.svg"
-                alt="みらい議会"
-                width={115}
-                height={21}
-              />
+              <span className="whitespace-nowrap text-base font-extrabold tracking-wide text-mirai-text sm:text-lg">
+                {SITE.NAME}
+              </span>
             </Link>
           </div>
 

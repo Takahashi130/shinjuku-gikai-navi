@@ -36,7 +36,7 @@ export type OpenDataBillItem = {
   submittedDate: string | null;
   publishedAt: string | null;
   tags: OpenDataBillTag[];
-  /** チームみらいの賛否。未表明の場合は null */
+  /** 運営者の賛否。未表明の場合は null */
   miraiStance: OpenDataMiraiStance | null;
   createdAt: string;
 };

@@ -14,9 +14,9 @@ export function registerMiraiStanceTools(server: McpServer): void {
   server.registerTool(
     "get_mirai_stance",
     {
-      title: "チームみらいの賛否を取得",
+      title: "運営者の賛否を取得",
       description:
-        "指定議案に対するチームみらいの賛否スタンス(mirai_stances)を返す。未設定なら stance=null。publishAt は公開日時（null は即時公開）。差分反映（既に同じ賛否が設定済みなら再提案・再反映しない）の判定に使う。",
+        "指定議案に対する運営者の賛否スタンス(mirai_stances)を返す。未設定なら stance=null。publishAt は公開日時（null は即時公開）。差分反映（既に同じ賛否が設定済みなら再提案・再反映しない）の判定に使う。",
       inputSchema: {
         billId: z.string().uuid(),
       },
@@ -39,9 +39,9 @@ export function registerMiraiStanceTools(server: McpServer): void {
   server.registerTool(
     "upsert_mirai_stance",
     {
-      title: "チームみらいの賛否を設定",
+      title: "運営者の賛否を設定",
       description:
-        "指定議案に対するチームみらいの賛否スタンスをupsertする（1議案につき1件）。既存スタンスがあれば type / comment を更新し、なければ新規作成する。type は for / against / neutral / conditional_for / conditional_against / considering / continued_deliberation のいずれか。publishAt に ISO 8601 日時（タイムゾーン付き）を指定するとその日時まで公開サイトに表示しない予約公開になり、null で即時公開、省略時は既存の公開日時を変更しない。",
+        "指定議案に対する運営者の賛否スタンスをupsertする（1議案につき1件）。既存スタンスがあれば type / comment を更新し、なければ新規作成する。type は for / against / neutral / conditional_for / conditional_against / considering / continued_deliberation のいずれか。publishAt に ISO 8601 日時（タイムゾーン付き）を指定するとその日時まで公開サイトに表示しない予約公開になり、null で即時公開、省略時は既存の公開日時を変更しない。",
       inputSchema: {
         billId: z.string().uuid(),
         ...stanceInputSchema.shape,

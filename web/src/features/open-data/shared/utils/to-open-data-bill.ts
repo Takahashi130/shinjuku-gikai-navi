@@ -79,7 +79,7 @@ export function toOpenDataBillDetail(
 }
 
 /**
- * チームみらいの賛否行をレスポンス形式（日本語ラベル付き）に変換する。
+ * 運営者の賛否行をレスポンス形式（日本語ラベル付き）に変換する。
  * 公開日時前の賛否は未設定（null）として扱う。
  */
 export function toOpenDataMiraiStance(

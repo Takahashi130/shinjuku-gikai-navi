@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props) {
   }
 
   return {
-    title: `${session.name}の法案一覧 | みらい議会`,
+    title: `${session.name}の法案一覧 | 新宿区議会ナビ`,
     description: `${session.name}（${session.start_date}〜${session.end_date}）に提出された法案の一覧です。`,
   };
 }

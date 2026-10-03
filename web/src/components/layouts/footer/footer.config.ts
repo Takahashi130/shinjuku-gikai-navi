@@ -19,28 +19,17 @@ export const primaryLinks: FooterLink[] = [
     href: routes.home(),
   },
   {
-    label: "みらい議会とは",
-    href: EXTERNAL_LINKS.ABOUT_NOTE,
-    external: true,
+    label: "議案を探す",
+    href: routes.billsList(),
   },
   {
-    label: "チームみらいについて",
-    href: EXTERNAL_LINKS.TEAM_MIRAI_ABOUT,
-    external: true,
-  },
-  {
-    label: "寄附で応援する",
-    href: EXTERNAL_LINKS.DONATION,
+    label: "新宿区議会（公式）",
+    href: EXTERNAL_LINKS.SHINJUKU_GIKAI,
     external: true,
   },
 ];
 
 export const policyLinks: FooterPolicyLink[] = [
-  {
-    label: "よくあるご質問",
-    href: EXTERNAL_LINKS.FAQ,
-    external: true,
-  },
   {
     label: "利用規約",
     href: routes.terms(),

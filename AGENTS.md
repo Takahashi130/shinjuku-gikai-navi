@@ -2,60 +2,16 @@
 
 > **Note**: `CLAUDE.md` は `AGENTS.md` へのシンボリックリンクです。ルールの追加・編集は必ず `AGENTS.md` を直接編集してください。
 
-## 必須ルール
+## このリポジトリについて
+- 「新宿区議会ナビ」は、AGPL-3.0 で公開されている「みらい議会」（https://github.com/team-mirai/mirai-gikai ）をもとにした個人開発アプリです。
+- サービス名・説明文・テーマカラー・免責文言は `web/src/config/site.ts` で一元管理しています。名前を変える場合はまずここを変更すること。
+- 元のソフトウェアのライセンス追加条件により、免責文言「これは政党チームみらいが運営しているものではありません」と、チームみらいのロゴ・配色を使わないことが求められています。
+- 新宿区議会のデータ取り込みは `packages/shinjuku-importer/` で行います（`pnpm --filter @mirai-gikai/shinjuku-importer ingest <会期ページURL>`）。区のサイトへのアクセスは1秒以上の間隔をあけること。
 
-### Worktree必須
-変更作業は、**必ず git worktree を作成してから開始すること**。メインのリポジトリディレクトリでは直接変更を行わない。
-
-```bash
-# 1. worktreeを作成（必ずdevelopから分岐すること）
-git worktree add ../mirai-gikai-<branch-name> -b <branch-name> develop
-
-# 2. settings.local.jsonをコピー（権限設定のため必須）
-mkdir -p ../mirai-gikai-<branch-name>/.claude
-cp .claude/settings.local.json ../mirai-gikai-<branch-name>/.claude/
-
-# 3. .envをコピー（環境変数の引き継ぎ）
-cp .env ../mirai-gikai-<branch-name>/
-
-# 4. 依存パッケージをインストール
-cd ../mirai-gikai-<branch-name> && pnpm install --frozen-lockfile
-```
-
-- **必ず `develop` から分岐する**: `git worktree add` の末尾に `develop` を指定すること。省略すると現在のブランチ（HEADが別ブランチを指している場合）から分岐し、無関係なコミットがPRに混入する原因になる。
-
-- **目的**: developブランチを常にクリーンに保ち、作業の分離と並列作業を容易にする
-- **developに変更が残っている場合のリカバリ**: worktreeを作成する前に、developブランチの変更を必ずクリーンアップすること。作業途中の変更をdevelopに残したままworktreeを作成・作業することは禁止。
-  ```bash
-  # 変更を退避してからworktreeを作成
-  git stash --include-untracked
-  git worktree add ../mirai-gikai-<branch-name> -b <branch-name>
-  # worktreeに移動して退避した変更を適用
-  cd ../mirai-gikai-<branch-name>
-  git stash pop
-  ```
-
-### 実装完了後は即PR作成
-実装完了後は「コミットしますか？」等の確認を挟まず、コミット → push → PR作成まで一気に進めること。ユーザーへの確認は不要。
-
-### セルフレビュー必須
-実装完了後（コミット前）に、以下の順で必ずセルフレビューを実施すること：
-
-1. **`/simplify` を実行**: 変更コードの重複・可読性・効率の観点から自己修正を行う。明らかな問題を先に潰しておくことで、後段の `/review` の指摘ノイズを減らす。
-2. **`/review` を実行**: Codexレビュー・`test-guidelines-checker` によるテストガイドラインチェック・`code-quality-checker` によるコード品質チェックを同時に実行する。指摘があれば修正する。
-
-両方を通過したら、ユーザーに確認せずそのままコミット → push → PR作成まで一気に進めること（`gh pr create`）。
-
-### UI変更時のスクリーンショット必須
-PR作成後、変更差分にUI関連ファイル（`web/src/`, `admin/src/` 配下の `.tsx`, `.css` 等）が含まれる場合は、必ず `/pr-screenshot` スキルを実行すること。スキルが自動でdevサーバー起動→スクリーンショット撮影→R2アップロード→PR本文更新まで行う。
-
-### 並列PR作成
-複数の独立したPRを作成する場合は `/parallel-pr` スキルを使用すること。
-
-### Linearタスクのステータス管理
-Linear issue ID（例: `MIR-123`）を含むタスクを依頼された場合、以下のタイミングで `/linear` スキルを実行すること：
-- **作業着手時**: `/linear start <issue-id>` でステータスを `In Progress` に更新
-- **PR作成後**: `/linear review <issue-id>` でステータスを `In Review` に更新し、PR URLをissueにリンク
+## 開発の進め方（個人開発）
+- `develop` ブランチで直接作業してよい。worktree や PR は必須ではない。
+- コミット・push はユーザーの確認を取ってから行う。
+- コミット前に `pnpm lint`・`pnpm typecheck`・関連するテストを通すこと。
 
 ## Project Structure & Module Organization
 - `web/` は公開用 Next.js アプリ。共通 UI は `src/components`、Vitest のテストは `src/**/*.test.ts` に配置します。
@@ -139,35 +95,9 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
 - PR 前に `pnpm --filter web test:watch` で失敗を早期検知し、必要に応じて `vitest run --coverage` でカバレッジ低下を確認します。
 - テストの書き方・構造化・コード例などの詳細は [docs/テストガイドライン.md](docs/20260219_1000_テストガイドライン.md) を参照。
 
-## Commit & Pull Request Guidelines
-- **push前のローカル検証（必須）**: `git push` の前に、CIと同じ検証コマンドをローカルで実行して通過を確認すること。CIで落ちてから直すのではなく、手元で事前に検知する。
-  ```bash
-  pnpm lint        # Biome format + lint チェック
-  pnpm typecheck   # TypeScript 型チェック
-  pnpm build       # Next.js ビルドチェック
-  pnpm test        # 全ワークスペースのテスト実行
-  ```
-- **push / PR作成前のGitHub状態確認（必須）**: `git push` やPR作成を行う前に、必ず `gh pr list` や `gh pr view <番号>` でGitHub上のPR状態（open/merged/closed）を確認すること。マージ済みブランチへの追加pushや、既にクローズされたPRとの重複を防ぐ。
-- **PRのスコープを厳守**: PRには現在のタスクに関係する変更のみを含めること。レビューやセルフレビューで無関係な変更（別タスクの修正、ついでのリファクタ等）が混入していた場合は、コミット前に取り除く。
-- コミットメッセージは既存履歴同様、短い命令形主体（日本語可）とし、課題連携は `(#id)` を付与します。
-- PR ではスコープ概要、実行テスト記録（例: `pnpm dev`, `pnpm --filter web test`）、UI 変更時のスクリーンショットや GIF を添付します。
-- スキーマ・シード・環境変数の変更は本文で明示し、レビューフィードバックへの対応状況を追跡コメントで共有して Ready for Review に切り替えます。
-- **イシュー連携**: 特定のイシューに対応する PR を作成する場合、PR 本文に `Resolves #123` の形式で記載してください。これにより PR マージ時にイシューが自動クローズされます。複数のイシューを閉じる場合は `Resolves #123, Resolves #456` のように列挙します。
-- **PR作成後の状態確認（必須）**: PR作成後、以下の4点を確認すること：
-  1. **Conflict確認**: `gh pr view <番号> --json mergeable,mergeStateStatus` でマージ可能か確認。conflictがあれば解消してpushする。
-  2. **CI確認**: `gh pr checks <番号>` でCIの状態を確認。失敗があれば原因を調査し修正してpushする。CIが実行中の場合は完了まで待つ。
-  3. **CodeRabbitレビュー確認**: CodeRabbitのレビューが届くまで待ってからコメントを確認する。レビューは通常2〜3分で届く。`gh api repos/{owner}/{repo}/pulls/{number}/comments` でコメントを取得し、空なら少し待って再取得する。**Minor以上（Minor/Major/Critical）の指摘はすべて対応が必須。** 対応とは「修正してpush」または「スキップ理由を該当コメントに返信」のいずれか。Nitpickのみスキップ可。
-  4. **対応済みコメントへの返信とresolve（必須）**: 対応済みコメント（修正pushした場合・スキップした場合の両方）に対して、該当コメントへ返信した上でGraphQL APIでresolveする。返信なしで黙ってresolveするのは禁止。
-     ```bash
-     # 1. 該当コメントに返信（対応内容の概要を記載、修正の場合はコミットSHAを含める）
-     gh api repos/{owner}/{repo}/pulls/{number}/comments -X POST \
-       -F in_reply_to=<コメントID> \
-       -f body='修正しました (<コミットSHA>)。<対応内容の要約>'
-     # 2. スレッド一覧取得（isResolved=falseのものが未resolve）
-     gh api graphql -f query='{ repository(owner: "{owner}", name: "{repo}") { pullRequest(number: <番号>) { reviewThreads(first: 50) { nodes { id isResolved comments(first: 1) { nodes { body path } } } } } } }'
-     # 3. 対応済みスレッドをresolve
-     gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "<スレッドID>"}) { thread { isResolved } } }'
-     ```
+## Commit Guidelines
+- コミットメッセージは短い命令形（日本語可）とします。
+- スキーマ変更時は `supabase/migrations` のマイグレーションと `packages/supabase/types/supabase.types.ts` の再生成ファイルをセットでコミットします。
 
 ## Supabase & Environment Notes
 - ローカル開発前に `npx supabase start` を実行し、`.env.example` を `.env` にコピーして値を整えます。
@@ -179,10 +109,3 @@ Repository レイヤーの詳細は [docs/repository-layer.md](docs/repository-l
 - 要件定義や実装計画をまとめる際は論点を先に洗い出し、不明点を確認してから Markdown で整理します。
 - 設計文書は `docs/` 配下に `YYYYMMDD_HHMM_作業内容.md` で保存してください（例: `docs/20250815_1430_ユーザー認証システム設計.md`）。
 - 既存資料に大きな変更を加える場合は新しいファイルとして残し、更新履歴をたどれるようにします。
-
-## GitHub Issue作成ルール
-GitHub Issueを作成する際は、以下のルールに従うこと：
-
-- プラン内容を簡略化せず、そのままissueに記載する
-- コード例、SQL、型定義などの詳細な実装内容を含める
-- 検証方法を具体的に記載する
