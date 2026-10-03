@@ -16,3 +16,7 @@ node_modules
 infra/cloud-run/config.env
 infra/cloud-run/config.env.*
 *-key.json
+
+# Vercel CLI のリンク情報
+.vercel
+
