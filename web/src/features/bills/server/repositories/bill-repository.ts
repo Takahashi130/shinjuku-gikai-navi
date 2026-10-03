@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { chunk, IN_QUERY_CHUNK_SIZE } from "@/lib/utils/chunk";
 
 // ============================================================
 // Bills
@@ -208,16 +209,22 @@ export async function findTagsByBillIds(
   }
 
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills_tags")
-    .select("bill_id, tags(id, label)")
-    .in("bill_id", billIds);
+  // 議案が多いと ID の一覧で URL が長くなりすぎるため、分割して問い合わせる
+  const results = await Promise.all(
+    chunk(billIds, IN_QUERY_CHUNK_SIZE).map((ids) =>
+      supabase
+        .from("bills_tags")
+        .select("bill_id, tags(id, label)")
+        .in("bill_id", ids)
+    )
+  );
 
-  if (error) {
-    throw new Error(`Failed to fetch tags: ${error.message}`);
+  const failed = results.find((r) => r.error);
+  if (failed?.error) {
+    throw new Error(`Failed to fetch tags: ${failed.error.message}`);
   }
 
-  return groupTagsByBillId(data ?? []);
+  return groupTagsByBillId(results.flatMap((r) => r.data ?? []));
 }
 
 // ============================================================
@@ -616,16 +623,24 @@ export async function findBillIdsWithPublicInterview(
   }
 
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("interview_configs")
-    .select("bill_id")
-    .in("bill_id", billIds)
-    .eq("status", "public");
+  // 議案が多いと ID の一覧で URL が長くなりすぎるため、分割して問い合わせる
+  const results = await Promise.all(
+    chunk(billIds, IN_QUERY_CHUNK_SIZE).map((ids) =>
+      supabase
+        .from("interview_configs")
+        .select("bill_id")
+        .in("bill_id", ids)
+        .eq("status", "public")
+    )
+  );
 
-  if (error) {
-    console.error("Failed to fetch interview configs:", error);
+  const failed = results.find((r) => r.error);
+  if (failed?.error) {
+    console.error("Failed to fetch interview configs:", failed.error);
     return new Set();
   }
 
-  return new Set(data.map((row) => row.bill_id));
+  return new Set(
+    results.flatMap((r) => (r.data ?? []).map((row) => row.bill_id))
+  );
 }
