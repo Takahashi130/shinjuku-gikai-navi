@@ -24,7 +24,7 @@ describe("isMainPage", () => {
     expect(isMainPage("/about")).toBe(false);
   });
 
-  // 一覧でも難易度の切り替えとチャットのサイドバーを出す。
+  // 一覧でも難易度の切り替えを出す。
   it("returns true for the bills list page", () => {
     expect(isMainPage("/bills")).toBe(true);
   });

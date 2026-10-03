@@ -7,24 +7,18 @@ import {
   ReasoningTrigger,
 } from "@/components/ai-elements/reasoning";
 import { Response } from "@/components/ai-elements/response";
-import { SUGGEST_INTERVIEW_TOOL_TYPE } from "@/features/chat/shared/constants";
-import { InterviewSuggestionBanner } from "./interview-suggestion-banner";
 
 type RehypePlugins = ComponentProps<typeof Response>["rehypePlugins"];
 
 interface SystemMessageProps {
   message: UIMessage;
   isStreaming: boolean;
-  billId?: string;
-  billName?: string;
   rehypePlugins?: RehypePlugins;
 }
 
 export function SystemMessage({
   message,
   isStreaming,
-  billId,
-  billName,
   rehypePlugins,
 }: SystemMessageProps) {
   return (
@@ -55,15 +49,6 @@ export function SystemMessage({
                 <ReasoningTrigger />
                 <ReasoningContent>{part.text}</ReasoningContent>
               </Reasoning>
-            );
-          }
-          if (part.type === SUGGEST_INTERVIEW_TOOL_TYPE && billId && billName) {
-            return (
-              <InterviewSuggestionBanner
-                key={`${message.id}-${i}`}
-                billId={billId}
-                billName={billName}
-              />
             );
           }
           return null;

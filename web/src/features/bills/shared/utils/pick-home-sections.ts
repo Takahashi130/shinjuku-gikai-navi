@@ -20,13 +20,9 @@ interface PickHomeSectionsInput<
   inSession: boolean;
 }
 
-interface PickHomeSectionsResult<TBill, TGroup> {
+interface PickHomeSectionsResult<TGroup> {
   /** タグ別セクションに出すグループ。上のセクションに出た議案は含まない。 */
   tagGroups: TGroup[];
-  /** 画面に出ている議案を重複なく並べたもの。チャットの文脈に渡す。 */
-  shownBills: TBill[];
-  /** 注目として出ている議案のID。 */
-  featuredBillIds: Set<string>;
 }
 
 export function pickHomeSections<
@@ -37,10 +33,7 @@ export function pickHomeSections<
   featuredBills,
   interviewOpenBills,
   inSession,
-}: PickHomeSectionsInput<TBill, TGroup>): PickHomeSectionsResult<
-  TBill,
-  TGroup
-> {
+}: PickHomeSectionsInput<TBill, TGroup>): PickHomeSectionsResult<TGroup> {
   // 閉会中は注目セクションを出さないので、注目の議案は画面に出ていない扱いにする。
   const shownFeaturedBills = inSession ? featuredBills : [];
   const featuredBillIds = new Set(shownFeaturedBills.map((bill) => bill.id));
@@ -61,16 +54,5 @@ export function pickHomeSections<
     // 上のセクションに出た議案しか無かったタグは、見出しだけが残るので落とす。
     .filter((group) => group.bills.length > 0);
 
-  // 受付中と注目は重なるので、IDで一意にする。
-  const shownBills = [
-    ...new Map(
-      [
-        ...interviewOpenBills,
-        ...shownFeaturedBills,
-        ...tagGroups.flatMap((group) => group.bills),
-      ].map((bill) => [bill.id, bill])
-    ).values(),
-  ];
-
-  return { tagGroups, shownBills, featuredBillIds };
+  return { tagGroups };
 }

@@ -9,7 +9,6 @@ const group = (label: string, ...billIds: string[]) => ({
 
 const shape = (groups: { tag: { id: string }; bills: { id: string }[] }[]) =>
   groups.map((g) => [g.tag.id, g.bills.map((b) => b.id)]);
-const ids = (bills: { id: string }[]) => bills.map((b) => b.id);
 
 const base = {
   billsByTag: [] as ReturnType<typeof group>[],
@@ -98,72 +97,6 @@ describe("pickHomeSections", () => {
       });
 
       expect(shape(billsByTag)).toEqual([["暮らし", ["a", "b"]]]);
-    });
-  });
-
-  describe("shownBills", () => {
-    it("受付中・注目・タグ別に出た議案を並べる", () => {
-      const result = pickHomeSections({
-        ...base,
-        billsByTag: [group("暮らし", "tag1"), group("税金", "tag2")],
-        featuredBills: [bill("feat")],
-        interviewOpenBills: [bill("intv")],
-      });
-
-      expect(ids(result.shownBills)).toEqual(["intv", "feat", "tag1", "tag2"]);
-    });
-
-    // 受付中と注目は意図的に重複させているので、片方に寄せないと2回渡ってしまう。
-    it("受付中と注目に重複して出る議案は1件にまとめる", () => {
-      const result = pickHomeSections({
-        ...base,
-        featuredBills: [bill("both")],
-        interviewOpenBills: [bill("both")],
-      });
-
-      expect(ids(result.shownBills)).toEqual(["both"]);
-    });
-
-    it("閉会中は注目だけの議案を含めない", () => {
-      const result = pickHomeSections({
-        ...base,
-        featuredBills: [bill("feat")],
-        inSession: false,
-      });
-
-      expect(ids(result.shownBills)).toEqual([]);
-    });
-
-    // タグ別から外れた議案を含めると、画面に無いものまでチャットの文脈に入る。
-    it("タグ別から外れた分は重ねて数えない", () => {
-      const result = pickHomeSections({
-        ...base,
-        billsByTag: [group("暮らし", "intv", "other")],
-        interviewOpenBills: [bill("intv")],
-      });
-
-      expect(ids(result.shownBills)).toEqual(["intv", "other"]);
-    });
-  });
-
-  describe("featuredBillIds", () => {
-    it("会期中は注目の議案IDを返す", () => {
-      const result = pickHomeSections({
-        ...base,
-        featuredBills: [bill("a"), bill("b")],
-      });
-
-      expect([...result.featuredBillIds]).toEqual(["a", "b"]);
-    });
-
-    it("閉会中は空", () => {
-      const result = pickHomeSections({
-        ...base,
-        featuredBills: [bill("a")],
-        inSession: false,
-      });
-
-      expect([...result.featuredBillIds]).toEqual([]);
     });
   });
 });

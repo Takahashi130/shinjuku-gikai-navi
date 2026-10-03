@@ -15,8 +15,6 @@ import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/get-difficulty-level";
-import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 import { routes } from "@/lib/routes";
 import { BillSearchCard } from "../../client/components/bill-list/bill-search-card";
 import { BillsSortSelect } from "../../client/components/bill-list/bills-sort-select";
@@ -27,7 +25,6 @@ import {
   countByStatusGroup,
   filterByStatusGroup,
 } from "../../shared/utils/bill-status-group";
-import { chatBillName } from "../../shared/utils/chat-bill-name";
 import { filterBills } from "../../shared/utils/filter-bills";
 import {
   type BillsListParams,
@@ -54,10 +51,9 @@ export async function BillsListPage({
   searchParams: BillsListSearchParams;
 }) {
   const params = parseBillsListParams(searchParams);
-  const [allBills, featuredTags, currentDifficulty] = await Promise.all([
+  const [allBills, featuredTags] = await Promise.all([
     getBillsWithReportCounts(),
     getFeaturedTags(),
-    getDifficultyLevel(),
   ]);
 
   // タグ以外の絞り込みを先に適用し、そこからタグ絞り込みを派生させる。
@@ -93,66 +89,65 @@ export async function BillsListPage({
     billsListHref(params, patch);
 
   return (
-    <>
-      <Container className="pt-24 pb-8 md:pt-8">
-        <div className="mb-3">
-          <Breadcrumb
-            items={[
-              { label: "トップ", href: routes.home() },
-              { label: "議案を検索する" },
-            ]}
+    <Container className="pt-24 pb-8 md:pt-8">
+      <div className="mb-3">
+        <Breadcrumb
+          items={[
+            { label: "トップ", href: routes.home() },
+            { label: "議案を検索する" },
+          ]}
+        />
+      </div>
+
+      <h1 className="mb-4 text-3xl font-bold">議案を検索する</h1>
+
+      <form action={routes.billsList()} className="mb-5">
+        <div className="flex h-12 items-center gap-2.5 rounded-full border border-mirai-border bg-white pr-4 pl-5">
+          <Search
+            className="h-[18px] w-[18px] shrink-0 text-mirai-text-muted"
+            aria-hidden
+          />
+          <input
+            type="search"
+            name="q"
+            aria-label="議案を検索"
+            defaultValue={params.query}
+            placeholder="議案名やキーワードで探す"
+            className="w-full bg-transparent text-sm outline-none"
           />
         </div>
-
-        <h1 className="mb-4 text-3xl font-bold">議案を検索する</h1>
-
-        <form action={routes.billsList()} className="mb-5">
-          <div className="flex h-12 items-center gap-2.5 rounded-full border border-mirai-border bg-white pr-4 pl-5">
-            <Search
-              className="h-[18px] w-[18px] shrink-0 text-mirai-text-muted"
-              aria-hidden
-            />
-            <input
-              type="search"
-              name="q"
-              aria-label="議案を検索"
-              defaultValue={params.query}
-              placeholder="議案名やキーワードで探す"
-              className="w-full bg-transparent text-sm outline-none"
-            />
-          </div>
-          {/*
+        {/*
           検索しても他の絞り込みを落とさない。既定値を出さない規則は
           buildBillsListQuery が持っているので、そこから導出する。
           q はテキスト入力が持つので取り除く。
         */}
-          {[
-            ...new URLSearchParams(
-              billsListHref(params, { query: "" }).split("?")[1] ?? ""
-            ),
-          ].map(([name, value]) => (
-            <input key={name} type="hidden" name={name} value={value} />
-          ))}
-        </form>
+        {[
+          ...new URLSearchParams(
+            billsListHref(params, { query: "" }).split("?")[1] ?? ""
+          ),
+        ].map(([name, value]) => (
+          <input key={name} type="hidden" name={name} value={value} />
+        ))}
+      </form>
 
-        <FilterGroup label="ステータス">
-          {BILL_STATUS_GROUPS.map((group) => (
-            <Chip
-              key={group}
-              href={href({ status: group })}
-              active={params.status === group}
-              icon={STATUS_GROUP_ICONS[group]}
-              label={BILL_STATUS_GROUP_LABELS[group]}
-              count={statusCounts[group]}
-            />
-          ))}
-        </FilterGroup>
+      <FilterGroup label="ステータス">
+        {BILL_STATUS_GROUPS.map((group) => (
+          <Chip
+            key={group}
+            href={href({ status: group })}
+            active={params.status === group}
+            icon={STATUS_GROUP_ICONS[group]}
+            label={BILL_STATUS_GROUP_LABELS[group]}
+            count={statusCounts[group]}
+          />
+        ))}
+      </FilterGroup>
 
-        <section className="mb-4">
-          <h2 className="mb-2 text-[13px] font-bold text-mirai-text-secondary">
-            カテゴリ
-          </h2>
-          {/*
+      <section className="mb-4">
+        <h2 className="mb-2 text-[13px] font-bold text-mirai-text-secondary">
+          カテゴリ
+        </h2>
+        {/*
           タグは本番で18件あり、折り返すと縦に伸びて一覧が押し下がる。
           多いときは2行に詰めて横スクロールさせる。grid で流すと列幅が最長の
           チップに揃って短いチップの右に空白が残るので、行ごとに独立した
@@ -161,32 +156,32 @@ export async function BillsListPage({
           少ないときは1行にする。絞り込みでチップが数個に減ったときに2行へ
           割ると、横に余白があるのに縦に並んでしまう。
         */}
-          <div className="scrollbar-hide overflow-x-auto">
-            <div className="flex w-max flex-col gap-1.5">
-              {splitIntoRows(tagChips, tagChipRowCount(tagChips.length)).map(
-                (row, rowIndex) => (
-                  <div
-                    // biome-ignore lint/suspicious/noArrayIndexKey: 行は固定順で再並びしない
-                    key={rowIndex}
-                    className="flex items-center gap-1.5"
-                  >
-                    {row.map((chip) => (
-                      <Chip
-                        key={chip.id}
-                        href={href({ tagId: chip.tagId })}
-                        active={params.tagId === chip.tagId}
-                        label={chip.label}
-                        count={chip.count}
-                      />
-                    ))}
-                  </div>
-                )
-              )}
-            </div>
+        <div className="scrollbar-hide overflow-x-auto">
+          <div className="flex w-max flex-col gap-1.5">
+            {splitIntoRows(tagChips, tagChipRowCount(tagChips.length)).map(
+              (row, rowIndex) => (
+                <div
+                  // biome-ignore lint/suspicious/noArrayIndexKey: 行は固定順で再並びしない
+                  key={rowIndex}
+                  className="flex items-center gap-1.5"
+                >
+                  {row.map((chip) => (
+                    <Chip
+                      key={chip.id}
+                      href={href({ tagId: chip.tagId })}
+                      active={params.tagId === chip.tagId}
+                      label={chip.label}
+                      count={chip.count}
+                    />
+                  ))}
+                </div>
+              )
+            )}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/*
+      {/*
         リンクで絞り込むのでフォーム部品ではないが、見た目はチェックボックスなので
         状態が支援技術にも伝わるようにする。
 
@@ -194,88 +189,77 @@ export async function BillsListPage({
         アイコンが入った瞬間に行の高さが変わって下の一覧が数px動く。block に
         してベースラインへの依存を切る。
       */}
-        <Link
-          href={href({ interviewOnly: !params.interviewOnly })}
-          role="checkbox"
-          aria-checked={params.interviewOnly}
-          className="mb-4 flex w-fit items-center gap-2 text-[13px] font-bold"
-        >
-          {/*
+      <Link
+        href={href({ interviewOnly: !params.interviewOnly })}
+        role="checkbox"
+        aria-checked={params.interviewOnly}
+        className="mb-4 flex w-fit items-center gap-2 text-[13px] font-bold"
+      >
+        {/*
           枠線の有無で寸法が変わらないよう、選択時も border を残して色だけ
           透明にする。太さが変わると行の高さが動いて一覧がずれる。
         */}
-          <span
-            className={`flex h-[18px] w-[18px] items-center justify-center rounded-[5px] border ${
-              params.interviewOnly
-                ? "border-transparent bg-mirai-gradient"
-                : "border-mirai-border-light bg-white"
-            }`}
+        <span
+          className={`flex h-[18px] w-[18px] items-center justify-center rounded-[5px] border ${
+            params.interviewOnly
+              ? "border-transparent bg-mirai-gradient"
+              : "border-mirai-border-light bg-white"
+          }`}
+          aria-hidden
+        >
+          {params.interviewOnly && (
+            <Check className="h-3 w-3 text-black" strokeWidth={3.5} />
+          )}
+        </span>
+        AIインタビュー受付中のみ表示
+      </Link>
+
+      <div className="mb-3 flex items-center gap-3">
+        <p className="text-[13px] font-bold text-mirai-text-secondary">
+          {bills.length}件の議案
+        </p>
+        <BillsSortSelect params={params} />
+      </div>
+
+      {bills.length === 0 ? (
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-mirai-border bg-white px-6 py-16 text-center">
+          <Search
+            className="h-10 w-10 text-mirai-text-placeholder"
             aria-hidden
-          >
-            {params.interviewOnly && (
-              <Check className="h-3 w-3 text-black" strokeWidth={3.5} />
-            )}
-          </span>
-          AIインタビュー受付中のみ表示
-        </Link>
-
-        <div className="mb-3 flex items-center gap-3">
-          <p className="text-[13px] font-bold text-mirai-text-secondary">
-            {bills.length}件の議案
-          </p>
-          <BillsSortSelect params={params} />
-        </div>
-
-        {bills.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-mirai-border bg-white px-6 py-16 text-center">
-            <Search
-              className="h-10 w-10 text-mirai-text-placeholder"
-              aria-hidden
-            />
-            <div className="flex flex-col gap-1.5">
-              <p className="text-base font-bold">
-                該当する議案が見つかりませんでした
-              </p>
-              <p className="text-[13px] text-mirai-text-muted">
-                キーワードを変えるか、絞り込み条件を解除してお試しください
-              </p>
-            </div>
+          />
+          <div className="flex flex-col gap-1.5">
+            <p className="text-base font-bold">
+              該当する議案が見つかりませんでした
+            </p>
+            <p className="text-[13px] text-mirai-text-muted">
+              キーワードを変えるか、絞り込み条件を解除してお試しください
+            </p>
           </div>
-        ) : (
-          <ul className="flex flex-col gap-3">
-            {bills.map((bill) => (
-              <li key={bill.id}>
-                <BillSearchCard bill={bill} />
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* 掲載外の議案は本家の一覧に送る */}
-        <div className="mt-8 text-sm text-mirai-text-secondary">
-          <Link
-            href={EXTERNAL_LINKS.SHINJUKU_GIKAI}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 hover:opacity-80"
-          >
-            新宿区議会に提出されているすべての議案は{" "}
-            <span className="underline">新宿区議会の公式ページへ</span>
-            <ExternalLink className="h-3 w-3" aria-hidden />
-          </Link>
         </div>
-      </Container>
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {bills.map((bill) => (
+            <li key={bill.id}>
+              <BillSearchCard bill={bill} />
+            </li>
+          ))}
+        </ul>
+      )}
 
-      {/* チャットはトップと同じものを出す。文脈は表示中の一覧に合わせる。 */}
-      <HomeChatClient
-        currentDifficulty={currentDifficulty}
-        bills={bills.map((bill) => ({
-          name: chatBillName(bill),
-          summary: bill.bill_content?.summary,
-          tags: bill.tags?.map((tag) => tag.label) ?? [],
-        }))}
-      />
-    </>
+      {/* 掲載外の議案は本家の一覧に送る */}
+      <div className="mt-8 text-sm text-mirai-text-secondary">
+        <Link
+          href={EXTERNAL_LINKS.SHINJUKU_GIKAI}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 hover:opacity-80"
+        >
+          新宿区議会に提出されているすべての議案は{" "}
+          <span className="underline">新宿区議会の公式ページへ</span>
+          <ExternalLink className="h-3 w-3" aria-hidden />
+        </Link>
+      </div>
+    </Container>
   );
 }
 

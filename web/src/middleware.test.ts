@@ -14,7 +14,7 @@ describe("shouldApplyDifficultyCookie", () => {
 
   it("APIパスではfalseを返す（レスポンスにSet-Cookieを乗せない）", () => {
     expect(shouldApplyDifficultyCookie("/api/open-data/bills")).toBe(false);
-    expect(shouldApplyDifficultyCookie("/api/chat")).toBe(false);
+    expect(shouldApplyDifficultyCookie("/api/interview/chat")).toBe(false);
   });
 });
 
