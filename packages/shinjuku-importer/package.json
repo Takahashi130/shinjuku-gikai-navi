@@ -1,0 +1,23 @@
+{
+  "name": "@mirai-gikai/shinjuku-importer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "ingest": "dotenv -e ../../.env -- tsx src/run.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mirai-gikai/supabase": "workspace:*",
+    "@supabase/supabase-js": "^2.57.0",
+    "unpdf": "^1.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "dotenv-cli": "^7.4.4",
+    "tsx": "^4.19.1",
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
+  }
+}
