@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "sessionSlug": "r8-teirei-3",
+  "billSlug": "r8-teirei-3-gian-66",
+  "billLabel": "第66号議案",
+  "billName": "令和8年度新宿区後期高齢者医療特別会計補正予算（第1号）",
+  "status": "published",
+  "version": 1,
+  "publishAt": null,
+  "author": {
+    "kind": "ai",
+    "model": "claude-opus-5-5",
+    "generatedAt": "2026-10-04T00:50:00+09:00"
+  },
+  "review": {
+    "reviewedBy": "ai-crosscheck",
+    "reviewedAt": "2026-10-04T01:00:56+09:00",
+    "notes": "AI（Claude）が新宿区の公開資料をもとに作成し、別のAIが資料と照合しました。誤りがあればお知らせください。"
+  },
+  "sources": [
+    {
+      "id": "full-text",
+      "kind": "full_text_pdf",
+      "title": "第66号議案 令和8年度新宿区後期高齢者医療特別会計補正予算(第1号)",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [1, 2, 3],
+      "materialKey": "full-text"
+    },
+    {
+      "id": "budget-overview",
+      "kind": "budget_overview_pdf",
+      "title": "令和8年度9月補正予算概要（一般会計(補正第5号)、介護保険特別会計(補正第2号)、後期高齢者医療特別会計(補正第1号)）",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [5],
+      "materialKey": "budget-overview"
+    }
+  ],
+  "body": {
+    "title": "後期高齢者医療の会計で、確定した額に合わせて納付と返納を行う追加の予算",
+    "oneLiner": "区の後期高齢者医療特別会計の今年度の予算に7,108千円（約711万円）を追加します。保険料軽減措置納付金の額が確定したことによる追加の納付と、葬祭費の受託事業収入が多すぎた分の返納にあてます。",
+    "purpose": {
+      "text": "額が確定したことに合わせて、広域連合への保険料軽減措置納付金を追加で納め、葬祭費の受託事業収入が多すぎた分を返すため、予算に7,108千円を追加します。",
+      "sourceRefs": ["full-text", "budget-overview"],
+      "evidence": [
+        "歳入歳出それぞれ7,108千円を追加し",
+        "保険料軽減措置納付金の額確定による追加納付",
+        "葬祭費受託事業収入の収入超過に伴う返納金"
+      ]
+    },
+    "background": [
+      {
+        "text": "保険料軽減措置納付金の額が確定し、追加で納める必要が出ました。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["保険料軽減措置納付金の額確定による追加納付"]
+      },
+      {
+        "text": "葬祭費の受託事業収入が、多すぎた（収入超過）ことが分かりました。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["葬祭費受託事業収入の収入超過に伴う返納金"]
+      }
+    ],
+    "merits": [
+      {
+        "text": "確定した額に合わせて、保険料軽減措置納付金1,459千円を広域連合に追加で納めます。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["(1)保険料軽減措置納付金", "保険料軽減措置納付金の額確定による追加納付"]
+      },
+      {
+        "text": "葬祭費の受託事業収入が多すぎた分として、5,649千円を返します。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["5,649千円葬祭費受託事業収入の収入超過に伴う返納金"]
+      }
+    ],
+    "concerns": [
+      {
+        "text": "区の一般会計からこの会計への繰入金が10,772千円増えます（保険料軽減措置繰入金1,459千円、事務費繰入金9,313千円）。",
+        "sourceRefs": ["budget-overview", "full-text"],
+        "evidence": [
+          "一般会計繰入金(保険料軽減措置繰入金)",
+          "一般会計繰入金(事務費繰入金) 9,313千円",
+          "10,772千円"
+        ]
+      },
+      {
+        "text": "歳入のうち、前の年度からの繰越金は、補正前の予算より9,033千円少なくなります。",
+        "sourceRefs": ["budget-overview", "full-text"],
+        "evidence": ["前年度繰越金", "△9,033千円"]
+      }
+    ],
+    "keyFacts": [
+      {
+        "label": "追加する予算の額",
+        "value": "7,108千円（約711万円）",
+        "sourceRefs": ["full-text"],
+        "evidence": ["歳入歳出それぞれ7,108千円を追加し"]
+      },
+      {
+        "label": "補正後の後期高齢者医療特別会計の総額",
+        "value": "9,962,512千円（約99億6,251万円）",
+        "sourceRefs": ["full-text"],
+        "evidence": ["歳入歳出それぞれ9,962,512千円とする"]
+      },
+      {
+        "label": "広域連合への保険料軽減措置納付金",
+        "value": "1,459千円を追加で納付",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["(1)保険料軽減措置納付金", "1,459千円"]
+      },
+      {
+        "label": "葬祭費の受託事業収入の返納金",
+        "value": "5,649千円",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["5,649千円葬祭費受託事業収入の収入超過に伴う返納金"]
+      },
+      {
+        "label": "一般会計からの繰入金",
+        "value": "10,772千円の増（うち事務費繰入金9,313千円）",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["10,772千円", "一般会計繰入金(事務費繰入金) 9,313千円"]
+      },
+      {
+        "label": "前年度繰越金",
+        "value": "9,033千円の減",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["前年度繰越金", "△9,033千円"]
+      },
+      {
+        "label": "保険料軽減措置納付金の償還金（諸収入）",
+        "value": "5,369千円の増",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["保険料還付金(保険料軽減措置納付金償還金)", "5,369千円"]
+      }
+    ],
+    "notInMaterials": [
+      "保険料軽減措置の対象になる人の数や、軽減の中身は、資料からは分かりません。",
+      "葬祭費の受託事業収入が多くなった理由は、資料からは分かりません。",
+      "事務費繰入金9,313千円がどの事務に使われるかは、資料からは分かりません。",
+      "この補正予算で後期高齢者医療の保険料の額が変わるかどうかは、資料からは分かりません。"
+    ]
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "sessionSlug": "r8-teirei-3",
+  "billSlug": "r8-teirei-3-gian-78",
+  "billLabel": "第78号議案",
+  "billName": "権利の放棄について",
+  "status": "published",
+  "version": 1,
+  "publishAt": null,
+  "author": {
+    "kind": "ai",
+    "model": "claude-opus-5-5",
+    "generatedAt": "2026-10-04T00:50:09+09:00"
+  },
+  "review": {
+    "reviewedBy": "ai-crosscheck",
+    "reviewedAt": "2026-10-04T00:57:07+09:00",
+    "notes": "AI（Claude）が新宿区の公開資料をもとに作成し、別のAIが資料と照合しました。誤りがあればお知らせください。"
+  },
+  "sources": [
+    {
+      "id": "full-text",
+      "kind": "full_text_pdf",
+      "title": "第78号議案 権利の放棄について",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [2],
+      "materialKey": "full-text"
+    },
+    {
+      "id": "overview",
+      "kind": "overview_pdf",
+      "title": "令和8年第3回区議会定例会提出案件概要",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [9],
+      "materialKey": "overview"
+    }
+  ],
+  "body": {
+    "title": "遺言で区に贈られる不動産を受け取る権利を放棄する",
+    "oneLiner": "「グラフィック・デザイン博物館として活用すること」を条件に遺言で区に贈られることになった不動産について、条件どおりに活用するのが難しいとして、区が受け取る権利を放棄します。",
+    "purpose": {
+      "text": "遺言によって区に生じた「不動産を受け取る権利（遺贈を受ける権利）」を放棄することを決める議案です。",
+      "sourceRefs": ["full-text", "overview"],
+      "evidence": [
+        "遺贈により生じた権利を放棄する",
+        "遺贈者の有する財産について遺贈を受ける権利"
+      ]
+    },
+    "background": [
+      {
+        "text": "ある人（遺贈者）の遺言には、「グラフィック・デザイン博物館として活用すること」を条件に、自分の持っている不動産を区に遺贈する（遺言で贈る）と書かれていました。",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": [
+          "グラフィック・デザイン博物館として活用することを条件に",
+          "遺贈者の有する不動産を区に遺贈する"
+        ]
+      },
+      {
+        "text": "区は、この不動産を、遺贈者の遺志（願い）に応える形で活用することが難しいと説明しています。",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["遺贈者の遺志に応えて活用することが困難であるため"]
+      }
+    ],
+    "merits": [
+      {
+        "text": "区は、遺言の条件（グラフィック・デザイン博物館として活用すること）に応えて活用するのは難しいとしています。権利を放棄すれば、その条件に応えられないまま不動産を受け取ることはなくなります。",
+        "sourceRefs": ["full-text"],
+        "evidence": ["遺贈者の遺志に応えて活用することが困難であるため"]
+      }
+    ],
+    "concerns": [
+      {
+        "text": "区はこの不動産を受け取りません。そのため、遺言が条件にしていた「グラフィック・デザイン博物館」としての活用は、区では行われないことになります。",
+        "sourceRefs": ["full-text"],
+        "evidence": [
+          "遺贈により生じた権利を放棄する",
+          "グラフィック・デザイン博物館として活用することを条件に"
+        ]
+      }
+    ],
+    "keyFacts": [
+      {
+        "label": "放棄する権利",
+        "value": "遺贈者の財産について遺贈を受ける権利",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["遺贈者の有する財産について遺贈を受ける権利"]
+      },
+      {
+        "label": "贈られるはずだったもの",
+        "value": "遺贈者の不動産",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["遺贈者の有する不動産を区に遺贈する"]
+      },
+      {
+        "label": "遺言の条件",
+        "value": "グラフィック・デザイン博物館として活用すること",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["グラフィック・デザイン博物館として活用することを条件に"]
+      },
+      {
+        "label": "放棄する理由",
+        "value": "遺贈者の遺志に応えて活用することが難しいため",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["遺贈者の遺志に応えて活用することが困難であるため"]
+      }
+    ],
+    "notInMaterials": [
+      "不動産の場所・広さ・価値（評価額）は、資料からは分からない。",
+      "博物館として活用するのが難しいと判断した具体的な理由は、資料からは分からない。",
+      "博物館以外の使い方を検討したかどうかは、資料からは分からない。",
+      "区が権利を放棄したあと、この不動産がどうなるのかは、資料からは分からない。",
+      "遺言がいつ書かれたのか、区が遺贈を知ったのがいつなのかは、資料からは分からない。"
+    ]
+  }
+}

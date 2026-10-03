@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
+import { AuthGate } from "@/components/layouts/auth-gate";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getInterviewQuestions } from "@/features/interview-config/server/loaders/get-interview-questions";
@@ -44,20 +45,28 @@ export default async function InterviewChatPage({
     );
 
     return (
-      <InterviewChatClient
-        billId={billId}
-        billTitle={bill.bill_content?.title ?? bill.name}
-        sessionId={session.id}
-        initialMessages={messages}
-        mode={interviewConfig.mode}
-        totalQuestions={questions.length}
-        estimatedDuration={interviewConfig.estimated_duration}
-        sessionStartedAt={session.started_at}
-        hasRated={session.rating != null}
-      />
+      <>
+        <AuthGate />
+        <InterviewChatClient
+          billId={billId}
+          billTitle={bill.bill_content?.title ?? bill.name}
+          sessionId={session.id}
+          initialMessages={messages}
+          mode={interviewConfig.mode}
+          totalQuestions={questions.length}
+          estimatedDuration={interviewConfig.estimated_duration}
+          sessionStartedAt={session.started_at}
+          hasRated={session.rating != null}
+        />
+      </>
     );
   } catch (error) {
     console.error("Failed to initialize interview session:", error);
-    return <InterviewSessionErrorView billId={billId} />;
+    return (
+      <>
+        <AuthGate />
+        <InterviewSessionErrorView billId={billId} />
+      </>
+    );
   }
 }

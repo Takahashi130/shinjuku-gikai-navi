@@ -73,6 +73,15 @@ export const env = {
     dailyTotalCostLimitUsd: chatDailyTotalCostLimitUsd,
     monthlyTotalCostLimitUsd: chatMonthlyTotalCostLimitUsd,
   },
+  participation: {
+    /**
+     * 区民参加（投票など）で接続元などをハッシュする HMAC の秘密鍵（32文字以上）。
+     * サーバー専用。本番で未設定なら投票の受付を止める（起動は止めない）。
+     * 開発では未設定でも開発用の既定値で動く。
+     * 決め方は lib/participation/resolve-participation-hash-secret.ts を参照。
+     */
+    hashSecret: process.env.PARTICIPATION_HASH_SECRET,
+  },
 } as const;
 
 // 型定義

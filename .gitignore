@@ -20,3 +20,5 @@ infra/cloud-run/config.env.*
 # Vercel CLI のリンク情報
 .vercel
 
+# 解説の材料（区の資料から抜き出した文字。転載しないためリポジトリに入れない）
+.materials

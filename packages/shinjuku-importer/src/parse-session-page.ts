@@ -21,6 +21,15 @@ export type SessionPage = {
   type: "regular" | "extraordinary";
   startDate: string;
   endDate: string;
+  /** 議案を採決する本会議の開始予定（ISO 8601、日本時間）。読めなければ null */
+  finalVoteAt: string | null;
+  /**
+   * finalVoteAt の時刻が、採決の行に書かれた時刻ではない（直前の行の時刻・既定の 14 時など、
+   * 実際の採決より早いかもしれない下限の時刻）なら true。読めなかったときも true
+   */
+  finalVoteTimeInferred: boolean;
+  /** 先議（一部の議案を先に採決する本会議）の予定。無ければ null */
+  earlyVoteAt: string | null;
   bills: SessionBill[];
   resultsPdfUrl: string | null;
 };
@@ -110,14 +119,126 @@ export function parseSessionPage(html: string, pageUrl: string): SessionPage {
   const pdfLink = html.match(/<a[^>]+href="([^"]+\.pdf)"[^>]*>(?:(?!<\/a>)[\s\S])*審議結果/);
   const resultsPdfUrl = pdfLink ? new URL(pdfLink[1], pageUrl).toString() : null;
 
+  const type = t === "定例会" ? "regular" : "extraordinary";
+  const { finalVoteAt, finalVoteTimeInferred, earlyVoteAt } = parseVoteSchedule(lines, { startDate, type });
+
   return {
     title: `令和${reiwaYear}年第${o}回${t}`,
     reiwaYear,
     ordinal: Number(o),
-    type: t === "定例会" ? "regular" : "extraordinary",
+    type,
     startDate,
     endDate,
+    finalVoteAt,
+    finalVoteTimeInferred,
+    earlyVoteAt,
     bills,
     resultsPdfUrl,
   };
+}
+
+export type VoteSchedule = {
+  finalVoteAt: string | null;
+  /** finalVoteAt の時刻が採決の行に書かれていない（下限の時刻）か */
+  finalVoteTimeInferred: boolean;
+  earlyVoteAt: string | null;
+};
+
+const SCHEDULE_DATE_LINE = /^(\d{1,2})\s*月\s*(\d{1,2})\s*日(?:\s*[（(][^）)]*[）)])?$/;
+const SCHEDULE_TIME_PREFIX = /^(\d{1,2})\s*(?:時\s*(?:(\d{1,2})\s*分)?|[:：]\s*(\d{2}))\s*/;
+/** 日程の終わり（議案の一覧や審議結果の PDF へのリンク） */
+const SCHEDULE_END = /^(議案|区長提出議案|議員提出議案)$|^議案の概要/;
+/** 採決の時刻が書かれていないときの時刻（本会議は 14 時に始まることが多い） */
+const DEFAULT_VOTE_TIME = "14:00";
+
+function jstIso(date: string, time: string): string {
+  return `${date}T${time}:00+09:00`;
+}
+
+/**
+ * 会期ページの「主な会議日程」から、議案を採決する本会議の日時を読む。
+ *
+ * - 「14時 本会議（議案の討論・採決等）」「14：00本会議（議案の採決等）」→ 採決（finalVoteAt。最後のもの）
+ * - 「本会議（先議議案の採決等）」→ 先議（earlyVoteAt。最初のもの）
+ * - 「本会議（追加議案の採決等）」は数えない（同じ日の本会議の続き）
+ * - 時刻が書かれていない行は、同じ日の直前に書かれた時刻を使う（無ければ 14 時）。
+ *   実際の採決はそれより後のことがあるので、finalVoteTimeInferred = true にする
+ * - 臨時会で採決の行が無いとき（「14時 本会議」だけ）は、初日の最初の本会議の時刻（無ければ 14 時）
+ * - 定例会で採決の行が無いときは null（締切は会期の最終日 14 時にする）
+ */
+export function parseVoteSchedule(
+  lines: string[],
+  session: { startDate: string; type: SessionPage["type"] }
+): VoteSchedule {
+  const startIdx = lines.findIndex((l) => l.replace(/\s/g, "") === "主な会議日程");
+  if (startIdx === -1) return fallbackSchedule(null, session);
+
+  const startYear = Number(session.startDate.slice(0, 4));
+  const startMonth = Number(session.startDate.slice(5, 7));
+  let date: string | null = null;
+  let lastTime: string | null = null;
+  let finalVoteAt: string | null = null;
+  let finalVoteTimeInferred = true;
+  let earlyVoteAt: string | null = null;
+  let firstPlenaryOnStart: string | null = null;
+
+  for (const raw of lines.slice(startIdx + 1)) {
+    const line = toHalfWidthDigits(raw).trim();
+    if (SCHEDULE_END.test(line)) break;
+    const d = line.match(SCHEDULE_DATE_LINE);
+    if (d) {
+      const month = Number(d[1]);
+      // 年をまたぐ会期（11月〜翌年1月など）
+      const year = month < startMonth ? startYear + 1 : startYear;
+      date = `${year}-${pad(month)}-${pad(Number(d[2]))}`;
+      lastTime = null;
+      continue;
+    }
+    if (!date) continue;
+    const tm = line.match(SCHEDULE_TIME_PREFIX);
+    if (tm) lastTime = `${pad(Number(tm[1]))}:${pad(Number(tm[2] ?? tm[3] ?? 0))}`;
+    const text = (tm ? line.slice(tm[0].length) : line).replace(/\s/g, "");
+    if (!text.includes("本会議")) continue;
+    if (date === session.startDate && tm && !firstPlenaryOnStart) {
+      firstPlenaryOnStart = jstIso(date, lastTime!);
+    }
+    if (!text.includes("採決")) continue;
+    const at = jstIso(date, lastTime ?? DEFAULT_VOTE_TIME);
+    if (text.includes("先議")) {
+      earlyVoteAt ??= at;
+    } else if (!text.includes("追加")) {
+      finalVoteAt = at;
+      finalVoteTimeInferred = !tm;
+    }
+  }
+
+  if (finalVoteAt) return { finalVoteAt, finalVoteTimeInferred, earlyVoteAt };
+  return { ...fallbackSchedule(firstPlenaryOnStart, session), earlyVoteAt };
+}
+
+function fallbackSchedule(
+  firstPlenaryOnStart: string | null,
+  session: { startDate: string; type: SessionPage["type"] }
+): VoteSchedule {
+  if (session.type !== "extraordinary") return { finalVoteAt: null, finalVoteTimeInferred: true, earlyVoteAt: null };
+  return {
+    finalVoteAt: firstPlenaryOnStart ?? jstIso(session.startDate, DEFAULT_VOTE_TIME),
+    finalVoteTimeInferred: true,
+    earlyVoteAt: null,
+  };
+}
+
+/**
+ * 会期ページから「会期」「主な会議日程」の部分の行を取り出す（解説の材料に使う）
+ */
+export function extractScheduleLines(html: string): string[] {
+  const lines = htmlToLines(html);
+  const start = lines.findIndex((l) => l === "会期と日程" || l === "会期");
+  if (start === -1) return [];
+  const out: string[] = [];
+  for (const line of lines.slice(start)) {
+    if (SCHEDULE_END.test(line)) break;
+    out.push(line);
+  }
+  return out;
 }

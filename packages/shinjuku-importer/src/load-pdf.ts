@@ -1,4 +1,4 @@
-import { getDocumentProxy } from "unpdf";
+import { extractText, getDocumentProxy } from "unpdf";
 import type { RuleLines, TextItem } from "./parse-results-pdf";
 
 // pdf.js の OPS.constructPath
@@ -43,4 +43,11 @@ export async function loadPdfPages(data: Uint8Array): Promise<PdfPage[]> {
     pages.push({ items, rules });
   }
   return pages;
+}
+
+/** PDF の各ページの文字を、ページ番号（1 から）つきで取り出す */
+export async function loadPdfPageTexts(data: Uint8Array): Promise<{ page: number; text: string }[]> {
+  const pdf = await getDocumentProxy(data);
+  const { text } = await extractText(pdf, { mergePages: false });
+  return text.map((t, i) => ({ page: i + 1, text: t }));
 }

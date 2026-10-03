@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
+import { AuthGate } from "@/components/layouts/auth-gate";
 import { getBillByIdAdmin } from "@/features/bills/server/loaders/get-bill-by-id-admin";
 import { validatePreviewToken } from "@/features/bills/server/loaders/validate-preview-token";
 import { getInterviewConfigAdmin } from "@/features/interview-config/server/loaders/get-interview-config-admin";
@@ -83,6 +84,7 @@ export default async function InterviewPreviewChatPage({
 
     return (
       <>
+        <AuthGate />
         <PreviewBanner />
         <InterviewChatClient
           billId={billId}
@@ -102,6 +104,7 @@ export default async function InterviewPreviewChatPage({
     console.error("Failed to initialize interview session (preview):", error);
     return (
       <>
+        <AuthGate />
         <PreviewBanner />
         <InterviewSessionErrorView billId={billId} previewToken={token} />
       </>

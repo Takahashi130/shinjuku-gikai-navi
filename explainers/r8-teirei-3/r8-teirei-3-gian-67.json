@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "sessionSlug": "r8-teirei-3",
+  "billSlug": "r8-teirei-3-gian-67",
+  "billLabel": "第67号議案",
+  "billName": "新宿区公益保護のための通報に関する条例の一部を改正する条例",
+  "status": "published",
+  "version": 1,
+  "publishAt": null,
+  "author": {
+    "kind": "ai",
+    "model": "claude-opus-5-5",
+    "generatedAt": "2026-10-04T00:50:00+09:00"
+  },
+  "review": {
+    "reviewedBy": "ai-crosscheck",
+    "reviewedAt": "2026-10-04T01:00:56+09:00",
+    "notes": "AI（Claude）が新宿区の公開資料をもとに作成し、別のAIが資料と照合しました。誤りがあればお知らせください。"
+  },
+  "sources": [
+    {
+      "id": "full-text",
+      "kind": "full_text_pdf",
+      "title": "第67号議案 新宿区公益保護のための通報に関する条例の一部を改正する条例",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [1, 2],
+      "materialKey": "full-text"
+    },
+    {
+      "id": "overview",
+      "kind": "overview_pdf",
+      "title": "令和8年第3回区議会定例会提出案件概要",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [1],
+      "materialKey": "overview"
+    }
+  ],
+  "body": {
+    "title": "公益通報についての区の条例で、引用している法律の条文番号の書き方を直す",
+    "oneLiner": "国の公益通報者保護法の改正に合わせて、区の条例が引用している法律の条文番号の書き方を「第3条第1号」から「第3条第1項第1号」に改めます。令和8年12月1日から施行します。",
+    "purpose": {
+      "text": "公益通報者保護法の改正に合わせて、「新宿区公益保護のための通報に関する条例」の中で引用している法律の条項の書き方を改めます。",
+      "sourceRefs": ["overview"],
+      "evidence": ["公益通報者保護法の改正に伴い、引用条項を改める。"]
+    },
+    "background": [
+      {
+        "text": "国の「公益通報者保護法の一部を改正する法律」（令和7年法律第62号）が施行されることに伴い、区の条例の規定を整える必要があると区は説明しています。",
+        "sourceRefs": ["full-text"],
+        "evidence": [
+          "公益通報者保護法の一部を改正する法律(令和7年法律第62号)の施行に伴い、規定を整備する必要があるため"
+        ]
+      },
+      {
+        "text": "改正の対象は、平成18年にできた「新宿区公益保護のための通報に関する条例」（平成18年新宿区条例第39号）です。",
+        "sourceRefs": ["full-text"],
+        "evidence": ["新宿区公益保護のための通報に関する条例(平成18年新宿区条例第39号)"]
+      }
+    ],
+    "merits": [
+      {
+        "text": "区の条例が引用する法律の条項の書き方が、改正後の法律に合わせた形（「第3条第1項第1号」）になります。",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["「第3条第1号」を「第3条第1項第1号」に改める", "引用条項を改める"]
+      }
+    ],
+    "concerns": [
+      {
+        "text": "今回の改正で変わるのは、条例の第3条第1項にある引用部分1か所の書き方です。区の通報の受け付け方などの中身を変える規定は、この改正条例には含まれていません。",
+        "sourceRefs": ["full-text"],
+        "evidence": ["第3条第1項中「第3条第1号」を「第3条第1項第1号」に改める"]
+      }
+    ],
+    "keyFacts": [
+      {
+        "label": "改める部分",
+        "value": "条例第3条第1項の中の「第3条第1号」を「第3条第1項第1号」に改める",
+        "sourceRefs": ["full-text"],
+        "evidence": ["第3条第1項中「第3条第1号」を「第3条第1項第1号」に改める"]
+      },
+      {
+        "label": "施行日",
+        "value": "令和8年12月1日",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["この条例は、令和8年12月1日から施行する。"]
+      },
+      {
+        "label": "きっかけになった国の法律",
+        "value": "公益通報者保護法の一部を改正する法律（令和7年法律第62号）",
+        "sourceRefs": ["full-text"],
+        "evidence": ["公益通報者保護法の一部を改正する法律(令和7年法律第62号)"]
+      },
+      {
+        "label": "提出",
+        "value": "令和8年9月16日に新宿区長が提出",
+        "sourceRefs": ["full-text"],
+        "evidence": ["令和8年9月16日", "提出者新宿区長"]
+      }
+    ],
+    "notInMaterials": [
+      "公益通報者保護法の改正で、国の制度のどこが変わったかは、資料からは分かりません。",
+      "区の条例でどのような通報を受け付けているか、通報の件数は、資料からは分かりません。",
+      "この改正で、区民や区の職員の手続きが変わるかどうかは、資料からは分かりません。"
+    ]
+  }
+}

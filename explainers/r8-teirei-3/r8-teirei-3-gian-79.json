@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "sessionSlug": "r8-teirei-3",
+  "billSlug": "r8-teirei-3-gian-79",
+  "billLabel": "第79号議案",
+  "billName": "損害賠償の額の決定について",
+  "status": "published",
+  "version": 1,
+  "publishAt": null,
+  "author": {
+    "kind": "ai",
+    "model": "claude-opus-5-5",
+    "generatedAt": "2026-10-04T00:50:27+09:00"
+  },
+  "review": {
+    "reviewedBy": "ai-crosscheck",
+    "reviewedAt": "2026-10-04T00:57:07+09:00",
+    "notes": "AI（Claude）が新宿区の公開資料をもとに作成し、別のAIが資料と照合しました。誤りがあればお知らせください。"
+  },
+  "sources": [
+    {
+      "id": "full-text",
+      "kind": "full_text_pdf",
+      "title": "第79号議案 損害賠償の額の決定について",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [2],
+      "materialKey": "full-text"
+    },
+    {
+      "id": "overview",
+      "kind": "overview_pdf",
+      "title": "令和8年第3回区議会定例会提出案件概要",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [9],
+      "materialKey": "overview"
+    }
+  ],
+  "body": {
+    "title": "区の清掃車が首都高速道路で前の車と接触した事故の損害賠償額を決める",
+    "oneLiner": "区の清掃車両が首都高速道路で前の車と接触した事故について、相手方への損害賠償の額を216万8,065円に決めます。",
+    "purpose": {
+      "text": "区が持っている自動車（清掃車両）の事故について、相手方に払う損害賠償の額を決める議案です。",
+      "sourceRefs": ["full-text"],
+      "evidence": ["区が保有する自動車の事故による損害賠償の額を定める必要がある"]
+    },
+    "background": [
+      {
+        "text": "令和7年6月28日の午前9時48分ごろ、区の清掃車両が首都高速道路を走っていました。2台前の車が無理な車線変更をしようとして急ブレーキをかけ、1台前の車も急ブレーキをかけて止まりました。清掃車両も急ブレーキをかけましたが間に合わず、1台前の車と接触しました。",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": [
+          "令和7年6月28日午前9時48分頃、清掃車両にて首都高速道路を走行中",
+          "2台前の車両が無理な車線変更をするため急ブレーキをかけた",
+          "清掃車両も急ブレーキをかけたが間に合わず、1台前の車両と接触した"
+        ]
+      }
+    ],
+    "merits": [
+      {
+        "text": "相手方の人身損害（人の体に関わる損害）と物件損害（物に関わる損害）について、賠償する額がそれぞれ決まります。",
+        "sourceRefs": ["full-text"],
+        "evidence": ["人身損害110万6,972円", "物件損害106万1,093円"]
+      }
+    ],
+    "concerns": [
+      {
+        "text": "この事故について、区は相手方に合わせて216万8,065円の損害賠償をすることになります。",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["損害賠償額216万8,065円"]
+      }
+    ],
+    "keyFacts": [
+      {
+        "label": "損害賠償額",
+        "value": "216万8,065円",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["損害賠償額216万8,065円"]
+      },
+      {
+        "label": "内訳：人身損害（人の体に関わる損害）",
+        "value": "110万6,972円",
+        "sourceRefs": ["full-text"],
+        "evidence": ["人身損害110万6,972円"]
+      },
+      {
+        "label": "内訳：物件損害（物に関わる損害）",
+        "value": "106万1,093円",
+        "sourceRefs": ["full-text"],
+        "evidence": ["物件損害106万1,093円"]
+      },
+      {
+        "label": "事故の日時",
+        "value": "令和7年6月28日 午前9時48分ごろ",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["令和7年6月28日午前9時48分頃"]
+      },
+      {
+        "label": "事故の場所",
+        "value": "首都高速道路（清掃車両で走っていたとき）",
+        "sourceRefs": ["full-text", "overview"],
+        "evidence": ["清掃車両にて首都高速道路を走行中"]
+      }
+    ],
+    "notInMaterials": [
+      "賠償金が保険でまかなわれるのか、区の予算からいくら出るのかは、資料からは分からない。",
+      "区と相手方の過失の割合（どちらにどれだけ責任があるか）は、資料からは分からない。",
+      "無理な車線変更をした2台前の車に対して、区が何かを求めるのかどうかは、資料からは分からない。",
+      "相手方のけがの程度や、車の壊れ方は、資料からは分からない。",
+      "同じような事故を防ぐために区が何をするのかは、資料からは分からない。"
+    ]
+  }
+}

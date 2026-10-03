@@ -1,5 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import { notFound } from "next/navigation";
+import { AuthGate } from "@/components/layouts/auth-gate";
 import { getBillByIdAdmin } from "@/features/bills/server/loaders/get-bill-by-id-admin";
 import { validatePreviewToken } from "@/features/bills/server/loaders/validate-preview-token";
 import { InterviewDisclosurePage } from "@/features/interview-config/server/components/interview-disclosure-page";
@@ -65,6 +66,7 @@ export default async function DisclosurePreviewPage({
 
   return (
     <>
+      <AuthGate />
       <PreviewBanner />
       <InterviewDisclosurePage {...disclosureData} previewToken={token} />
     </>
