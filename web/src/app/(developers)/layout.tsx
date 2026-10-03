@@ -1,7 +1,6 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { ReactNode } from "react";
 import { Header } from "@/components/header";
-import { AuthGate } from "@/components/layouts/auth-gate";
 import { Footer } from "@/components/layouts/footer/footer";
 import { env } from "@/lib/env";
 
@@ -17,8 +16,10 @@ export default function DevelopersGroupLayout({
 }>) {
   return (
     <>
-      <GoogleAnalytics gaId={env.analytics.gaTrackingId ?? ""} />
-      <AuthGate />
+      {/* 計測IDを設定したときだけ読み込む（未設定なら Google に何も送らない） */}
+      {env.analytics.gaTrackingId && (
+        <GoogleAnalytics gaId={env.analytics.gaTrackingId} />
+      )}
       <Header />
       {/* Team Mirai デザインシステム準拠: 白を基調のキャンバスにする */}
       <main className="min-h-dvh bg-white pt-24">{children}</main>

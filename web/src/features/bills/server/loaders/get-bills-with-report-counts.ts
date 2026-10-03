@@ -3,7 +3,7 @@ import "server-only";
 import { countPublicReportsByBillIds } from "@mirai-gikai/shared/report-publication/count-public-reports";
 import { unstable_cache } from "next/cache";
 import { CACHE_TAGS } from "@/lib/cache-tags";
-import type { BillWithContent } from "../../shared/types";
+import type { BillListItem } from "../../shared/types";
 import { getBills } from "./get-bills";
 
 /**
@@ -35,7 +35,7 @@ const getCachedReportCounts = unstable_cache(
  * 件数は議案ごとに数えるとクエリが議案数ぶんに膨らむので、DB側で集約する
  * （count_public_reports_by_bill_ids）。0件の議案はRPCの返り値に現れないため 0 を埋める。
  */
-export async function getBillsWithReportCounts(): Promise<BillWithContent[]> {
+export async function getBillsWithReportCounts(): Promise<BillListItem[]> {
   const bills = await getBills();
   const counts = new Map(
     await getCachedReportCounts(bills.map((bill) => bill.id))

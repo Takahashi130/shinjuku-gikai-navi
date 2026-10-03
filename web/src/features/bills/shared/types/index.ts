@@ -56,6 +56,31 @@ export type BillWithContent = Bill & {
   publicReportCount?: number;
 };
 
+/**
+ * 議案一覧（/bills）とサイトマップ用の軽い議案。カードの表示・キーワード検索・
+ * 絞り込み・並び替えに使う列だけを持つ。
+ *
+ * 解説本文（bill_contents.content）は数KB／件あり、全件ぶんを持つと
+ * unstable_cache の1エントリの上限（2MB）を超えてキャッシュされなくなる。
+ * 一覧はタイトルと要約しか出さないので、ここには含めない。
+ */
+export type BillListItem = Pick<
+  Bill,
+  | "id"
+  | "name"
+  | "status"
+  | "submitted_date"
+  | "updated_at"
+  | "thumbnail_url"
+  | "is_review_completed"
+> & {
+  bill_content?: Pick<BillContent, "title" | "summary">;
+  tags: BillTag[];
+  hasPublicInterview?: boolean;
+  /** 公開レポート件数。一覧の回答数バッジと「声が集まっている順」に使う。 */
+  publicReportCount?: number;
+};
+
 // タグごとにグループ化された議案
 export type BillsByTag = {
   tag: BillTag & { description?: string; priority: number };

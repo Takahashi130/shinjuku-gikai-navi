@@ -2,7 +2,6 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { ReactNode } from "react";
 import { Header } from "@/components/header";
-import { AuthGate } from "@/components/layouts/auth-gate";
 import { Footer } from "@/components/layouts/footer/footer";
 import { MainLayout } from "@/components/layouts/main-layout";
 import { env } from "@/lib/env";
@@ -16,9 +15,11 @@ export default function MainGroupLayout({
   return (
     <>
       <SpeedInsights />
-      <GoogleAnalytics gaId={env.analytics.gaTrackingId ?? ""} />
+      {/* 計測IDを設定したときだけ読み込む（未設定なら Google に何も送らない） */}
+      {env.analytics.gaTrackingId && (
+        <GoogleAnalytics gaId={env.analytics.gaTrackingId} />
+      )}
       <RubyfulInitializer />
-      <AuthGate />
 
       <MainLayout>
         <Header />

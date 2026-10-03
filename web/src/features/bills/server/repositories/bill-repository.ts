@@ -2,93 +2,107 @@ import "server-only";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { chunk, IN_QUERY_CHUNK_SIZE } from "@/lib/utils/chunk";
+import { fetchAllRows, SUPABASE_MAX_ROWS } from "@/lib/utils/fetch-all-rows";
+import { uniqueBy } from "@/lib/utils/unique-by";
 
 // ============================================================
 // Bills
 // ============================================================
 
 /**
- * 公開済み議案を難易度コンテンツ付きで取得
+ * 一覧（/bills）用に、公開済み議案をカードに要る列だけで全件取得する。
+ *
+ * 解説本文（content）や knowledge_source は引かない。数KB／件あるのに一覧は
+ * タイトルと要約しか出さず、全件ぶんを持つと unstable_cache の1エントリの
+ * 上限（2MB）を超えて、毎回DBを引くことになる。
+ *
+ * 議案は1000件を超えうるので、range で分けて全件を集める（fetchAllRows）。
+ * 分けた問い合わせの間に取り込みが重なると境目の行が二重に返るので、id で
+ * 重複を除く（抜けは防げないが、キャッシュの再取得で直る）。
+ *
+ * 並びは一覧の同点の順序にもなる（sortBills は安定ソート）。提出日は同じ日に
+ * 数十件並ぶので、取り込んだ順（created_at）を第2キーにして区の議案ページと
+ * 同じ並びにする。最後に id を置いてページをまたいだ順序を固定する。揺れると
+ * 境目で行が重複・欠落する。
  */
-
-/** Supabase が1リクエストで返す行数の上限（既定値）。 */
-const SUPABASE_MAX_ROWS = 1000;
-export async function findPublishedBillsWithContents(
+export async function findPublishedBillsForList(
   difficultyLevel: DifficultyLevelEnum
 ) {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(
-      `
-      *,
-      bill_contents!inner (
-        id,
-        bill_id,
-        title,
-        summary,
-        content,
-        difficulty_level,
-        created_at,
-        updated_at
-      )
-    `
-    )
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel)
-    .order("submitted_date", { ascending: false, nullsFirst: false });
-
-  if (error) {
-    throw new Error(`Failed to fetch bills: ${error.message}`);
+  try {
+    const rows = await fetchAllRows((from, to) =>
+      supabase
+        .from("bills")
+        .select(
+          `
+          id,
+          name,
+          status,
+          submitted_date,
+          updated_at,
+          thumbnail_url,
+          is_review_completed,
+          bill_contents!inner (
+            title,
+            summary
+          )
+        `
+        )
+        .eq("publish_status", "published")
+        .eq("bill_contents.difficulty_level", difficultyLevel)
+        .order("submitted_date", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    );
+    return uniqueBy(rows, (row) => row.id);
+  } catch (error) {
+    throw new Error(
+      `Failed to fetch bills: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
-
-  return data;
 }
 
 /**
  * 検索候補用に、公開済み議案の名称・タイトル・タグだけを取得する。
  *
- * `findPublishedBillsWithContents` は解説本文（数KB／件）まで引くため、候補の
- * 絞り込みに使うには重すぎる。ここは候補行に出す最小限だけを選ぶ。
+ * 一覧用の `findPublishedBillsForList` よりさらに絞り、候補行に出す最小限
+ * だけを選ぶ。議案は1000件を超えうるので、range で分けて全件を集める。
+ * 境目の行が二重に返ることがあるので、一覧と同じく id で重複を除く。
  */
 export async function findPublishedBillsForSuggest(
   difficultyLevel: DifficultyLevelEnum
 ) {
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("bills")
-    .select(
-      `
-      id,
-      name,
-      bill_contents!inner (title),
-      bills_tags (tags (id, label))
-    `
-    )
-    .eq("publish_status", "published")
-    .eq("bill_contents.difficulty_level", difficultyLevel)
-    // 提出日は null と同日の重複があるので、id を第2キーにして順序を固定する。
-    // 候補は上位数件で打ち切るため、並びが揺れると出る候補そのものが変わる。
-    .order("submitted_date", { ascending: false, nullsFirst: false })
-    .order("id", { ascending: true });
-
-  if (error) {
+  try {
+    const rows = await fetchAllRows((from, to) =>
+      supabase
+        .from("bills")
+        .select(
+          `
+          id,
+          name,
+          bill_contents!inner (title),
+          bills_tags (tags (id, label))
+        `
+        )
+        .eq("publish_status", "published")
+        .eq("bill_contents.difficulty_level", difficultyLevel)
+        // 提出日は null と同日の重複があるので、取り込んだ順と id を後ろの
+        // キーにして順序を固定する。候補は上位数件で打ち切るため、並びが揺れると
+        // 出る候補そのものが変わる。range で分けて引くので、ページの境目で行が
+        // 重複・欠落するのも防ぐ。
+        .order("submitted_date", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: true })
+        .order("id", { ascending: true })
+        .range(from, to)
+    );
+    return uniqueBy(rows, (row) => row.id);
+  } catch (error) {
     // 候補は検索の補助なので、落とさずに空で返して検索自体は使える状態にする。
     console.error("Failed to fetch bills for suggest:", error);
     return [];
   }
-
-  const rows = data ?? [];
-  // Supabase は max_rows を超えた行を返さない。到達したら古い議案が候補から
-  // 静かに落ちるので、気づけるようにログを残す。
-  if (rows.length >= SUPABASE_MAX_ROWS) {
-    console.warn(
-      `findPublishedBillsForSuggest hit the row limit (${SUPABASE_MAX_ROWS}). ` +
-        "候補から漏れる議案が出ているため、サーバー側検索への移行を検討する。"
-    );
-  }
-
-  return rows;
 }
 
 /**

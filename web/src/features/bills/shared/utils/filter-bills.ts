@@ -1,11 +1,13 @@
-import type { BillWithContent } from "../types";
+import type { BillListItem } from "../types";
 import type { BillsListParams } from "./parse-bills-list-params";
-import { searchBills } from "./search-bills";
+import { type SearchableBill, searchBills } from "./search-bills";
 
-type FilterableBill = Pick<
-  BillWithContent,
-  "name" | "bill_content" | "tags" | "hasPublicInterview"
->;
+/**
+ * 絞り込みに必要な最小の形。検索の対象（名称・タイトル・要約・タグ名）に、
+ * カテゴリと受付中の判定に使う項目を足したもの。
+ */
+type FilterableBill = Omit<SearchableBill, "tags"> &
+  Pick<BillListItem, "tags" | "hasPublicInterview">;
 
 /**
  * ステータス以外の絞り込み（キーワード・カテゴリ・受付中）をまとめて適用する。

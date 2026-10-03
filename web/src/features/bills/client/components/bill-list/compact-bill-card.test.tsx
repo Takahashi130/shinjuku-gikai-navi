@@ -9,7 +9,7 @@ import {
 import { CompactBillCard } from "./compact-bill-card";
 
 /** 日付の行だけを狙う。行全体に一致させて、ステータスバッジの文言と混ざらないようにする。 */
-const DATE_LINE = /^\d{4}\.\d+\.\d+ (提出|成立)$/;
+const DATE_LINE = /^\d{4}\.\d+\.\d+ (提出|可決)$/;
 
 describe("CompactBillCard", () => {
   it("わかりやすいタイトルがあればそれを見出しにする", () => {
@@ -64,7 +64,7 @@ describe("CompactBillCard", () => {
     ).toBeInTheDocument();
   });
 
-  it("成立済みの日付には「成立」を添える", () => {
+  it("可決済みの日付には「可決」を添える", () => {
     render(
       <CompactBillCard
         bill={createMockBill({
@@ -74,10 +74,10 @@ describe("CompactBillCard", () => {
       />
     );
 
-    expect(screen.getByText(DATE_LINE)).toHaveTextContent("2026.2.3 成立");
+    expect(screen.getByText(DATE_LINE)).toHaveTextContent("2026.2.3 可決");
   });
 
-  it("成立していなければ「提出」を添える", () => {
+  it("可決していなければ「提出」を添える", () => {
     render(
       <CompactBillCard
         bill={createMockBill({
@@ -90,7 +90,7 @@ describe("CompactBillCard", () => {
     expect(screen.getByText(DATE_LINE)).toHaveTextContent("2026.2.3 提出");
   });
 
-  // 成立済みでも日付が無いことはある。バッジの「議案成立」と取り違えない。
+  // 可決済みでも日付が無いことはある。バッジの「可決」と取り違えない。
   it("日付が無ければ日付の行を出さない", () => {
     render(
       <CompactBillCard

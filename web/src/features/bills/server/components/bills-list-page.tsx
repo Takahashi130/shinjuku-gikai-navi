@@ -17,24 +17,23 @@ import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { routes } from "@/lib/routes";
 import { BillSearchCard } from "../../client/components/bill-list/bill-search-card";
+import { BillsPagination } from "../../client/components/bill-list/bills-pagination";
 import { BillsSortSelect } from "../../client/components/bill-list/bills-sort-select";
 import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
 import {
   BILL_STATUS_GROUP_LABELS,
   BILL_STATUS_GROUPS,
-  countByStatusGroup,
-  filterByStatusGroup,
 } from "../../shared/utils/bill-status-group";
-import { filterBills } from "../../shared/utils/filter-bills";
+import { buildBillsListView } from "../../shared/utils/build-bills-list-view";
 import {
+  BILLS_RESULTS_ID,
   type BillsListParams,
   type BillsListSearchParams,
   billsListHref,
+  billsListPageHref,
   parseBillsListParams,
 } from "../../shared/utils/parse-bills-list-params";
-import { sortBills } from "../../shared/utils/sort-bills";
 import { splitIntoRows } from "../../shared/utils/split-into-rows";
-import { countTagChipItems } from "../../shared/utils/tag-chip-items";
 import { tagChipRowCount } from "../../shared/utils/tag-chip-row-count";
 import { getBillsWithReportCounts } from "../loaders/get-bills-with-report-counts";
 import { getFeaturedTags } from "../loaders/get-featured-tags";
@@ -44,6 +43,10 @@ import { getFeaturedTags } from "../loaders/get-featured-tags";
  *
  * 絞り込みの状態はすべて URL に載せる。並び替え以外はリンクで完結するので、
  * ページ全体を Server Component のまま保てる。
+ *
+ * カードは1ページ BILLS_PER_PAGE 件ずつ出す。議案は1000件近くあり、全件を
+ * 描画すると HTML が十数MBになって初回表示が極端に遅くなる。件数のタブと
+ * チップは、ページ分割の前の全体から数える。
  */
 export async function BillsListPage({
   searchParams,
@@ -56,35 +59,17 @@ export async function BillsListPage({
     getFeaturedTags(),
   ]);
 
-  // タグ以外の絞り込みを先に適用し、そこからタグ絞り込みを派生させる。
-  // 同じキーワード検索を2度走らせずに、タブとチップの母集合を作れる。
-  const withoutTag = filterBills(allBills, { ...params, tagId: null });
-  const scoped = params.tagId
-    ? withoutTag.filter((bill) =>
-        bill.tags.some((tag) => tag.id === params.tagId)
-      )
-    : withoutTag;
-  const statusCounts = countByStatusGroup(scoped);
-  const bills = sortBills(
-    filterByStatusGroup(scoped, params.status),
-    params.sort
+  // 件数はページ分割の前の全体から数える。順序の約束は buildBillsListView が
+  // 持っている（範囲外のページ番号の丸めも含む）。
+  const { statusCounts, tagChips, pageBills, pageInfo } = buildBillsListView(
+    allBills,
+    featuredTags,
+    params
   );
-
-  // タグの件数は、タグ以外の絞り込みを適用した母集合から数える。タグ自身を
-  // 母集合に含めると、選択中のタグ以外がすべて0件になる。
-  const forTagCounts = filterByStatusGroup(withoutTag, params.status);
-  const tags = countTagChipItems(featuredTags, forTagCounts, params.tagId);
-  const tagChips = [
-    { id: "all", label: "すべて", tagId: null, count: forTagCounts.length },
-    ...tags.map((tag) => ({
-      id: tag.id,
-      label: tag.label,
-      tagId: tag.id,
-      count: tag.count,
-    })),
-  ];
   // typedRoutes はクエリ付きのテンプレート文字列を推論できないため、
   // リンク生成をここに集約してキャストも1箇所に閉じる。
+  // 絞り込みのリンクは page を渡さないので1ページ目に戻る。ページ送りは
+  // 一覧の先頭に着地させるため billsListPageHref で作る。
   const href = (patch: Partial<BillsListParams>) =>
     billsListHref(params, patch);
 
@@ -215,13 +200,33 @@ export async function BillsListPage({
       </Link>
 
       <div className="mb-3 flex items-center gap-3">
-        <p className="text-[13px] font-bold text-mirai-text-secondary">
-          {bills.length}件の議案
+        {/*
+          ページ送りの着地点。リンクのハッシュでここまでスクロールし、focus も
+          移す（tabIndex={-1}）。scroll-mt-24 は固定ヘッダー（top-4 + h-16）の分。
+          読み上げが「N件の議案」から始まるよう、行ではなく件数に付ける。
+
+          ページが複数あるときは表示中の範囲を添える。件数だけだとどのページも
+          同じ文言で、ページを移ったことが分からない。狭い画面では範囲が2行目に
+          送られる。
+        */}
+        <p
+          id={BILLS_RESULTS_ID}
+          tabIndex={-1}
+          className="min-w-0 scroll-mt-24 text-[13px] font-bold text-mirai-text-secondary outline-none"
+        >
+          <span className="whitespace-nowrap">
+            {pageInfo.totalCount}件の議案
+          </span>
+          {pageInfo.totalPages > 1 && (
+            <span className="whitespace-nowrap font-normal text-mirai-text-muted">
+              （{pageInfo.startIndex + 1}〜{pageInfo.endIndex}件目）
+            </span>
+          )}
         </p>
         <BillsSortSelect params={params} />
       </div>
 
-      {bills.length === 0 ? (
+      {pageInfo.totalCount === 0 ? (
         <div className="flex flex-col items-center gap-4 rounded-2xl border border-mirai-border bg-white px-6 py-16 text-center">
           <Search
             className="h-10 w-10 text-mirai-text-placeholder"
@@ -237,13 +242,28 @@ export async function BillsListPage({
           </div>
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
-          {bills.map((bill) => (
-            <li key={bill.id}>
-              <BillSearchCard bill={bill} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="flex flex-col gap-3">
+            {pageBills.map((bill) => (
+              <li key={bill.id}>
+                <BillSearchCard bill={bill} />
+              </li>
+            ))}
+          </ul>
+          <BillsPagination
+            pageInfo={pageInfo}
+            prevHref={
+              pageInfo.prevPage
+                ? billsListPageHref(params, pageInfo.prevPage)
+                : null
+            }
+            nextHref={
+              pageInfo.nextPage
+                ? billsListPageHref(params, pageInfo.nextPage)
+                : null
+            }
+          />
+        </>
       )}
 
       {/* 掲載外の議案は本家の一覧に送る */}

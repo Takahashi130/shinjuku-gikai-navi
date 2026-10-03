@@ -21,7 +21,7 @@ export const BILL_STATUS_GROUP_LABELS: Record<BillStatusGroup, string> = {
   all: "すべて",
   deliberating: "審議中",
   waiting: "審議待ち",
-  enacted: "成立",
+  enacted: "可決",
   rejected: "否決",
 };
 

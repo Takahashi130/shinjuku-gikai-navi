@@ -26,8 +26,8 @@ import {
   findPublishedBillById,
   findPublishedBillsByDietSession,
   findPublishedBillsByTag,
+  findPublishedBillsForList,
   findPublishedBillsForSuggest,
-  findPublishedBillsWithContents,
   findTagsByBillId,
   findTagsByBillIds,
 } from "./bill-repository";
@@ -53,11 +53,11 @@ describe("bill-repository 統合テスト", () => {
   });
 
   // ============================================================
-  // findPublishedBillsWithContents
+  // findPublishedBillsForList
   // ============================================================
 
-  describe("findPublishedBillsWithContents", () => {
-    it("公開済み議案を難易度コンテンツ付きで取得できる", async () => {
+  describe("findPublishedBillsForList", () => {
+    it("公開済み議案を難易度コンテンツのタイトル・要約付きで取得できる", async () => {
       const bill = await createTestBill({
         publish_status: "published",
         submitted_date: new Date().toISOString(),
@@ -68,13 +68,28 @@ describe("bill-repository 統合テスト", () => {
         title: "テストタイトル",
       });
 
-      const result = await findPublishedBillsWithContents("normal");
+      const result = await findPublishedBillsForList("normal");
 
       const found = result.find((b) => b.id === bill.id);
       expect(found).toBeDefined();
       expect(found?.bill_contents).toHaveLength(1);
       expect(found?.bill_contents[0].title).toBe("テストタイトル");
-      expect(found?.bill_contents[0].difficulty_level).toBe("normal");
+    });
+
+    // 一覧は全件をキャッシュに載せるので、数KB／件の本文を持たない。
+    it("解説本文（content）は含まない", async () => {
+      const bill = await createTestBill({
+        publish_status: "published",
+        submitted_date: new Date().toISOString(),
+      });
+      billIds.push(bill.id);
+      await createTestBillContent(bill.id, { difficulty_level: "normal" });
+
+      const result = await findPublishedBillsForList("normal");
+
+      const found = result.find((b) => b.id === bill.id);
+      expect(found?.bill_contents[0]).not.toHaveProperty("content");
+      expect(found).not.toHaveProperty("knowledge_source");
     });
 
     it("下書き議案は含まれない", async () => {
@@ -82,7 +97,7 @@ describe("bill-repository 統合テスト", () => {
       billIds.push(bill.id);
       await createTestBillContent(bill.id, { difficulty_level: "normal" });
 
-      const result = await findPublishedBillsWithContents("normal");
+      const result = await findPublishedBillsForList("normal");
 
       const found = result.find((b) => b.id === bill.id);
       expect(found).toBeUndefined();
@@ -96,7 +111,7 @@ describe("bill-repository 統合テスト", () => {
       billIds.push(bill.id);
       await createTestBillContent(bill.id, { difficulty_level: "hard" });
 
-      const result = await findPublishedBillsWithContents("normal");
+      const result = await findPublishedBillsForList("normal");
 
       const found = result.find((b) => b.id === bill.id);
       expect(found).toBeUndefined();
