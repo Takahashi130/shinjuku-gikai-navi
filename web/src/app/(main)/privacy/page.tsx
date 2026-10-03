@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import {
   LegalList,
@@ -7,11 +6,11 @@ import {
   LegalParagraph,
   LegalSectionTitle,
 } from "@/components/layouts/legal-page-layout";
-import { routes } from "@/lib/routes";
+import { SITE } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: "プライバシーポリシー | 新宿区議会ナビ",
-  description: "新宿区議会ナビのプライバシーポリシー",
+  title: `プライバシーポリシー | ${SITE.NAME}`,
+  description: `${SITE.NAME}のプライバシーポリシー`,
 };
 
 export default function PrivacyPage() {
@@ -20,141 +19,75 @@ export default function PrivacyPage() {
       className="bg-transparent pt-24 md:pt-12"
       title="プライバシーポリシー"
       enLabel="Privacy Policy"
-      description="新宿区議会ナビの運営者（以下「当組織」といいます）における個人情報の取り扱いについてご説明します。"
+      description={`${SITE.NAME}（以下「本サービス」といいます）の運営者（以下「運営者」といいます）は、利用者の情報を次のとおり取り扱います。`}
     >
       <Container className="space-y-8">
         <p className="text-sm text-mirai-text-muted">
-          最終更新日：2026年7月29日
+          最終更新日：2026年10月3日
         </p>
 
         <section className="space-y-4">
-          <LegalSectionTitle>1. 個人情報の定義</LegalSectionTitle>
+          <LegalSectionTitle>1. 取得する情報</LegalSectionTitle>
           <LegalParagraph>
-            個人情報とは、以下のような情報であって、特定の個人を識別することができるものを指します。
+            本サービスは会員登録を必要とせず、氏名・メールアドレス・住所などの個人情報を利用者から取得しません。本サービスが取得・保存する情報は次のとおりです。
           </LegalParagraph>
           <LegalList
             items={[
-              "氏名、年齢、性別、住所、電話番号、職業、メールアドレス",
-              "個人ごとに割り当てられたIDやパスワード、その他識別可能な記号",
-              "当組織の提供するサービスである新宿区議会ナビにおけるAIインタビュー機能（以下「新宿区議会ナビAIインタビュー機能」といいます。）を通じて取得される対話ログ、音声データ、および行動履歴",
-              "他の情報と容易に照合することができ、それにより特定の個人を識別できることとなるもの",
+              "アクセスの記録（閲覧したページ、日時、ブラウザの種類、IPアドレスなど）。本サービスを動かしているホスティング事業者のサーバーが自動的に記録します。",
+              "表示の設定（説明の詳しさ、ふりがなの表示など）。利用者のブラウザのCookieまたは保存領域に保存し、運営者のサーバーには送信しません。",
+              "表示速度の計測データ。個人を特定しない形で集計されます。",
             ]}
           />
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>2. 個人情報の収集方法と使用範囲</LegalSectionTitle>
-          <LegalParagraph>
-            個人情報をご提供いただく際には、ユーザーの同意に基づいて行うことを原則とします。また、当組織は、以下に定める目的での利用を除き、個人情報を無断で利用することはありません。
-          </LegalParagraph>
+          <LegalSectionTitle>2. 利用目的</LegalSectionTitle>
           <LegalList
             items={[
-              "ユーザーが利用する当組織のサービス（以下「当組織サービス」といいます。）の運営およびそれに伴うユーザーとのやりとり・情報提供",
-              "当組織サービスの安全な運営に必要な不正対策",
-              "当組織サービスの改善・新規開発",
-              "当組織における政策立案",
-              "当組織サービスに係る情報提供・広告配信",
-              "上記の各利用目的に必要な各種調査・分析",
-              "「3. 第三者への情報提供について」に定める場合における第三者への開示・提供",
-            ]}
-          />
-          <LegalParagraph>
-            なお、新宿区議会ナビAIインタビュー機能を通じて当組織が取得した回答内容については、当組織は、以下の通り取り扱います。
-          </LegalParagraph>
-          <LegalList
-            items={[
-              {
-                id: "publish",
-                content: (
-                  <>
-                    <span className="font-semibold text-slate-800">公開：</span>
-                    ユーザーが回答時に公開に同意した場合に限り、当ウェブサイトや報告書等で公開されることがあります。本人が公開に同意しなかった回答内容は、第三者に公開または提供されることはありません。
-                  </>
-                ),
-              },
-              {
-                id: "open-data",
-                content: (
-                  <>
-                    <span className="font-semibold text-slate-800">
-                      第三者への提供（オープンデータ公開）：
-                    </span>
-                    インタビューデータを、別途定める「
-                    <Link
-                      href={routes.interviewDataTerms()}
-                      className="text-primary-accent underline"
-                    >
-                      新宿区議会ナビAIインタビューデータ利用規約
-                    </Link>
-                    」に同意する者であれば誰でもダウンロード可能なオープンデータとして第三者に提供することがあります。
-                  </>
-                ),
-              },
-              {
-                id: "statistics",
-                content: (
-                  <>
-                    <span className="font-semibold text-slate-800">
-                      統計的利用：
-                    </span>
-                    取得したデータは、個人を特定できない統計情報に加工した上で、第三者へ公表する場合があります。
-                  </>
-                ),
-              },
+              "本サービスの提供・運営",
+              "不具合の調査、不正なアクセスへの対応",
+              "表示速度や使いやすさの改善",
             ]}
           />
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>3. 第三者への情報提供について</LegalSectionTitle>
+          <LegalSectionTitle>3. 第三者への提供と外部サービス</LegalSectionTitle>
           <LegalParagraph>
-            以下のいずれかに該当する場合を除き、個人情報を第三者に開示・提供することはありません。
+            法令に基づく場合を除き、取得した情報を第三者に提供しません。なお、本サービスは次の外部サービスを利用しており、アクセスの記録などはそれぞれの事業者の方針に従って処理されます。
           </LegalParagraph>
           <LegalList
             items={[
-              "「2. 個人情報の収集方法と使用範囲」に定める新宿区議会ナビAIインタビュー機能を通じて当組織が取得した回答内容を、本人が公開に同意した範囲で公開する場合、および別途定める「新宿区議会ナビAIインタビューデータ利用規約」に同意する者であれば誰でもダウンロード可能なオープンデータとして第三者に提供する場合",
-              "ユーザー本人の同意がある場合",
-              "統計的なデータなど、個人を特定できない状態で提供する場合",
-              "法令に基づく開示請求（裁判所・警察等）があった場合",
-              "不正アクセスや規約違反など、緊急の対応が必要と判断された場合",
+              "Vercel（本サービスのホスティング、表示速度の計測）",
+              "Supabase（議案などのデータの保存）",
             ]}
           />
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>4. 安全管理措置</LegalSectionTitle>
+          <LegalSectionTitle>4. Cookie（クッキー）について</LegalSectionTitle>
           <LegalParagraph>
-            個人情報の適切な管理を行うために、責任者を定め、厳正な管理体制を構築しています。AI処理に伴うデータ保管についても、最新のセキュリティ対策を講じます。
+            本サービスは、表示の設定を保存するためにCookieを使用します。ブラウザの設定でCookieを無効にすることもできますが、その場合は表示の設定が保存されないことがあります。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>5. Cookie（クッキー）について</LegalSectionTitle>
+          <LegalSectionTitle>5. 今後の機能について</LegalSectionTitle>
           <LegalParagraph>
-            当ウェブサイトでは、利便性向上とアクセス解析（Googleアナリティクス等）のためにCookieを使用しています。これらは匿名で収集され、個人を特定するものではありません。
+            議案への投票や意見の受付など、利用者の情報を取得する機能を追加する場合は、事前に本ポリシーを改訂し、取得する情報と利用目的をお知らせします。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>6. 保管期間と廃棄</LegalSectionTitle>
+          <LegalSectionTitle>6. 改訂</LegalSectionTitle>
           <LegalParagraph>
-            取得した個人情報および対話ログは、法令（政治資金規正法等）に基づき必要な期間（原則7年間）保管した後、適切な方法で廃棄・削除します。なお、本人の同意に基づき公開された回答内容、および個人を特定できないよう加工した上でオープンデータとして提供されたデータなど当組織が管理していない情報は、廃棄・削除を行うことはできないため、継続して公開・提供されることがあります。
+            本ポリシーは必要に応じて改訂します。改訂後の内容は、本ページに掲載した時点から適用します。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>7. 改訂と通知</LegalSectionTitle>
-          <LegalParagraph>
-            本ポリシーは必要に応じて改訂されます。改訂内容はウェブサイトへの掲載をもって効力を生じるものとし、個別の通知は行いません。
-          </LegalParagraph>
-        </section>
-
-        <section className="space-y-4">
-          <LegalSectionTitle>8. お問い合わせ窓口</LegalSectionTitle>
-          <LegalParagraph>
-            個人情報の確認・修正・削除、または新宿区議会ナビAIインタビュー機能の回答公開の停止等のご相談は、下記までご連絡ください。
-          </LegalParagraph>
-          <LegalParagraph>（連絡先は公開前に設定してください）</LegalParagraph>
+          <LegalSectionTitle>7. お問い合わせ</LegalSectionTitle>
+          <LegalParagraph>お問い合わせ窓口は現在準備中です。</LegalParagraph>
         </section>
       </Container>
     </LegalPageLayout>
