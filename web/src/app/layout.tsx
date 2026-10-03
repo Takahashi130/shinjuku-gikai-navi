@@ -78,10 +78,11 @@ export const metadata: Metadata = {
   },
 };
 
+// ピンチで拡大できるよう、maximumScale は指定しない。そのかわり iOS で入力欄に
+// フォーカスしたときにページが拡大されないよう、入力欄の文字は 16px 以上にする。
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
   themeColor: SITE.THEME_COLOR,
 };
 

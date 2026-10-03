@@ -33,7 +33,7 @@ export function BillsPagination({ pageInfo, prevHref, nextHref }: Props) {
   return (
     <nav
       aria-label="ページ送り"
-      className="flex flex-col items-center gap-3 rounded-md bg-white px-4 py-4"
+      className="flex flex-col items-center gap-3 rounded-3xl border border-line-soft bg-white px-4 py-5 shadow-xs"
     >
       {/*
         「全N件中」だと、絞り込み中でも全議案の件数に読める。上の「N件の議案」

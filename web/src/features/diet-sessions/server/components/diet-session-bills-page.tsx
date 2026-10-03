@@ -15,16 +15,14 @@ export async function DietSessionBillsPage({
   const bills = await getBillsByDietSession(session.id);
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] px-3 py-4 md:px-5">
-      <div className="mb-3">
-        <Breadcrumb
-          items={[
-            { label: "トップ", href: routes.home() },
-            { label: "議案をさがす", href: routes.billsList() },
-            { label: session.name },
-          ]}
-        />
-      </div>
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6 md:py-8">
+      <Breadcrumb
+        items={[
+          { label: "トップ", href: routes.home() },
+          { label: "議案をさがす", href: routes.billsList() },
+          { label: session.name },
+        ]}
+      />
       <DietSessionBillList session={session} bills={bills} />
     </div>
   );

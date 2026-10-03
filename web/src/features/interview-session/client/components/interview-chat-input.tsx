@@ -64,7 +64,7 @@ export function InterviewChatInput({
             placeholder={placeholder}
             rows={1}
             submitOnEnter={isDesktop}
-            className="!min-h-0 min-w-0 wrap-anywhere text-sm font-medium leading-[1.5em] tracking-[0.01em] placeholder:text-mirai-text-placeholder placeholder:font-medium placeholder:leading-[1.5em] placeholder:tracking-[0.01em] placeholder:no-underline border-none focus:ring-0 bg-transparent shadow-none !py-2 !px-0"
+            className="!min-h-0 min-w-0 wrap-anywhere text-base font-medium md:text-sm leading-[1.5em] tracking-[0.01em] placeholder:text-mirai-text-placeholder placeholder:font-medium placeholder:leading-[1.5em] placeholder:tracking-[0.01em] placeholder:no-underline border-none focus:ring-0 bg-transparent shadow-none !py-2 !px-0"
           />
         </PromptInputBody>
         {/* アクセント地にチャコールの矢印（主要な操作のボタンと同じ見た目） */}

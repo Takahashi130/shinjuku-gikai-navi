@@ -25,7 +25,9 @@ describe("BRAND_COLORS", () => {
     }
   });
 
-  it("ブラウザのテーマカラーはヘッダー上段の色", () => {
-    expect(SITE.THEME_COLOR).toBe(BRAND_COLORS.header);
+  // ヘッダーは白地。アドレスバーだけ濃色にすると、白基調の画面の上に帯が出る。
+  it("ブラウザのテーマカラーはヘッダーの地の色（白）", () => {
+    expect(SITE.THEME_COLOR).toBe(BRAND_COLORS.headerSurface);
+    expect(BRAND_COLORS.headerSurface).toBe("#ffffff");
   });
 });

@@ -60,13 +60,11 @@
    * コンポーネントからはこの名前（bg-brand-header, text-brand-link 等）で使う。
    * 配色を差し替えるときは :root の値だけを変えればよい。
    */
-  /* ヘッダー・フッターなど濃色の帯 */
+  /* 濃色（チャコール）の面：お知らせ帯・フッター・濃色のカード・選択中のタブ */
   --color-brand-header: var(--brand-header);
   --color-brand-header-sub: var(--brand-header-sub);
   --color-brand-header-deep: var(--brand-header-deep);
   --color-brand-header-hover: var(--brand-header-hover);
-  /* トップの大きなバナーの地。ヘッダー下段の帯と見分けられる色にする */
-  --color-brand-hero: var(--brand-hero);
   /* 濃色の帯の上の文字 */
   --color-brand-on-header: var(--brand-on-header);
   --color-brand-on-header-muted: var(--brand-on-header-muted);
@@ -80,8 +78,10 @@
   /* 白地のリンク・強調（白地で 4.5:1 以上） */
   --color-brand-link: var(--brand-link);
   --color-brand-link-hover: var(--brand-link-hover);
-  /* 本文の背景（薄いグレー）。カードは白（bg-white / bg-card） */
+  /* 本文の背景（ごく薄いグレー）。カードは白（bg-white / bg-card） */
   --color-page: var(--page-bg);
+  /* 白いカードの細い枠。地の色（page）からカードを浮かせる程度の淡さにする */
+  --color-line-soft: var(--line-soft);
 
   /* --- Mirai Design System Color Tokens --- */
 
@@ -201,7 +201,6 @@
   --brand-header-sub: #2a3038;
   --brand-header-deep: #121519;
   --brand-header-hover: #3a414b;
-  --brand-hero: #1f3a3d;
   --brand-on-header: #ffffff;
   --brand-on-header-muted: #c5cbd3;
   --brand-accent: #2ec4b6;
@@ -211,7 +210,12 @@
   --brand-on-accent: #1b1f24;
   --brand-link: #0f766e;
   --brand-link-hover: #115e59;
-  --page-bg: #eaeded;
+  /*
+   * 地は白に近いごく薄いグレー（色味を付けない）。白いカード（rounded-3xl）を
+   * 淡い枠（--line-soft）で浮かせる。
+   */
+  --page-bg: #f6f7f8;
+  --line-soft: #e3e6ea;
 }
 
 /* 案A：投票箱（ネイビー × オレンジ） */
@@ -220,7 +224,6 @@
   --brand-header-sub: #1f3157;
   --brand-header-deep: #0d1629;
   --brand-header-hover: #2c4270;
-  --brand-hero: #2a4374;
   --brand-on-header-muted: #c8d0e0;
   --brand-accent: #fca311;
   --brand-accent-hover: #fdb94a;
@@ -237,7 +240,6 @@
   --brand-header-sub: #13315c;
   --brand-header-deep: #071a33;
   --brand-header-hover: #1e4373;
-  --brand-hero: #1d4a7a;
   --brand-on-header-muted: #c3cfe0;
   --brand-accent: #f4d35e;
   --brand-accent-hover: #f7df8a;
@@ -470,4 +472,31 @@ button {
   &::-webkit-scrollbar {
     display: none; /* Chrome/Safari */
   }
+}
+
+/*
+ * 日本語の短い見出しを文節で折り返す（「政務活動費」を「政／務活動費」で切らない）。
+ * セクションの見出しや準備中のページの見出しなど、短い見出しだけに使う。
+ * 議案名のような長い固有名には使わない（1つの文節が行より長いので「令和」だけが
+ * 1行になったり、括弧の中で切れたりする）。対応していないブラウザでは通常の
+ * 折り返しになる。
+ */
+@utility break-phrase {
+  word-break: auto-phrase;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * 横にスクロールする帯の右端をぼかし、続きがあることを示す。
+ * 中身の末尾に、ぼかす幅と同じくらいの余白を足しておくこと。端までスクロール
+ * したときや、帯に全部収まっているときは、ぼけるのは余白だけになる。
+ * （色ではなく透明度のマスク）
+ */
+@utility scroll-fade-right {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 calc(100% - 2.5rem),
+    transparent
+  );
+  mask-image: linear-gradient(to right, #000 calc(100% - 2.5rem), transparent);
 }

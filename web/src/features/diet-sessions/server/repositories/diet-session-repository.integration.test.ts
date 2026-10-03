@@ -6,9 +6,11 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   findActiveDietSession,
   findCurrentDietSession,
+  findDietSessionById,
   findDietSessionBySlug,
   findLatestClosedDietSession,
   findPreviousDietSession,
+  findRecentDietSessions,
 } from "./diet-session-repository";
 
 describe("diet-session-repository 統合テスト", () => {
@@ -109,6 +111,46 @@ describe("diet-session-repository 統合テスト", () => {
 
     it("存在しない slug では null を返す", async () => {
       const result = await findDietSessionBySlug("non-existent-slug-999999999");
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("findRecentDietSessions", () => {
+    it("開始日が新しい順に、指定した数だけ返す", async () => {
+      // 既存の会期より新しい日付にして、先頭の2件がこのテストの会期になるようにする
+      const older = await createTestDietSession({
+        start_date: "2090-01-01",
+        end_date: "2090-03-31",
+        slug: `test-recent-older-${Date.now()}`,
+      });
+      const newer = await createTestDietSession({
+        start_date: "2090-06-01",
+        end_date: "2090-09-30",
+        slug: `test-recent-newer-${Date.now()}`,
+      });
+      sessionIds.push(older.id, newer.id);
+
+      const result = await findRecentDietSessions(2);
+
+      expect(result.map((session) => session.id)).toEqual([newer.id, older.id]);
+    });
+  });
+
+  describe("findDietSessionById", () => {
+    it("id で会期を取得できる", async () => {
+      const session = await createTestDietSession({});
+      sessionIds.push(session.id);
+
+      const result = await findDietSessionById(session.id);
+
+      expect(result?.id).toBe(session.id);
+    });
+
+    it("存在しない id では null を返す", async () => {
+      const result = await findDietSessionById(
+        "00000000-0000-0000-0000-000000000000"
+      );
 
       expect(result).toBeNull();
     });

@@ -134,3 +134,57 @@ export function billsListPageHref(
 ): Route {
   return `${billsListHref(current, { page })}#${BILLS_RESULTS_ID}` as Route;
 }
+
+/**
+ * 一覧の検索欄の id。ヘッダーの検索アイコンはここへ送る。
+ *
+ * ページ内の移動だけではブラウザは入力欄にフォーカスを移さない（ページを
+ * 開き直したときなど）ので、絞り込みのフォーム（BillsFilterForm）が、
+ * URL のハッシュがこの id のときに入力欄へフォーカスする。
+ */
+export const BILLS_SEARCH_INPUT_ID = "bills-search";
+
+/** ヘッダーの検索アイコンの行き先（一覧の検索欄）。 */
+export function billsSearchHref(): Route {
+  return `${routes.billsList()}#${BILLS_SEARCH_INPUT_ID}` as Route;
+}
+
+/**
+ * 一覧の絞り込みのフォーム（検索欄・テーマ・並び替え）と一緒に送る隠しフィールド
+ * （名前と値）。
+ *
+ * 検索し直してもステータスなどの絞り込みが外れないよう、いまの条件を引き継ぐ。
+ * 検索語・テーマ・並び替えはフォームの入力欄と選択欄が持つので含めない（同じ
+ * 名前が2つあると、先に来る古い値が使われる）。ページ番号も含めない（検索し
+ * 直したら件数も並びも変わるので、1ページ目に戻す）。既定値を URL に出さない
+ * 規則は buildBillsListQuery が持っているので、そこから導出する。
+ */
+export function buildSearchHiddenFields(
+  params: BillsListParams
+): [name: string, value: string][] {
+  const rest = buildBillsListQuery(params, {
+    query: "",
+    tagId: null,
+    sort: DEFAULT_BILL_SORT,
+  }).replace(/^\?/, "");
+  return [...new URLSearchParams(rest)];
+}
+
+/**
+ * 絞り込みのフォームの送信内容（FormData の組）から、一覧の URL を作る。
+ *
+ * フォームは JavaScript が無くても GET 送信で動くが、そのままだと空の検索語や
+ * 既定の並び替えまで URL に出る。JavaScript があるときは、送信の代わりに
+ * この URL へ移動して、共有しやすい短い URL にする。同じ名前が2つあれば
+ * 先のものを使う（URL のときと同じ）。
+ */
+export function billsListHrefFromFormEntries(
+  entries: Iterable<readonly [string, unknown]>
+): Route {
+  const searchParams: Record<string, string> = {};
+  for (const [name, value] of entries) {
+    if (typeof value !== "string" || name in searchParams) continue;
+    searchParams[name] = value;
+  }
+  return billsListHref(parseBillsListParams(searchParams));
+}

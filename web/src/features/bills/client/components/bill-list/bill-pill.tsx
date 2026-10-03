@@ -6,7 +6,7 @@
  */
 export function BillPill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center justify-center rounded-sm bg-brand-accent-tint px-2 py-0.5 text-xs font-medium text-brand-link">
+    <span className="inline-flex items-center justify-center rounded-full bg-brand-accent-tint px-2.5 py-0.5 text-xs font-medium text-brand-link">
       {children}
     </span>
   );

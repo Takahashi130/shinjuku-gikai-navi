@@ -38,7 +38,7 @@ function StatusBadge({ message }: StatusBadgeProps) {
   if (!message) return null;
 
   return (
-    <p className="w-full max-w-md rounded-md bg-brand-accent-tint px-4 py-3 text-center text-sm font-bold text-brand-link">
+    <p className="w-full max-w-md rounded-2xl bg-brand-accent-tint px-4 py-3 text-center text-sm font-bold text-brand-link">
       {message}
     </p>
   );
@@ -106,11 +106,11 @@ export function BillStatusProgress({
     >
       <h2
         id="bill-status-title"
-        className="border-mirai-border border-b pb-2 text-xl font-bold text-mirai-text"
+        className="text-lg font-extrabold text-mirai-text md:text-xl"
       >
         審議のステータス
       </h2>
-      <div className="rounded-md border border-mirai-border bg-white p-5">
+      <div className="pt-2">
         <div className="flex flex-col items-center gap-7">
           {/* ステータスメッセージバッジ */}
           <StatusBadge message={statusMessage} />

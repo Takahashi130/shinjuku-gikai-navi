@@ -1,6 +1,8 @@
-import { ExternalLink } from "lucide-react";
+import { CalendarDays, ExternalLink } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { LabelPill } from "@/components/ui/label-pill";
+import { RoundCard } from "@/components/ui/round-card";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { DietSession } from "../../shared/types";
@@ -11,19 +13,21 @@ type Props = {
   bills: BillWithContent[];
 };
 
+/** 会期ごとの議案一覧の本体。見出しのカードと、ステータスの絞り込みつきの一覧。 */
 export function DietSessionBillList({ session, bills }: Props) {
   return (
-    <div className="flex flex-col gap-3">
-      {/* 見出し。会期名・期間・件数 */}
-      <div className="flex flex-wrap items-end gap-x-4 gap-y-2 rounded-md bg-white px-4 py-3">
-        <div className="min-w-0">
-          <h1 className="text-lg font-bold text-mirai-text md:text-xl">
+    <div className="flex flex-col gap-5">
+      <RoundCard className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex min-w-0 flex-col gap-2">
+          <LabelPill tone="accent" size="md">
+            <CalendarDays aria-hidden />
+            {`${formatDateWithDots(session.start_date)} 〜 ${formatDateWithDots(session.end_date)}`}
+          </LabelPill>
+          <h1 className="text-2xl font-extrabold tracking-tight text-mirai-text md:text-3xl">
             {session.name}の議案
           </h1>
-          <p className="text-[13px] text-mirai-text-secondary">
-            {formatDateWithDots(session.start_date)} 〜{" "}
-            {formatDateWithDots(session.end_date)}・
-            <span className="font-bold">{bills.length}件</span>
+          <p className="text-sm font-bold text-mirai-text-secondary">
+            {`${bills.length}件`}
           </p>
         </div>
         {/* 区議会の会期ページへのリンク */}
@@ -32,19 +36,19 @@ export function DietSessionBillList({ session, bills }: Props) {
             href={session.shugiin_url as Route}
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-auto inline-flex min-h-11 items-center gap-1 text-[13px] font-bold text-brand-link hover:text-brand-link-hover hover:underline"
+            className="inline-flex min-h-11 shrink-0 items-center gap-1 text-sm font-bold text-brand-link hover:text-brand-link-hover hover:underline"
           >
             新宿区議会の公式ページ
-            <ExternalLink className="h-3 w-3" aria-hidden />
+            <ExternalLink className="size-3" aria-hidden />
             <span className="sr-only">（新しいタブで開きます）</span>
           </Link>
         )}
-      </div>
+      </RoundCard>
 
       {bills.length === 0 ? (
-        <p className="rounded-md bg-white py-12 text-center text-mirai-text-muted">
+        <RoundCard className="py-12 text-center text-mirai-text-muted">
           この会期の議案はまだありません
-        </p>
+        </RoundCard>
       ) : (
         <BillListWithStatusFilter bills={bills} />
       )}

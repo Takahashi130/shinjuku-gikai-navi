@@ -1,39 +1,34 @@
 import "server-only";
 
 import {
-  AlignLeft,
   Check,
-  Clock,
   ExternalLink,
-  type LucideIcon,
-  MessageSquare,
+  MessageSquareText,
   Search,
+  Split,
   X,
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { RoundCard } from "@/components/ui/round-card";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
-import { BillSearchCard } from "../../client/components/bill-list/bill-search-card";
+import { BillCard } from "../../client/components/bill-list/bill-card";
+import { BillsFilterForm } from "../../client/components/bill-list/bills-filter-form";
 import { BillsPagination } from "../../client/components/bill-list/bills-pagination";
-import { BillsSortSelect } from "../../client/components/bill-list/bills-sort-select";
 import {
   type ActiveFilter,
   buildActiveFilters,
   clearFiltersHref,
 } from "../../shared/utils/active-filters";
-import type { BillStatusGroup } from "../../shared/utils/bill-status-group";
 import {
   BILL_STATUS_GROUP_LABELS,
   BILL_STATUS_GROUPS,
 } from "../../shared/utils/bill-status-group";
-import {
-  type BillsListTagChip,
-  buildBillsListView,
-} from "../../shared/utils/build-bills-list-view";
+import { buildBillsListView } from "../../shared/utils/build-bills-list-view";
 import { formatBillsResultCount } from "../../shared/utils/format-bills-result-count";
 import {
   BILLS_RESULTS_ID,
@@ -48,14 +43,15 @@ import { getBillsWithReportCounts } from "../loaders/get-bills-with-report-count
 import { getFeaturedTags } from "../loaders/get-featured-tags";
 
 /**
- * 議案一覧（/bills）。Amazon の検索結果ページの作り。
+ * 議案一覧（/bills）。
  *
- * - 広い画面: 左に絞り込みのサイドバー（ステータス・テーマ・こだわり条件）、
- *   右に結果のリスト。並び替えは結果の右上
- * - 狭い画面: 絞り込みは結果の上に、横にスクロールするチップの列でまとめる
+ * 上に白い角丸のカードで絞り込み（検索欄・ステータスのピル・テーマと並び替えの
+ * 選択）をまとめ、その下に大きめのカードで結果を並べる。ヘッダーの検索
+ * アイコンは、この検索欄（BILLS_SEARCH_INPUT_ID）へ送る。
  *
- * 絞り込みの状態はすべて URL に載せる。並び替え以外はリンクで完結するので、
- * ページ全体を Server Component のまま保てる。検索語はヘッダーの検索バーが持つ。
+ * 絞り込みの状態はすべて URL に載せる。ステータスと切り替えはリンク、検索語・
+ * テーマ・並び替えはフォームの送信（BillsFilterForm）で反映する。どちらも
+ * JavaScript が無くても動く。
  *
  * カードは1ページ BILLS_PER_PAGE 件ずつ出す。議案は1000件近くあり、全件を
  * 描画すると HTML が十数MBになって初回表示が極端に遅くなる。件数は、ページ
@@ -86,12 +82,12 @@ export async function BillsListPage({
     (group) =>
       group === "all" || statusCounts[group] > 0 || params.status === group
   );
-  const filters: FilterProps = {
-    params,
-    statusGroups,
-    statusCounts,
-    tagChips,
-  };
+  // AIインタビューを受け付けている議案が無いあいだは、その絞り込みを出さない
+  // （選んでも0件になるだけ）。URL で指定されたときは外せるよう残す。
+  const showInterviewToggle =
+    params.interviewOnly || allBills.some((bill) => bill.hasPublicInterview);
+  const href = (patch: Partial<BillsListParams>) =>
+    billsListHref(params, patch);
 
   return (
     /*
@@ -102,322 +98,159 @@ export async function BillsListPage({
       複製になり、条件を変えても href・件数・選択中の表示が更新されない。条件で
       増減する子要素があると、React が外れたノードを取り除こうとしてページごと
       落ちる（NotFoundError: removeChild）。作り直せば、新しい要素を Rubyful が
-      改めて処理する。
+      改めて処理する。検索欄の初期値（defaultValue）も、作り直すことで新しい
+      検索語に入れ替わる。
     */
     <div
       key={`bills-list${buildBillsListQuery(params, { page: params.page })}`}
-      className="mx-auto w-full max-w-[1500px] px-3 py-4 md:px-5"
+      className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6 md:py-8"
     >
-      <div className="mb-3">
-        <Breadcrumb
-          items={[
-            { label: "トップ", href: routes.home() },
-            { label: "議案をさがす" },
-          ]}
-        />
-      </div>
+      <Breadcrumb
+        items={[
+          { label: "トップ", href: routes.home() },
+          { label: "議案をさがす" },
+        ]}
+      />
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-2xl font-extrabold tracking-tight text-mirai-text md:text-3xl">
+          {params.query ? `「${params.query}」の検索結果` : "議案をさがす"}
+        </h1>
         {/*
-          読み上げやキーボードでは見出し（h1）と結果を先に届けたいので、DOM では
-          結果の列を先に置き、絞り込みのサイドバーは lg:order-first で左に出す。
+          ページ送りの着地点。リンクのハッシュでここまでスクロールし、focus も
+          移す（tabIndex={-1}）。読み上げが「N件の議案」から始まるよう、件数に付ける。
+
+          中身は1つの文字列にする。ページ数で出し入れする子要素を置くと、
+          ふりがな表示が ON のとき Rubyful が差し替えた後の p から React が
+          子要素を取り除こうとして落ちる（initializer.tsx の注意書き）。
         */}
-        <div className="flex min-w-0 flex-1 flex-col gap-3">
-          {/* 結果の見出し。件数と並び替え */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md bg-white px-4 py-3">
-            <div className="min-w-0">
-              <h1 className="text-lg font-bold text-mirai-text md:text-xl">
-                {params.query
-                  ? `「${params.query}」の検索結果`
-                  : "議案をさがす"}
-              </h1>
-              {/*
-                ページ送りの着地点。リンクのハッシュでここまでスクロールし、focus も
-                移す（tabIndex={-1}）。読み上げが「N件の議案」から始まるよう、
-                件数に付ける。
-
-                中身は1つの文字列にする。ページ数で出し入れする子要素を置くと、
-                ふりがな表示が ON のとき Rubyful が差し替えた後の p から React が
-                子要素を取り除こうとして落ちる（initializer.tsx の注意書き）。
-              */}
-              <p
-                id={BILLS_RESULTS_ID}
-                tabIndex={-1}
-                className="scroll-mt-4 text-[13px] font-bold text-mirai-text-secondary outline-none"
-              >
-                {formatBillsResultCount(pageInfo)}
-              </p>
-            </div>
-            <div className="ml-auto">
-              <BillsSortSelect params={params} />
-            </div>
-          </div>
-
-          <MobileFilters {...filters} />
-
-          {activeFilters.length > 0 && (
-            <ActiveFilterChips
-              filters={activeFilters}
-              clearHref={clearFiltersHref(params)}
-            />
-          )}
-
-          <h2 className="sr-only">検索結果</h2>
-          {pageInfo.totalCount === 0 ? (
-            <div className="flex flex-col items-center gap-4 rounded-md bg-white px-6 py-16 text-center">
-              <Search
-                className="h-10 w-10 text-mirai-text-placeholder"
-                aria-hidden
-              />
-              <div className="flex flex-col gap-1.5">
-                <p className="text-base font-bold">
-                  該当する議案が見つかりませんでした
-                </p>
-                <p className="text-[13px] text-mirai-text-muted">
-                  キーワードを変えるか、絞り込み条件を解除してお試しください
-                </p>
-              </div>
-            </div>
-          ) : (
-            <>
-              <ul className="divide-y divide-mirai-border rounded-md bg-white px-4">
-                {pageBills.map((bill) => (
-                  <li key={bill.id}>
-                    <BillSearchCard bill={bill} />
-                  </li>
-                ))}
-              </ul>
-              <BillsPagination
-                pageInfo={pageInfo}
-                prevHref={
-                  pageInfo.prevPage
-                    ? billsListPageHref(params, pageInfo.prevPage)
-                    : null
-                }
-                nextHref={
-                  pageInfo.nextPage
-                    ? billsListPageHref(params, pageInfo.nextPage)
-                    : null
-                }
-              />
-            </>
-          )}
-
-          {/* 掲載外の議案は本家の一覧に送る */}
-          <div className="mt-2 text-sm text-mirai-text-secondary">
-            <Link
-              href={EXTERNAL_LINKS.SHINJUKU_GIKAI}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-11 flex-wrap items-center gap-1 hover:text-brand-link"
-            >
-              新宿区議会に提出されているすべての議案は{" "}
-              <span className="underline">新宿区議会の公式ページへ</span>
-              <ExternalLink className="h-3 w-3" aria-hidden />
-              <span className="sr-only">（新しいタブで開きます）</span>
-            </Link>
-          </div>
-        </div>
-
-        <FilterSidebar
-          {...filters}
-          hasActiveFilters={activeFilters.length > 0}
-        />
-      </div>
-    </div>
-  );
-}
-
-type FilterProps = {
-  params: BillsListParams;
-  statusGroups: readonly BillStatusGroup[];
-  statusCounts: Record<BillStatusGroup, number>;
-  tagChips: BillsListTagChip[];
-};
-
-/** ステータスごとの目印。ラベルだけの列より状態が見分けやすくなる。 */
-const STATUS_GROUP_ICONS: Record<BillStatusGroup, LucideIcon> = {
-  all: AlignLeft,
-  deliberating: MessageSquare,
-  waiting: Clock,
-  enacted: Check,
-  rejected: X,
-};
-
-/** 広い画面の左の絞り込み（Amazon の検索結果の左のサイドバー）。 */
-function FilterSidebar({
-  params,
-  statusGroups,
-  statusCounts,
-  tagChips,
-  hasActiveFilters,
-}: FilterProps & { hasActiveFilters: boolean }) {
-  const href = (patch: Partial<BillsListParams>) =>
-    billsListHref(params, patch);
-
-  return (
-    <aside
-      aria-label="絞り込み"
-      className="hidden w-60 shrink-0 flex-col gap-5 rounded-md bg-white p-4 lg:order-first lg:flex"
-    >
-      <SidebarSection title="ステータス">
-        {statusGroups.map((group) => (
-          <SidebarLink
-            key={group}
-            href={href({ status: group })}
-            active={params.status === group}
-            icon={STATUS_GROUP_ICONS[group]}
-            label={BILL_STATUS_GROUP_LABELS[group]}
-            count={statusCounts[group]}
-          />
-        ))}
-      </SidebarSection>
-
-      <SidebarSection title="テーマ">
-        {tagChips.map((chip) => (
-          <SidebarLink
-            key={chip.id}
-            href={href({ tagId: chip.tagId })}
-            active={params.tagId === chip.tagId}
-            label={chip.tagId ? chip.label : "すべてのテーマ"}
-            count={chip.count}
-          />
-        ))}
-      </SidebarSection>
-
-      <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-bold text-mirai-text">こだわり条件</h2>
-        <div className="flex flex-col">
-          <FilterCheckboxes params={params} />
-        </div>
-      </section>
-
-      {hasActiveFilters && (
-        <Link
-          href={clearFiltersHref(params)}
-          className="flex min-h-11 items-center text-[13px] font-bold text-brand-link hover:text-brand-link-hover hover:underline"
+        <p
+          id={BILLS_RESULTS_ID}
+          tabIndex={-1}
+          className="scroll-mt-4 text-sm font-bold text-mirai-text-secondary outline-none"
         >
-          すべての条件を解除
-        </Link>
+          {formatBillsResultCount(pageInfo)}
+        </p>
+      </div>
+
+      <RoundCard asChild>
+        <section aria-label="絞り込み">
+          <BillsFilterForm params={params} tagChips={tagChips}>
+            {/*
+              狭い画面でも全部が見えるよう、横にスクロールさせずに折り返す。
+              ステータスと切り替え（賛否が分かれた・AIインタビュー）は、狭い
+              画面では行を分け、広い画面では区切り線をはさんで1行に並べる。
+            */}
+            <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center md:gap-3">
+              <nav aria-label="ステータス">
+                <ul className="flex flex-wrap items-center gap-2">
+                  {statusGroups.map((group) => (
+                    <li key={group}>
+                      <FilterPill
+                        href={href({ status: group })}
+                        active={params.status === group}
+                        label={BILL_STATUS_GROUP_LABELS[group]}
+                        count={statusCounts[group]}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+              <ul
+                aria-label="ほかの絞り込み"
+                className="flex flex-wrap items-center gap-2 md:border-line-soft md:border-l md:pl-3"
+              >
+                <li>
+                  <TogglePill
+                    href={href({ splitOnly: !params.splitOnly })}
+                    checked={params.splitOnly}
+                    icon={<Split className="size-4" aria-hidden />}
+                    label="賛否が分かれた議案のみ"
+                  />
+                </li>
+                {showInterviewToggle && (
+                  <li>
+                    <TogglePill
+                      href={href({ interviewOnly: !params.interviewOnly })}
+                      checked={params.interviewOnly}
+                      icon={
+                        <MessageSquareText className="size-4" aria-hidden />
+                      }
+                      label="AIインタビュー受付中のみ"
+                    />
+                  </li>
+                )}
+              </ul>
+            </div>
+          </BillsFilterForm>
+        </section>
+      </RoundCard>
+
+      {activeFilters.length > 0 && (
+        <ActiveFilterChips
+          filters={activeFilters}
+          clearHref={clearFiltersHref(params)}
+        />
       )}
-    </aside>
-  );
-}
 
-function SidebarSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="flex flex-col gap-1">
-      <h2 className="mb-1 text-sm font-bold text-mirai-text">{title}</h2>
-      <ul className="flex flex-col">{children}</ul>
-    </section>
-  );
-}
-
-function SidebarLink({
-  href,
-  active,
-  label,
-  count,
-  icon: Icon,
-}: {
-  href: Route;
-  active: boolean;
-  label: string;
-  count: number;
-  icon?: LucideIcon;
-}) {
-  return (
-    <li>
-      <Link
-        href={href}
-        aria-current={active ? "true" : undefined}
-        className={cn(
-          "flex min-h-9 items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-[13px]",
-          active
-            ? "bg-brand-accent-tint font-bold text-brand-link"
-            : "text-mirai-text hover:bg-mirai-surface hover:text-brand-link"
-        )}
-      >
-        <span className="flex min-w-0 items-center gap-2">
-          {Icon && <Icon className="size-4 shrink-0" aria-hidden />}
-          {label}
-        </span>
-        <span className="font-lexend text-xs text-mirai-text-muted">
-          {count}
-        </span>
-      </Link>
-    </li>
-  );
-}
-
-/**
- * 狭い画面の絞り込み。結果の上に、横にスクロールするチップの列でまとめる。
- * サイドバーをそのまま上に積むと、結果が画面の下へ押し出される。
- */
-function MobileFilters({
-  params,
-  statusGroups,
-  statusCounts,
-  tagChips,
-}: FilterProps) {
-  const href = (patch: Partial<BillsListParams>) =>
-    billsListHref(params, patch);
-
-  return (
-    <div className="flex flex-col gap-2.5 rounded-md bg-white p-3 lg:hidden">
-      <ChipRow label="ステータス">
-        {statusGroups.map((group) => (
-          <Chip
-            key={group}
-            href={href({ status: group })}
-            active={params.status === group}
-            label={BILL_STATUS_GROUP_LABELS[group]}
-            count={statusCounts[group]}
+      <h2 className="sr-only">検索結果</h2>
+      {pageInfo.totalCount === 0 ? (
+        <RoundCard className="flex flex-col items-center gap-4 px-6 py-16 text-center">
+          <Search className="size-10 text-mirai-text-placeholder" aria-hidden />
+          <div className="flex flex-col gap-1.5">
+            <p className="text-base font-bold">
+              該当する議案が見つかりませんでした
+            </p>
+            <p className="text-sm text-mirai-text-muted">
+              キーワードを変えるか、絞り込み条件を解除してお試しください
+            </p>
+          </div>
+        </RoundCard>
+      ) : (
+        <>
+          <ul className="grid gap-4 md:grid-cols-2">
+            {pageBills.map((bill) => (
+              <li key={bill.id}>
+                <BillCard bill={bill} />
+              </li>
+            ))}
+          </ul>
+          <BillsPagination
+            pageInfo={pageInfo}
+            prevHref={
+              pageInfo.prevPage
+                ? billsListPageHref(params, pageInfo.prevPage)
+                : null
+            }
+            nextHref={
+              pageInfo.nextPage
+                ? billsListPageHref(params, pageInfo.nextPage)
+                : null
+            }
           />
-        ))}
-      </ChipRow>
-      <ChipRow label="テーマ">
-        {tagChips.map((chip) => (
-          <Chip
-            key={chip.id}
-            href={href({ tagId: chip.tagId })}
-            active={params.tagId === chip.tagId}
-            label={chip.tagId ? chip.label : "すべてのテーマ"}
-            count={chip.count}
-          />
-        ))}
-      </ChipRow>
-      <div className="flex flex-wrap gap-x-5">
-        <FilterCheckboxes params={params} />
+        </>
+      )}
+
+      {/* 掲載外の議案は本家の一覧に送る */}
+      <div className="text-sm text-mirai-text-secondary">
+        <Link
+          href={EXTERNAL_LINKS.SHINJUKU_GIKAI}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-11 flex-wrap items-center gap-1 hover:text-brand-link"
+        >
+          新宿区議会に提出されているすべての議案は{" "}
+          <span className="underline">新宿区議会の公式ページへ</span>
+          <ExternalLink className="size-3" aria-hidden />
+          <span className="sr-only">（新しいタブで開きます）</span>
+        </Link>
       </div>
     </div>
   );
 }
 
-/**
- * 横にスクロールするチップの列。
- *
- * スクロールする箱は中身を上下にも切り取るので、フォーカスの枠（外側に4px）が
- * 欠けないよう、箱の内側に上下の余白を取り、その分を負のマージンで打ち消す。
- */
-function ChipRow({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <nav
-      aria-label={label}
-      className="scrollbar-hide -mx-3 -my-1 overflow-x-auto px-3 py-1"
-    >
-      <ul className="flex w-max items-center gap-1.5">{children}</ul>
-    </nav>
-  );
-}
-
-function Chip({
+/** ステータスのピル。選択中は塗りの角丸ピル。 */
+function FilterPill({
   href,
   active,
   label,
@@ -429,82 +262,63 @@ function Chip({
   count: number;
 }) {
   return (
-    <li>
-      <Link
-        href={href}
-        aria-current={active ? "true" : undefined}
+    <Link
+      href={href}
+      aria-current={active ? "true" : undefined}
+      className={cn(
+        "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-bold",
+        active
+          ? "border-brand-header bg-brand-header text-brand-on-header"
+          : "border-line-soft bg-white text-mirai-text hover:border-brand-link/40 hover:text-brand-link"
+      )}
+    >
+      {label}
+      <span
         className={cn(
-          "flex h-9 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 text-[13px] font-bold",
-          active
-            ? "border-brand-link bg-brand-accent-tint text-brand-link"
-            : "border-mirai-border bg-white text-mirai-text"
+          "font-lexend text-xs",
+          active ? "text-brand-on-header-muted" : "text-mirai-text-muted"
         )}
       >
-        {label}
-        <span className="font-lexend text-xs font-bold text-mirai-text-muted">
-          {count}
-        </span>
-      </Link>
-    </li>
+        {count}
+      </span>
+    </Link>
   );
 }
 
 /**
  * 「賛否が分かれた議案のみ」「AIインタビュー受付中のみ」。
  *
- * 押すと条件を切り替えたページへ移動するリンク。見た目はチェックボックスだが、
- * role="checkbox" にすると読み上げでチェックボックスと伝わり、Space で切り替え
- * ようとしても（リンクは Enter でしか動かないので）ページがスクロールするだけに
- * なる。リンクのまま、選択中かどうかは読み上げ用の文字で添える。
+ * 押すと条件を切り替えたページへ移動するリンク。選択中かどうかは見た目
+ * （チェックの印と塗り）と、読み上げ用の文字で添える。role="checkbox" には
+ * しない（リンクは Space で切り替わらないので、チェックボックスと伝えると
+ * 操作が食い違う）。
  */
-function FilterCheckboxes({ params }: { params: BillsListParams }) {
-  return (
-    <>
-      <FilterCheckbox
-        href={billsListHref(params, { splitOnly: !params.splitOnly })}
-        checked={params.splitOnly}
-        label="賛否が分かれた議案のみ"
-      />
-      <FilterCheckbox
-        href={billsListHref(params, { interviewOnly: !params.interviewOnly })}
-        checked={params.interviewOnly}
-        label="AIインタビュー受付中のみ"
-      />
-    </>
-  );
-}
-
-function FilterCheckbox({
+function TogglePill({
   href,
   checked,
+  icon,
   label,
 }: {
   href: Route;
   checked: boolean;
+  icon: ReactNode;
   label: string;
 }) {
   return (
-    /*
-      inline-flex にすると行ボックスのベースライン計算に参加し、チェックの
-      アイコンが入った瞬間に行の高さが変わる。flex にしてベースラインへの
-      依存を切る。押しやすいよう高さは 44px 取る。
-    */
     <Link
       href={href}
-      className="flex min-h-11 w-fit items-center gap-2 text-[13px] text-mirai-text hover:text-brand-link"
+      className={cn(
+        "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-bold",
+        checked
+          ? "border-brand-link bg-brand-accent-tint text-brand-link"
+          : "border-line-soft bg-white text-mirai-text hover:border-brand-link/40 hover:text-brand-link"
+      )}
     >
-      {/* 枠線の有無で寸法が変わらないよう、選択時も border を残して色だけ変える */}
-      <span
-        className={cn(
-          "flex size-[18px] shrink-0 items-center justify-center rounded-[4px] border",
-          checked
-            ? "border-brand-link bg-brand-link"
-            : "border-mirai-text-muted bg-white"
-        )}
-        aria-hidden
-      >
-        {checked && <Check className="size-3 text-white" strokeWidth={3.5} />}
-      </span>
+      {checked ? (
+        <Check className="size-4" strokeWidth={3} aria-hidden />
+      ) : (
+        icon
+      )}
       {label}
       <span className="sr-only">{checked ? "（選択中）" : "（未選択）"}</span>
     </Link>
@@ -521,16 +335,15 @@ function ActiveFilterChips({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-[13px] text-mirai-text-secondary">
-        絞り込み中：
-      </span>
-      <ul className="flex flex-wrap items-center gap-1.5">
+      <span className="text-sm text-mirai-text-secondary">絞り込み中：</span>
+      <ul className="flex flex-wrap items-center gap-2">
         {filters.map((filter) => (
           <li key={filter.key}>
             <Link
               href={filter.removeHref}
               aria-label={`${filter.label}の条件を外す`}
-              className="flex h-9 items-center gap-1 rounded-full border border-mirai-border bg-white px-3 text-xs font-bold text-mirai-text hover:border-brand-link hover:text-brand-link"
+              // 見た目は 36px のまま、押せる範囲だけ上下に広げる（44px）
+              className="relative flex h-9 items-center gap-1 rounded-full border border-line-soft bg-white px-3 text-xs font-bold text-mirai-text after:absolute after:inset-x-0 after:-inset-y-1 hover:border-brand-link hover:text-brand-link"
             >
               {filter.label}
               <X className="size-3.5" aria-hidden />

@@ -4,8 +4,13 @@ import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
 
+/*
+ * フォーカスの枠は付けない（globals.css の :focus-visible の 2px の実線の枠を
+ * そのまま使い、リンクとそろえる。濃色の面の上ではアクセント色になる）。
+ * 半透明のリングだと白地で 1.8:1 程度しかなく、見落としやすい。
+ */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-bold transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-primary focus-visible:ring-primary/40 focus-visible:ring-[3px] focus-visible:ring-offset-2 focus-visible:ring-offset-background aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-bold transition-all cursor-pointer disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
@@ -13,7 +18,7 @@ const buttonVariants = cva(
         default:
           "border border-brand-on-accent/15 bg-brand-accent text-brand-on-accent shadow-xs hover:bg-brand-accent-hover",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white shadow-xs hover:bg-destructive/90 dark:bg-destructive/60",
         outline:
           "border border-mirai-border bg-white text-mirai-text shadow-xs hover:bg-mirai-surface",
         secondary:

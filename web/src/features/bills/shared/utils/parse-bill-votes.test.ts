@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   FACTION_VOTES_HEADING,
+  formatFactionNames,
   parseBillVotes,
   RESULT_HEADING,
   removeMarkdownSections,
@@ -179,5 +180,20 @@ describe("tallyFactionVotes", () => {
       againstCount: 0,
       forPercent: null,
     });
+  });
+});
+
+describe("formatFactionNames", () => {
+  it("会派を読点でつなぎ、添え書きは括弧で添える", () => {
+    expect(
+      formatFactionNames([
+        { name: "会派A", note: null },
+        { name: "会派B", note: "1人反対" },
+      ])
+    ).toBe("会派A、会派B（1人反対）");
+  });
+
+  it("会派が無ければ「なし」", () => {
+    expect(formatFactionNames([])).toBe("なし");
   });
 });

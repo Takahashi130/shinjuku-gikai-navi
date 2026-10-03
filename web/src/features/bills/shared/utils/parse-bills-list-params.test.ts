@@ -2,8 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   BILLS_RESULTS_ID,
   type BillsListParams,
+  billsListHrefFromFormEntries,
   billsListPageHref,
+  billsSearchHref,
   buildBillsListQuery,
+  buildSearchHiddenFields,
   DEFAULT_BILLS_LIST_PARAMS,
   parseBillsListParams,
 } from "./parse-bills-list-params";
@@ -219,5 +222,97 @@ describe("billsListPageHref", () => {
     expect(billsListPageHref(current, 3)).toBe(
       "/bills?q=%E7%A8%8E&status=enacted&sort=old&page=3#bills-results"
     );
+  });
+});
+
+describe("billsSearchHref", () => {
+  it("一覧の検索欄へ送る", () => {
+    expect(billsSearchHref()).toBe("/bills#bills-search");
+  });
+});
+
+describe("buildSearchHiddenFields", () => {
+  it("絞り込みがなければ何も送らない", () => {
+    expect(buildSearchHiddenFields(DEFAULT_BILLS_LIST_PARAMS)).toEqual([]);
+  });
+
+  it("いまの絞り込みを引き継ぎ、検索語・テーマ・並び替えはフォームの欄に任せる", () => {
+    expect(
+      buildSearchHiddenFields({
+        ...defaults,
+        query: "ガソリン",
+        status: "enacted",
+        tagId: "budget",
+        sort: "old",
+        interviewOnly: true,
+        splitOnly: true,
+      })
+    ).toEqual([
+      ["status", "enacted"],
+      ["interview", "1"],
+      ["split", "1"],
+    ]);
+  });
+
+  // 検索し直したら件数も並びも変わるので、元のページ番号に留まっても意味がない。
+  it("ページ番号は引き継がない", () => {
+    expect(buildSearchHiddenFields({ ...defaults, page: 3 })).toEqual([]);
+  });
+
+  // フォームの選択欄と同じ名前を隠しフィールドにも置くと、先に来る古い値が使われる。
+  it("テーマと並び替えは隠しフィールドに入れない", () => {
+    expect(
+      buildSearchHiddenFields({ ...defaults, tagId: "budget", sort: "old" })
+    ).toEqual([]);
+  });
+});
+
+describe("billsListHrefFromFormEntries", () => {
+  it("フォームの送信内容から一覧の URL を作り、空の値や既定値は出さない", () => {
+    expect(
+      billsListHrefFromFormEntries([
+        ["q", ""],
+        ["status", "enacted"],
+        ["tag", ""],
+        ["sort", "new"],
+      ])
+    ).toBe("/bills?status=enacted");
+  });
+
+  it("検索語・テーマ・並び替えと隠しフィールドの条件を合わせる", () => {
+    expect(
+      billsListHrefFromFormEntries([
+        ["q", " ガソリン "],
+        ["split", "1"],
+        ["tag", "budget"],
+        ["sort", "old"],
+      ])
+    ).toBe(
+      `/bills?q=${encodeURIComponent("ガソリン")}&tag=budget&sort=old&split=1`
+    );
+  });
+
+  it("同じ名前が2つあれば先のものを使い、文字列でない値は無視する", () => {
+    expect(
+      billsListHrefFromFormEntries([
+        ["sort", "old"],
+        ["sort", "new"],
+        ["tag", { name: "file" }],
+      ])
+    ).toBe("/bills?sort=old");
+  });
+
+  // 検索し直したら件数も並びも変わるので、1ページ目に戻す。
+  it("ページ番号は送られてきても1ページ目に戻す", () => {
+    expect(billsListHrefFromFormEntries([["page", "3"]])).toBe("/bills");
+  });
+
+  it("不正な値は既定に倒す", () => {
+    expect(
+      billsListHrefFromFormEntries([
+        ["status", "unknown"],
+        ["sort", "random"],
+      ])
+    ).toBe("/bills");
   });
 });

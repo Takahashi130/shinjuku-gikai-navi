@@ -24,7 +24,7 @@ export function BillDetailShareButton({
         variant="outline"
         size="sm"
         onClick={() => setIsModalOpen(true)}
-        className="text-xs gap-1"
+        className="h-11 gap-1 px-4 text-xs"
       >
         <Image
           src="/icons/ios-share.svg"

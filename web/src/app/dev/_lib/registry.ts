@@ -25,8 +25,8 @@ export const previewRegistry: PreviewGroup[] = [
     items: [
       {
         path: "/dev/features/bills/bill-card",
-        label: "BillTile / BillSearchCard",
-        description: "トップの列のタイルと、一覧の1行",
+        label: "BillCard",
+        description: "トップ・一覧・会期別一覧の大きめのカード",
       },
       {
         path: "/dev/features/bills/bill-status-badge",

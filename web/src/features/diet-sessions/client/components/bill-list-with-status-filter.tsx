@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { BillSearchCard } from "@/features/bills/client/components/bill-list/bill-search-card";
+import { RoundCard } from "@/components/ui/round-card";
+import { BillCard } from "@/features/bills/client/components/bill-list/bill-card";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { cn } from "@/lib/utils";
 
@@ -51,12 +52,12 @@ export function BillListWithStatusFilter({ bills }: Props) {
   ];
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* フィルターボタン */}
+    <div className="flex flex-col gap-4">
+      {/* 絞り込み。選択中は塗りの角丸ピル */}
       <div
         role="group"
         aria-label="ステータスで絞り込む"
-        className="flex flex-wrap gap-1.5 rounded-md bg-white p-3"
+        className="flex flex-wrap gap-2"
       >
         {filters.map((filter) => {
           const active = activeFilter === filter.key;
@@ -67,14 +68,21 @@ export function BillListWithStatusFilter({ bills }: Props) {
               aria-pressed={active}
               onClick={() => setActiveFilter(filter.key)}
               className={cn(
-                "h-8 gap-1.5 rounded-full border px-3 text-[13px] font-bold shadow-none",
+                "h-10 gap-1.5 rounded-full border px-4 text-sm font-bold shadow-none",
                 active
-                  ? "border-brand-link bg-brand-accent-tint text-brand-link hover:bg-brand-accent-tint hover:text-brand-link"
-                  : "border-mirai-border bg-white text-mirai-text hover:bg-mirai-surface"
+                  ? "border-brand-header bg-brand-header text-brand-on-header hover:bg-brand-header hover:text-brand-on-header"
+                  : "border-line-soft bg-white text-mirai-text hover:bg-white hover:text-brand-link"
               )}
             >
               {filter.label}
-              <span className="font-lexend text-xs text-mirai-text-muted">
+              <span
+                className={cn(
+                  "font-lexend text-xs",
+                  active
+                    ? "text-brand-on-header-muted"
+                    : "text-mirai-text-muted"
+                )}
+              >
                 {filter.count}
               </span>
             </Button>
@@ -85,14 +93,14 @@ export function BillListWithStatusFilter({ bills }: Props) {
       {/* 議案リスト。見出し（h1）と各議案（h3）の間を埋める */}
       <h2 className="sr-only">議案の一覧</h2>
       {filteredBills.length === 0 ? (
-        <p className="rounded-md bg-white py-12 text-center text-mirai-text-muted">
+        <RoundCard className="py-12 text-center text-mirai-text-muted">
           該当する議案がありません
-        </p>
+        </RoundCard>
       ) : (
-        <ul className="divide-y divide-mirai-border rounded-md bg-white px-4">
+        <ul className="grid gap-4 md:grid-cols-2">
           {filteredBills.map((bill) => (
             <li key={bill.id}>
-              <BillSearchCard bill={bill} />
+              <BillCard bill={bill} />
             </li>
           ))}
         </ul>

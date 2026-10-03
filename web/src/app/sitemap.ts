@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getBills } from "@/features/bills/server/loaders/get-bills";
+import { UPCOMING_FEATURE_IDS } from "@/features/upcoming/shared/utils/upcoming-features";
 import { routes } from "@/lib/routes";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -29,6 +30,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily" as const,
       priority: 0.9,
     },
+    // 準備中の機能の説明ページ（ヘッダーのタブの行き先）
+    ...UPCOMING_FEATURE_IDS.map((feature) => ({
+      url: `${baseUrl}${routes.upcoming(feature)}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.3,
+    })),
     ...billUrls,
   ];
 }

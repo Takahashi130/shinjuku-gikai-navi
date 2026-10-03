@@ -4,14 +4,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getInterviewLPLink } from "@/features/interview-config/shared/utils/interview-links";
 import { routes } from "@/lib/routes";
-import { formatDateWithDots } from "@/lib/utils/date";
 import { BillDetailShareButton } from "../../../client/components/bill-detail/bill-detail-share-button";
 import {
   ReviewCompleteBadge,
   ReviewInProgressBanner,
 } from "../../../client/components/bill-detail/review-status-banner";
-import { BillStatusBadge } from "../../../client/components/bill-list/bill-status-badge";
-import { SplitVoteMark } from "../../../client/components/bill-list/split-vote-mark";
+import { BillTitleText } from "../../../client/components/bill-list/bill-title-text";
 import { getBillShareData } from "../../../client/utils/share";
 import type { BillWithContent } from "../../../shared/types";
 import {
@@ -29,9 +27,8 @@ interface BillDetailHeaderProps {
 }
 
 /**
- * 議案詳細の中央の先頭（Amazon の商品名・評価・価格の位置）。
- * タイトル・ステータス・提出日・テーマ・概要と、意見・共有の操作を並べる。
- * サムネイルと投票ボックスはレイアウト側で左右に置く。
+ * 議案カードの先頭（濃色の帯のすぐ下）。タイトル・正式名称・要約・テーマと、
+ * 意見・共有の操作を並べる。会期・議案番号・議決の結果は、上の濃色の帯に出す。
  */
 export async function BillDetailHeader({
   bill,
@@ -45,55 +42,48 @@ export async function BillDetailHeader({
   const { shareUrl, shareMessage, thumbnailUrl } = await getBillShareData(bill);
 
   return (
-    <div className="flex flex-col gap-3">
-      <h1 className="text-2xl font-bold leading-snug text-mirai-text md:text-[28px]">
-        {displayTitle}
-        {bill.is_review_completed && (
-          <>
-            {" "}
-            <ReviewCompleteBadge showTooltip />
-          </>
-        )}
-      </h1>
-
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-        <BillStatusBadge status={bill.status} className="w-fit" />
-        {bill.is_featured && <SplitVoteMark />}
-        {bill.submitted_date && (
-          <time className="text-xs font-medium text-mirai-text-muted">
-            {formatDateWithDots(bill.submitted_date)} 提出
-          </time>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2">
+        <h1
+          id="bill-title"
+          className="text-pretty text-2xl font-extrabold leading-snug tracking-tight text-mirai-text md:text-[32px]"
+        >
+          <BillTitleText title={displayTitle} />
+          {bill.is_review_completed && (
+            <>
+              {" "}
+              <ReviewCompleteBadge showTooltip />
+            </>
+          )}
+        </h1>
+        {/* 正式名称。わかりやすいタイトルと違うときに、元の名前も分かるようにする */}
+        {displayTitle !== bill.name && (
+          <p className="text-sm text-mirai-text-secondary">{bill.name}</p>
         )}
       </div>
 
-      {/* 正式名称。わかりやすいタイトルと違うときに、元の名前も分かるようにする */}
-      {displayTitle !== bill.name && (
-        <p className="text-sm text-mirai-text-secondary">{bill.name}</p>
+      {displaySummary && (
+        <p className="text-[15px] leading-relaxed text-mirai-text">
+          {displaySummary}
+        </p>
       )}
 
       {bill.tags.length > 0 && (
         <ul className="flex flex-wrap items-center gap-2" aria-label="テーマ">
           {bill.tags.map((tag) => (
             <li key={tag.id}>
+              {/* 見た目は 36px のまま、押せる範囲だけ上下に広げる（44px） */}
               <Link
                 href={billsListHref(DEFAULT_BILLS_LIST_PARAMS, {
                   tagId: tag.id,
                 })}
-                className="inline-flex h-9 items-center rounded-sm bg-mirai-surface-muted px-3 text-xs font-medium text-mirai-text-secondary hover:text-brand-link hover:underline"
+                className="relative inline-flex h-9 items-center rounded-full bg-mirai-surface px-3.5 text-xs font-bold text-mirai-text-secondary after:absolute after:inset-x-0 after:-inset-y-1 hover:text-brand-link hover:underline"
               >
                 {tag.label}
               </Link>
             </li>
           ))}
         </ul>
-      )}
-
-      <hr className="my-1 border-mirai-border" />
-
-      {displaySummary && (
-        <p className="text-[15px] leading-relaxed text-mirai-text">
-          {displaySummary}
-        </p>
       )}
 
       {!bill.is_review_completed && <ReviewInProgressBanner />}
@@ -119,11 +109,7 @@ export async function BillDetailHeader({
 
       <div className="flex flex-wrap items-center gap-2">
         {hasInterviewConfig && (
-          <Button
-            size="sm"
-            asChild
-            className="gap-1.5 rounded-md px-3 text-[13px]"
-          >
+          <Button size="sm" asChild className="h-11 gap-1.5 px-4 text-[13px]">
             <Link href={getInterviewLPLink(bill.id) as Route}>
               <MessageSquareText className="size-5" aria-hidden />
               AIインタビューに協力する

@@ -202,3 +202,16 @@ export function tallyFactionVotes(
     forPercent: total === 0 ? null : Math.round((forCount / total) * 100),
   };
 }
+
+/**
+ * 会派の並びを1行の文にする（`A、B（1人反対）、C`）。会派が無ければ「なし」。
+ * 解説の書き方（parseFactionList が読む形）と同じ区切りに戻す。
+ */
+export function formatFactionNames(factions: readonly FactionVote[]): string {
+  if (factions.length === 0) return "なし";
+  return factions
+    .map((faction) =>
+      faction.note ? `${faction.name}（${faction.note}）` : faction.name
+    )
+    .join("、");
+}

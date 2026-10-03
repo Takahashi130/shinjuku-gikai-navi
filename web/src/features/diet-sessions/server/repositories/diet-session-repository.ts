@@ -123,7 +123,30 @@ export async function findLatestClosedDietSession(
 }
 
 /**
- * 開始日が新しい順に会期を返す。ヘッダーのメニューやトップの「会期から探す」に使う。
+ * id で会期を取得する。議案ページで、その議案の会期（会期名と会期別一覧への
+ * リンク）を出すために使う。
+ */
+export async function findDietSessionById(
+  id: string
+): Promise<DietSession | null> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("diet_sessions")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    // 議案ページの補助的な情報なので、失敗しても画面全体は落とさない。
+    console.error("Failed to fetch diet session by id:", error);
+    return null;
+  }
+  return data;
+}
+
+/**
+ * 開始日が新しい順に会期を返す。トップの「会期から探す」に使う。
  * 一覧ページ（/kokkai/[slug]/bills）へリンクするので、slug の無い会期は除く。
  */
 export async function findRecentDietSessions(
@@ -139,7 +162,7 @@ export async function findRecentDietSessions(
     .limit(limit);
 
   if (error) {
-    // メニューの補助的な情報なので、失敗しても画面全体は落とさない。
+    // トップの補助的な情報なので、失敗しても画面全体は落とさない。
     console.error("Failed to fetch recent diet sessions:", error);
     return [];
   }

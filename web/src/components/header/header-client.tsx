@@ -1,63 +1,48 @@
 "use client";
 
-import { CalendarClock } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { ComingSoonTag } from "@/components/coming-soon-tag";
+import { Button } from "@/components/ui/button";
+import { LabelPill } from "@/components/ui/label-pill";
 import { SITE } from "@/config/site";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
-import type { BillTag } from "@/features/bills/shared/types";
+import { billsSearchHref } from "@/features/bills/shared/utils/parse-bills-list-params";
+import type { SessionNotice } from "@/features/diet-sessions/shared/utils/session-notice";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
 import { sendDifficultyStateEvent } from "@/lib/analytics/preference-state-events";
 import { useOnPageView } from "@/lib/analytics/use-on-page-view";
 import { isInterviewPage, isMainPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
-import { AllMenu } from "./all-menu";
 import { DisplaySettings } from "./display-settings";
 import {
-  buildHeaderBandLinks,
-  type HeaderNavLink,
-  type SessionPillLink,
+  getActiveHeaderTabId,
+  getHeaderTabAriaCurrent,
+  HEADER_TABS,
+  type HeaderTabId,
 } from "./header-nav";
-import { HeaderSearch } from "./header-search";
 
 interface HeaderClientProps {
   difficultyLevel: DifficultyLevelEnum;
-  /** テーマ（掲載タグ）。帯と「すべて」メニューに並べる。 */
-  themes: BillTag[];
-  /** 会期別の一覧へのリンク（新しい順）。 */
-  sessionLinks: HeaderNavLink[];
-  /** 今の会期のピル。閉会中は null。 */
-  sessionPill: SessionPillLink | null;
+  /** ヘッダーの下の全幅のお知らせ帯。出すものが無ければ null。 */
+  notice: SessionNotice | null;
 }
 
 /**
- * 濃色の帯の上のリンク。Amazon と同じく、ホバーで白い枠を出す。
+ * サイト共通のヘッダー（白地）。
  *
- * 帯は横にスクロールする箱で、箱は中身を上下にも切り取る。フォーカスの枠を
- * 外側に出すと上下が欠けるので、枠は内側に描く（-outline-offset-2）。
+ * - 1段目：ロゴの枠・サービス名・β版・1行の説明 / 検索・表示設定
+ * - 2段目：ハッシュタグ型のタブ（選択中は塗りの角丸ピル）
+ * - 3段目：全幅のお知らせ帯（会期の状況）
+ *
+ * インタビューのチャットでは画面の高さを使うので、1段目だけにする（ふりがなの
+ * 切り替えは、チャットでも使えるよう残す）。
  */
-const BAND_LINK_CLASS =
-  "flex h-9 items-center whitespace-nowrap rounded-sm border border-transparent px-2.5 text-[13px] font-bold text-brand-on-header hover:border-brand-on-header focus-visible:-outline-offset-2";
-
-/**
- * サイト共通のヘッダー（Amazon 風の2段の帯）。
- *
- * - 上段（濃色）: ロゴとサービス名 / 検索バー / 表示設定・投票履歴（準備中）
- * - 下段（やや明るい）: 「≡ すべて」メニュー / よく使う絞り込みとテーマ / 今の会期のピル
- *
- * スマホでは検索バーを上段の下に全幅で出し、下段は横にスクロールさせる。
- * インタビューのチャットでは画面の高さを使うので、上段だけにする（ふりがなの
- * 切り替えは、チャットでも使えるよう上段に残す）。
- */
-export function HeaderClient({
-  difficultyLevel,
-  themes,
-  sessionLinks,
-  sessionPill,
-}: HeaderClientProps) {
+export function HeaderClient({ difficultyLevel, notice }: HeaderClientProps) {
   const pathname = usePathname();
   const showDifficulty = isMainPage(pathname);
   const isChat = isInterviewPage(pathname);
@@ -68,129 +53,81 @@ export function HeaderClient({
   //  同時マウントされ得るため、送信元には適さない)
   useOnPageView(() => sendDifficultyStateEvent(difficultyLevel));
 
-  const bandLinks = buildHeaderBandLinks(themes);
-
   return (
-    <header id="top" data-surface="dark" className="text-brand-on-header">
-      {/* 上段 */}
-      <div className="bg-brand-header">
-        <div className="mx-auto flex max-w-[1500px] items-center gap-2 px-2 py-1.5 md:gap-4 md:px-4">
-          <HeaderLogo compact={isChat} />
+    <header id="top" className="border-line-soft border-b bg-white">
+      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
+        <HeaderLogo compact={isChat} />
 
-          {!isChat && (
-            <div className="hidden min-w-0 flex-1 md:block">
-              <HeaderSearch />
-            </div>
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {isChat ? (
+            <InterviewHeaderActions />
+          ) : (
+            <Button
+              asChild
+              variant="outline"
+              className="size-11 rounded-full border-line-soft p-0 shadow-none"
+            >
+              <Link href={billsSearchHref()} aria-label="議案を検索">
+                <Search className="size-[18px]" aria-hidden />
+              </Link>
+            </Button>
           )}
-
-          {/* 広い画面では検索バーが幅を取って右に押す。チャットには検索バーが無いので自分で右に寄せる */}
-          <div
-            className={cn(
-              "ml-auto flex shrink-0 items-center gap-1",
-              !isChat && "md:ml-0"
-            )}
-          >
-            {isChat && <InterviewHeaderActions />}
-            <DisplaySettings
-              difficultyLevel={difficultyLevel}
-              showDifficulty={!isChat && showDifficulty}
-            />
-            {!isChat && <VoteHistoryPlaceholder />}
-          </div>
+          <DisplaySettings
+            difficultyLevel={difficultyLevel}
+            showDifficulty={!isChat && showDifficulty}
+          />
         </div>
-
-        {!isChat && (
-          <div className="px-2 pb-2.5 md:hidden">
-            <HeaderSearch />
-          </div>
-        )}
       </div>
 
-      {/* 下段 */}
-      {!isChat && (
-        <div className="bg-brand-header-sub">
-          <div className="mx-auto flex h-10 max-w-[1500px] items-center gap-1 px-1 md:px-3">
-            <AllMenu
-              themes={themes}
-              sessionLinks={sessionLinks}
-              difficultyLevel={difficultyLevel}
-              showDifficulty={showDifficulty}
-            />
-            <div className="relative min-w-0 flex-1">
-              <nav
-                aria-label="カテゴリ"
-                className="scrollbar-hide overflow-x-auto"
-              >
-                {/* 右端のぼかしの下に最後のリンクが隠れないよう、右に余白を取る */}
-                <ul className="flex w-max items-center pr-8">
-                  {/* スマホでは右端に置く場所が無いので、帯の先頭に短くして出す */}
-                  {sessionPill && (
-                    <li className="pr-1 md:hidden">
-                      <SessionPill link={sessionPill} size="compact" />
-                    </li>
-                  )}
-                  {bandLinks.map((link) => (
-                    <li key={link.href}>
-                      <Link href={link.href} className={BAND_LINK_CLASS}>
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-              {/*
-                帯がまだ横に続くことを示すぼかし。スクロールバーは隠しているので、
-                これが無いと右に続きがあると分からない。帯に並ばないテーマも
-                「すべて」メニューから選べる。
-              */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-brand-header-sub to-transparent"
-              />
-            </div>
-            {sessionPill && (
-              <div className="hidden shrink-0 md:block">
-                <SessionPill link={sessionPill} size="wide" />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {!isChat && <HeaderTabs pathname={pathname} />}
+      {!isChat && notice && <NoticeBand notice={notice} />}
     </header>
   );
 }
 
 /**
- * ロゴとサービス名。
+ * ロゴの枠とサービス名。
  *
  * compact（インタビューのチャット）では、狭い画面で「保存して中断」と表示設定を
  * 並べる幅が足りないので、ロゴの記号だけにする（名前はリンクの aria-label にある）。
+ *
+ * 360px 未満では、右の検索・表示設定のボタンと重ならないよう β版の印を隠す。
  */
 function HeaderLogo({ compact }: { compact: boolean }) {
   return (
     <Link
       href={routes.home()}
       aria-label={`${SITE.NAME} トップページ`}
-      className="flex min-w-0 shrink-0 items-center gap-2 rounded-sm border border-transparent px-1 py-1 hover:border-brand-on-header"
+      className="group flex min-w-0 items-center gap-2 rounded-2xl sm:gap-3"
     >
-      <Image
-        src="/img/logo.svg"
-        alt=""
-        width={36}
-        height={36}
-        priority
-        className="size-8 shrink-0 md:size-9"
-      />
+      <span className="flex shrink-0 items-center justify-center rounded-2xl border-2 border-brand-header bg-white p-1 shadow-xs">
+        <Image
+          src="/img/logo.svg"
+          alt=""
+          width={32}
+          height={32}
+          priority
+          className="size-7 md:size-8"
+        />
+      </span>
       <span
         className={cn(
           "min-w-0 flex-col leading-tight",
           compact ? "hidden sm:flex" : "flex"
         )}
       >
-        <span className="whitespace-nowrap text-base font-extrabold tracking-wide text-brand-on-header md:text-lg">
-          {SITE.NAME}
+        <span className="flex items-center gap-1.5">
+          <span className="whitespace-nowrap text-base font-extrabold tracking-wide text-mirai-text group-hover:text-brand-link md:text-lg">
+            {SITE.NAME}
+          </span>
+          <LabelPill
+            tone="accent"
+            className="hidden h-5 px-2 min-[360px]:inline-flex"
+          >
+            β版
+          </LabelPill>
         </span>
-        <span className="whitespace-nowrap text-[11px] font-bold text-brand-accent sm:text-xs">
+        <span className="truncate text-xs text-mirai-text-muted">
           {SITE.CATCHPHRASE}
         </span>
       </span>
@@ -199,61 +136,106 @@ function HeaderLogo({ compact }: { compact: boolean }) {
 }
 
 /**
- * 「あなたの投票履歴」。投票機能はまだ無いので、リンクにせず準備中と添える。
- * 押せそうに見えないよう、ホバーの枠も付けず文字を控えめにする。
+ * ハッシュタグ型のタブ。狭い画面では横にスクロールさせ、右端をぼかして
+ * 続きがあることを示す（scroll-fade-right。末尾に余白を足しているので、
+ * 端までスクロールすれば何も隠れない）。
+ *
+ * スクロールする箱は中身を上下にも切り取るので、フォーカスの枠は内側に描く
+ * （-outline-offset-2）。「#」は飾りなので読み上げない。
  */
-function VoteHistoryPlaceholder() {
+function HeaderTabs({ pathname }: { pathname: string }) {
+  const activeId: HeaderTabId | null = getActiveHeaderTabId(pathname);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLAnchorElement>(null);
+
+  // 狭い画面で右のタブを開いたとき、選択中のタブが帯の外に隠れないよう
+  // 帯だけを横にずらす（ページ全体はスクロールさせない）。
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 選択中のタブが変わったときだけ動かす
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    const active = activeRef.current;
+    if (!scroller || !active) return;
+    // 帯（scroller）を relative にしているので、offsetLeft は帯の中での位置
+    const left = active.offsetLeft;
+    const right = left + active.offsetWidth;
+    if (
+      left < scroller.scrollLeft ||
+      right > scroller.scrollLeft + scroller.clientWidth
+    ) {
+      scroller.scrollLeft = Math.max(0, left - 16);
+    }
+  }, [activeId]);
+
   return (
-    <div className="hidden flex-col px-2 py-1 leading-tight lg:flex">
-      <span className="text-[11px] font-medium text-brand-on-header-muted">
-        あなたの
-      </span>
-      <span className="flex items-center gap-1.5 text-sm font-bold text-brand-on-header-muted">
-        投票履歴
-        <ComingSoonTag tone="dark" />
-      </span>
-    </div>
+    <nav aria-label="サービスの切り替え" className="border-line-soft border-t">
+      <div
+        ref={scrollerRef}
+        className="scrollbar-hide scroll-fade-right relative mx-auto max-w-6xl overflow-x-auto px-4 py-1"
+      >
+        <ul className="flex w-max items-center gap-1.5 pr-6">
+          {HEADER_TABS.map((tab) => {
+            const Icon = tab.icon;
+            const active = tab.id === activeId;
+            return (
+              <li key={tab.id}>
+                <Link
+                  ref={active ? activeRef : undefined}
+                  href={tab.href}
+                  aria-current={getHeaderTabAriaCurrent(tab, pathname)}
+                  className={cn(
+                    "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-[13px] font-bold focus-visible:-outline-offset-2",
+                    active
+                      ? "bg-brand-header text-brand-on-header shadow-sm"
+                      : "text-mirai-text-secondary hover:bg-mirai-surface hover:text-mirai-text"
+                  )}
+                >
+                  <Icon className="size-4" aria-hidden />
+                  <span>
+                    <span aria-hidden>#</span>
+                    {tab.label}
+                  </span>
+                  {tab.comingSoon && (
+                    <ComingSoonTag tone={active ? "dark" : "light"} />
+                  )}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </nav>
   );
 }
 
-/**
- * 今の会期のピル。
- *
- * compact（スマホの帯の先頭）は「あと12日」だけにする。会期名まで出すと帯の
- * 幅をほとんど使ってしまい、カテゴリのリンクが見えなくなる。wide（広い画面の
- * 右端）は、さらに広い画面でだけ会期名まで出す。
- * どの幅でも、読み上げには会期名を含む完全な言い方を渡す。
- */
-function SessionPill({
-  link,
-  size,
-}: {
-  link: SessionPillLink;
-  size: "compact" | "wide";
-}) {
+/** 全幅のお知らせ帯。いまの会期の状況と、その会期の議案へのリンク。 */
+function NoticeBand({ notice }: { notice: SessionNotice }) {
   return (
-    <Link
-      href={link.href}
-      className={cn(
-        "flex items-center gap-1.5 whitespace-nowrap rounded-full bg-brand-accent px-3 text-xs font-bold text-brand-on-accent hover:bg-brand-accent-hover",
-        // 帯（横スクロールの箱）の中では、フォーカスの枠が切れないよう内側に描く
-        size === "compact" ? "h-9 focus-visible:-outline-offset-2" : "h-8"
-      )}
+    <div
+      data-surface="dark"
+      className="bg-brand-header px-4 py-2.5 text-brand-on-header"
     >
-      <CalendarClock className="size-3.5" aria-hidden />
-      {size === "compact" ? (
-        <span aria-hidden>{link.shortLabel}</span>
-      ) : (
-        <>
-          <span aria-hidden className="pcl:hidden">
-            {link.daysLeftLabel}
-          </span>
-          <span aria-hidden className="hidden pcl:inline">
-            {link.label}
-          </span>
-        </>
-      )}
-      <span className="sr-only">{link.label}</span>
-    </Link>
+      <div className="mx-auto flex max-w-6xl items-start gap-2 text-xs font-bold leading-relaxed sm:items-center sm:justify-center md:text-[13px]">
+        <span
+          aria-hidden
+          className={cn(
+            "mt-[7px] size-2 shrink-0 rounded-full sm:mt-0",
+            notice.status === "open"
+              ? "bg-brand-accent"
+              : "bg-brand-on-header-muted"
+          )}
+        />
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+          <span>{notice.text}</span>
+          {/* 押せる範囲は上下に広げ（44px）、帯の高さは変えない */}
+          <Link
+            href={notice.link.href}
+            className="-my-[11px] inline-flex min-h-11 items-center gap-1 text-brand-accent underline-offset-4 hover:underline"
+          >
+            {notice.link.label}
+            <ArrowRight className="size-3.5" aria-hidden />
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }

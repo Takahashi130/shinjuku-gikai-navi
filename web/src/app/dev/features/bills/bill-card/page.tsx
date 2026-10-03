@@ -1,20 +1,14 @@
-import { BillSearchCard } from "@/features/bills/client/components/bill-list/bill-search-card";
-import { BillTile } from "@/features/bills/client/components/bill-list/bill-tile";
+import { BillCard } from "@/features/bills/client/components/bill-list/bill-card";
 import { ComponentShowcase } from "../../../_components/component-showcase";
 import { PreviewSection } from "../../../_components/preview-section";
 import { allBillStatuses, createMockBill } from "../../../_lib/mock-data";
 
-const SAMPLE_THUMBNAIL = "/img/thumbnails/budget.png";
-
 export default function BillCardPreview() {
-  const defaultBill = createMockBill({
-    thumbnail_url: SAMPLE_THUMBNAIL,
-  });
+  const defaultBill = createMockBill();
 
   const featuredBill = createMockBill({
     id: "mock-featured",
     is_featured: true,
-    thumbnail_url: SAMPLE_THUMBNAIL,
     bill_content: {
       id: "mock-content-featured",
       bill_id: "mock-featured",
@@ -35,7 +29,6 @@ export default function BillCardPreview() {
 
   const longTitleBill = createMockBill({
     id: "mock-long-title",
-    thumbnail_url: SAMPLE_THUMBNAIL,
     bill_content: {
       id: "mock-content-long-title",
       bill_id: "mock-long-title",
@@ -52,7 +45,6 @@ export default function BillCardPreview() {
 
   const longDescriptionBill = createMockBill({
     id: "mock-long-desc",
-    thumbnail_url: SAMPLE_THUMBNAIL,
     bill_content: {
       id: "mock-content-long-desc",
       bill_id: "mock-long-desc",
@@ -75,45 +67,25 @@ export default function BillCardPreview() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold text-mirai-text mb-4">
-        BillTile / BillSearchCard
-      </h1>
+      <h1 className="text-3xl font-bold text-mirai-text mb-4">BillCard</h1>
       {/*
-        BillTile と BillSearchCard は自分で議案詳細へのリンクになる。ここの議案は
-        プレビュー用の架空のもの（id: mock-*）なので、押しても存在しない議案の
-        ページになり、トップへ戻される。
+        BillCard は自分で議案詳細へのリンクになる。ここの議案はプレビュー用の
+        架空のもの（id: mock-*）なので、押しても存在しない議案のページになり、
+        トップへ戻される。
       */}
-      <p className="mb-8 rounded-md border border-mirai-border bg-white px-4 py-3 text-sm text-mirai-text-secondary">
+      <p className="mb-8 rounded-2xl border border-line-soft bg-white px-4 py-3 text-sm text-mirai-text-secondary">
         ※
         ここに並べている議案はプレビュー用の架空のものです。カードは議案詳細へのリンクですが、押しても存在しない議案のページ（トップへ戻されます）になります。
       </p>
 
       <ComponentShowcase
-        title="BillTile"
-        description="トップの横スクロールの列に並べる縦長のカード"
+        title="BillCard"
+        description="トップの「審議中の議案」・議案一覧（/bills）・会期別一覧の大きめのカード。is_featured は「賛否が分かれた」の目印になる"
       >
-        <ul className="flex flex-wrap gap-4">
-          {samples.map((bill) => (
-            <li key={bill.id} className="w-48">
-              <BillTile bill={bill} />
-            </li>
-          ))}
-          <li className="w-48">
-            <BillTile
-              bill={{ ...defaultBill, id: "no-thumb", thumbnail_url: null }}
-            />
-          </li>
-        </ul>
-      </ComponentShowcase>
-
-      <ComponentShowcase
-        title="BillSearchCard"
-        description="議案一覧（/bills）・会期別一覧の1行。is_featured は「賛否が分かれた」の目印になる"
-      >
-        <ul className="divide-y divide-mirai-border">
+        <ul className="grid gap-4 md:grid-cols-2">
           {samples.map((bill) => (
             <li key={bill.id}>
-              <BillSearchCard bill={bill} />
+              <BillCard bill={bill} />
             </li>
           ))}
         </ul>
@@ -123,15 +95,14 @@ export default function BillCardPreview() {
         title="All Statuses"
         description="全議案ステータスの表示"
       >
-        <ul className="flex flex-wrap gap-4">
+        <ul className="grid gap-4 md:grid-cols-2">
           {allBillStatuses.map((status) => (
-            <li key={status} className="w-48">
+            <li key={status}>
               <PreviewSection label={`status: ${status}`}>
-                <BillTile
+                <BillCard
                   bill={createMockBill({
                     id: `mock-${status}`,
                     status,
-                    thumbnail_url: SAMPLE_THUMBNAIL,
                   })}
                 />
               </PreviewSection>

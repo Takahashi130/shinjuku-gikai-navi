@@ -49,4 +49,8 @@ export const routes = {
 
   // ── 国会セッション ────────────────────────────────
   kokkaiSessionBills: (slug: string) => `/kokkai/${slug}/bills` as const,
+
+  // ── 準備中の機能の説明 ────────────────────────────
+  // feature は features/upcoming/shared/utils/upcoming-features.ts の UPCOMING_FEATURE_IDS
+  upcoming: (feature: string) => `/upcoming/${feature}` as const,
 } as const;

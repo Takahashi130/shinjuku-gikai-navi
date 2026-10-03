@@ -12,10 +12,10 @@ export const SITE = {
   DESCRIPTION:
     "新宿区議会でどんな議案が審議され、どの会派が賛成・反対したのかをわかりやすく伝えるアプリ",
   /**
-   * ブラウザのテーマカラー（アドレスバー等）。ヘッダー上段の色（globals.css の
-   * --brand-header）と同じ値。配色を差し替えたら brand-colors.ts を合わせる。
+   * ブラウザのテーマカラー（スマホのアドレスバー等）。すぐ下に続くヘッダーの
+   * 地の色（白）と同じにして、白基調の画面の上に濃色の帯が出ないようにする。
    */
-  THEME_COLOR: BRAND_COLORS.header,
+  THEME_COLOR: BRAND_COLORS.headerSurface,
   /**
    * 元にしたソフトウェアのライセンス（AGPL-3.0）の追加条件で表示が求められている文言
    * https://github.com/team-mirai/mirai-gikai/blob/develop/FORK_GUIDELINES.md

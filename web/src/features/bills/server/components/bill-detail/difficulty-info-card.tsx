@@ -9,7 +9,7 @@ import { getDifficultyLevel } from "@/features/bill-difficulty/server/loaders/ge
 export async function DifficultyInfoCard() {
   const level = await getDifficultyLevel();
   return (
-    <div className="my-8 flex flex-wrap items-center justify-between gap-3 rounded-md border border-mirai-border bg-mirai-surface px-4 py-3">
+    <div className="my-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-mirai-surface px-4 py-3">
       <p className="flex items-center gap-2 text-sm font-bold text-mirai-text">
         <BookOpenText className="size-5 shrink-0 text-brand-link" aria-hidden />
         説明の詳しさをいつでも切り替えられます

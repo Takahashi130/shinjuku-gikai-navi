@@ -1,20 +1,25 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { ArrowUp, ExternalLink } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ComingSoonTag } from "@/components/coming-soon-tag";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { SITE } from "@/config/site";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
-import { type FooterLink, footerColumns } from "./footer.config";
+import {
+  type FooterLink,
+  footerExternalLinks,
+  footerSiteLinks,
+} from "./footer.config";
 
 /**
- * サイト共通のフッター（Amazon 風の濃色の帯）。
+ * サイト共通のフッター（濃色の帯）。
  *
- * 上から「ページの先頭へ」の帯 → リンク群 → ロゴ → 免責文言と著作権表示。
+ * 上からロゴの枠とリンク → 外部サイト → 免責文言と著作権表示。
  * 免責文言（SITE.DISCLAIMER）と元のソフトウェアのライセンス表示は、元の
  * ソフトウェア（AGPL-3.0）の追加条件で求められているので必ず残す。
  */
@@ -26,59 +31,49 @@ export function Footer() {
   }
 
   return (
-    <footer data-surface="dark" className="text-brand-on-header">
-      {/* ヘッダーに id="top" を付けている */}
-      <a
-        href="#top"
-        className="block bg-brand-header-sub py-3.5 text-center text-[13px] font-bold text-brand-on-header hover:bg-brand-header-hover"
-      >
-        ページの先頭へ
-      </a>
-
-      <div className="bg-brand-header">
-        <nav
-          aria-label="フッター"
-          className="mx-auto grid max-w-[1000px] grid-cols-1 gap-8 px-6 py-10 sm:grid-cols-3"
-        >
-          {footerColumns.map((column) => (
-            <div key={column.title} className="flex flex-col gap-3">
-              <h2 className="text-base font-bold text-brand-on-header">
-                {column.title}
-              </h2>
-              <ul className="flex flex-col">
-                {column.links.map((link) => (
-                  <li key={link.label}>
-                    <FooterLinkItem link={link} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </nav>
-
-        <div className="border-brand-header-hover border-t">
-          <div className="mx-auto flex max-w-[1000px] items-center justify-center px-6 py-6">
-            <Link
-              href={routes.home()}
-              aria-label={`${SITE.NAME} トップページ`}
-              className="flex items-center gap-2 rounded-sm border border-transparent px-2 py-1 hover:border-brand-on-header"
-            >
-              <Image src="/img/logo.svg" alt="" width={32} height={32} />
-              <span className="flex flex-col leading-tight">
-                <span className="text-base font-extrabold text-brand-on-header">
-                  {SITE.NAME}
-                </span>
-                <span className="text-[11px] font-bold text-brand-accent sm:text-xs">
-                  {SITE.CATCHPHRASE}
-                </span>
+    <footer
+      data-surface="dark"
+      className="bg-brand-header text-brand-on-header"
+    >
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 pt-10 pb-10">
+        <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:justify-between">
+          <Link
+            href={routes.home()}
+            aria-label={`${SITE.NAME} トップページ`}
+            className="flex shrink-0 items-center gap-2.5 rounded-2xl bg-white px-4 py-2 text-mirai-text shadow-sm"
+          >
+            <Image src="/img/logo.svg" alt="" width={28} height={28} />
+            <span className="flex flex-col leading-tight">
+              <span className="text-base font-extrabold">{SITE.NAME}</span>
+              <span className="text-[11px] text-mirai-text-muted">
+                {SITE.CATCHPHRASE}
               </span>
-            </Link>
-          </div>
-        </div>
-      </div>
+            </span>
+          </Link>
 
-      <div className="bg-brand-header-deep">
-        <div className="mx-auto flex max-w-[1000px] flex-col items-center gap-1.5 px-6 py-6 pb-10 text-center text-xs text-brand-on-header-muted">
+          <nav aria-label="フッター" className="max-w-2xl">
+            <ul className="flex flex-wrap justify-center gap-x-5 gap-y-1 md:justify-end">
+              {footerSiteLinks.map((link) => (
+                <li key={link.href}>
+                  <FooterLinkItem link={link} />
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+
+        <ul className="flex flex-wrap justify-center gap-x-5 gap-y-1 md:justify-end">
+          {footerExternalLinks.map((link) => (
+            <li key={link.href}>
+              <FooterLinkItem link={link} />
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex flex-col items-center gap-1.5 border-brand-header-hover border-t pt-6 text-center text-xs leading-relaxed text-brand-on-header-muted">
+          <p>
+            掲載している議案の情報は、新宿区議会が公開している資料をもとに整理したものです。新宿区・新宿区議会の公式サービスではありません。
+          </p>
           <p>{SITE.DISCLAIMER}</p>
           <p>
             このアプリは
@@ -94,6 +89,14 @@ export function Footer() {
             をもとに作成しています
           </p>
           <p>{SITE.COPYRIGHT}</p>
+          {/* ヘッダーに id="top" を付けている */}
+          <a
+            href="#top"
+            className="mt-3 inline-flex min-h-11 items-center gap-1 rounded-full px-3 font-bold text-brand-on-header hover:underline"
+          >
+            <ArrowUp className="size-3.5" aria-hidden />
+            ページの先頭へ
+          </a>
         </div>
       </div>
     </footer>
@@ -101,8 +104,8 @@ export function Footer() {
 }
 
 /**
- * フッターのリンク1つ。縦に並ぶので、押し間違えないよう1行の高さを 44px 取る
- * （広い画面では少し詰める）。
+ * フッターのリンク1つ。折り返して並ぶので、押し間違えないよう1行の高さを
+ * 44px 取る（広い画面では少し詰める）。
  */
 function FooterLinkItem({ link }: { link: FooterLink }) {
   return (
@@ -113,6 +116,7 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
       className="inline-flex min-h-11 items-center gap-1 text-sm text-brand-on-header-muted hover:text-brand-on-header hover:underline sm:min-h-9"
     >
       {link.label}
+      {link.comingSoon && <ComingSoonTag tone="dark" />}
       {link.external && (
         <>
           <ExternalLink className="size-3" aria-hidden />

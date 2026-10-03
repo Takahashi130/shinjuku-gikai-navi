@@ -105,6 +105,7 @@ describe("getMainLayoutKind", () => {
     "/kokkai/r8-teirei-3/bills",
     "/terms",
     "/privacy",
+    "/upcoming/live",
   ])("%s は画面幅いっぱいに使う", (pathname) => {
     expect(getMainLayoutKind(pathname)).toBe("wide");
   });

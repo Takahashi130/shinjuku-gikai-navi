@@ -4,12 +4,18 @@
  * レポートの OG 画像（/api/og/report。Satori は CSS 変数を読めない）と、
  * ブラウザのテーマカラー（site.ts の THEME_COLOR）が使う。
  *
- * 値は web/src/app/globals.css の :root の --brand-* と同じにすること。
+ * headerSurface 以外の値は web/src/app/globals.css の :root の --brand-* と
+ * 同じにすること。
  * 片方を変えたら、もう片方も変える（brand-colors.test.ts が食い違いを検出する）。
  * 画像の配色は scripts/brand-assets/gen-brand-assets.mjs が持っている。
  */
 export const BRAND_COLORS = {
-  /** ヘッダー上段など濃色の帯（--brand-header） */
+  /**
+   * ヘッダーの地の色（白。header-client.tsx の bg-white）。配色を差し替えても
+   * 変えない白なので、CSS 変数は持たない。ブラウザのテーマカラーに使う。
+   */
+  headerSurface: "#ffffff",
+  /** お知らせ帯・フッターなど濃色の帯（--brand-header） */
   header: "#1b1f24",
   /** 濃色の帯の上の文字（--brand-on-header） */
   onHeader: "#ffffff",
@@ -21,8 +27,11 @@ export const BRAND_COLORS = {
   link: "#0f766e",
 } as const;
 
-/** BRAND_COLORS のキーと、globals.css の CSS 変数の対応。 */
-export const BRAND_COLOR_CSS_VARS: Record<keyof typeof BRAND_COLORS, string> = {
+/** BRAND_COLORS のキーと、globals.css の CSS 変数の対応（白の headerSurface は除く）。 */
+export const BRAND_COLOR_CSS_VARS: Record<
+  Exclude<keyof typeof BRAND_COLORS, "headerSurface">,
+  string
+> = {
   header: "--brand-header",
   onHeader: "--brand-on-header",
   accent: "--brand-accent",
