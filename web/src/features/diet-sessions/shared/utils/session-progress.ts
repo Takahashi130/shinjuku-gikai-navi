@@ -63,3 +63,12 @@ function toDayStart(date: string): number {
     Number(matched[3])
   );
 }
+
+/**
+ * 閉会までの残り日数を、ヘッダーのピルやバナーに出す短い文にする。
+ * 当日（0日）は「あと0日」と出すと閉会済みに読めるので、言い方を変える。
+ */
+export function formatDaysLeft(daysLeft: number): string {
+  if (!Number.isFinite(daysLeft) || daysLeft <= 0) return "本日閉会予定";
+  return `閉会まであと${Math.floor(daysLeft)}日`;
+}

@@ -1,46 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { countTagChipItems, toTagChipItems } from "./tag-chip-items";
+import { countTagChipItems } from "./tag-chip-items";
 
 const tag = (id: string) => ({ id, label: id });
 const bill = (...tags: string[]) => ({ tags: tags.map(tag) });
-
-describe("toTagChipItems", () => {
-  it("グループの件数をそのまま出す", () => {
-    const items = toTagChipItems([
-      { tag: tag("暮らし"), bills: [1, 2, 3] },
-      { tag: tag("税金"), bills: [1] },
-    ]);
-
-    expect(items).toEqual([
-      { id: "暮らし", label: "暮らし", count: 3 },
-      { id: "税金", label: "税金", count: 1 },
-    ]);
-  });
-
-  // 選んでも何も出ないチップを並べる意味がない。
-  it("0件のタグは落とす", () => {
-    const items = toTagChipItems([
-      { tag: tag("暮らし"), bills: [1] },
-      { tag: tag("エネルギー"), bills: [] },
-    ]);
-
-    expect(items.map((i) => i.id)).toEqual(["暮らし"]);
-  });
-
-  it("渡した順を保つ", () => {
-    const items = toTagChipItems([
-      { tag: tag("c"), bills: [1] },
-      { tag: tag("a"), bills: [1] },
-      { tag: tag("b"), bills: [1] },
-    ]);
-
-    expect(items.map((i) => i.id)).toEqual(["c", "a", "b"]);
-  });
-
-  it("空なら空", () => {
-    expect(toTagChipItems([])).toEqual([]);
-  });
-});
 
 describe("countTagChipItems", () => {
   it("渡した議案からタグごとに数える", () => {

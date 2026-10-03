@@ -18,10 +18,12 @@
     "typecheck": "pnpm -r run typecheck",
     "lint": "biome format . && biome lint .",
     "lint:fix": "biome format --write . && biome lint --write .",
+    "brand:assets": "node scripts/brand-assets/gen-brand-assets.mjs",
     "postinstall": "npx simple-git-hooks"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.11",
+    "@resvg/resvg-js": "^2.6.2",
     "@supabase/supabase-js": "^2.49.4",
     "dotenv-cli": "^7.4.2",
     "lint-staged": "^15.5.2",

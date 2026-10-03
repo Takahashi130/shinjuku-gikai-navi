@@ -1,11 +1,14 @@
 import { SITE } from "@/config/site";
+import { cn } from "@/lib/utils";
 
-export function BillDisclaimer() {
+export function BillDisclaimer({ className }: { className?: string }) {
   return (
-    <div className="space-y-6 pt-4 pb-10">
+    <div className={cn("space-y-4", className)}>
       {/* データの出典について */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-bold text-black">掲載コンテンツについて</h3>
+      <div className="space-y-1.5">
+        <h3 className="text-sm font-bold text-mirai-text">
+          掲載コンテンツについて
+        </h3>
         <p className="text-xs leading-relaxed text-mirai-text-note">
           掲載されている議案の情報は、新宿区議会が公開している資料をもとに、
           {SITE.NAME}
@@ -14,8 +17,8 @@ export function BillDisclaimer() {
       </div>
 
       {/* 掲載コンテンツについての免責事項 */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-bold text-black">免責事項</h3>
+      <div className="space-y-1.5">
+        <h3 className="text-sm font-bold text-mirai-text">免責事項</h3>
         <p className="text-xs leading-relaxed text-mirai-text-note">
           本サイトで公開する情報は、可能な限り正確かつ最新の情報を反映するよう努めていますが、その正確性・完全性・即時性について保証するものではありません。正確な情報は、新宿区議会の公式資料をご確認ください。
         </p>

@@ -16,20 +16,28 @@ export function getCardStatusLabel(status: BillStatusEnum): string {
   }
 }
 
-/** ステータスに対応するBadgeのvariantを取得 */
-export function getStatusVariant(
-  status: BillStatusEnum
-): "light" | "default" | "dark" | "muted" {
+/** ステータスのバッジの見た目。Badge の variant 名と対応する。 */
+export type BillStatusVariant =
+  | "status-deliberating"
+  | "status-enacted"
+  | "status-rejected"
+  | "status-pending";
+
+/**
+ * ステータスに対応するBadgeのvariantを取得。
+ * 可決は緑系・否決は赤系にして、会派の賛成・反対の色と系統を揃える。
+ */
+export function getStatusVariant(status: BillStatusEnum): BillStatusVariant {
   switch (status) {
     case "introduced":
     case "in_originating_house":
     case "in_receiving_house":
-      return "light";
+      return "status-deliberating";
     case "enacted":
-      return "default";
+      return "status-enacted";
     case "rejected":
-      return "dark";
+      return "status-rejected";
     default:
-      return "muted";
+      return "status-pending";
   }
 }

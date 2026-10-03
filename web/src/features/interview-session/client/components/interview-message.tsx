@@ -1,5 +1,5 @@
 import type { UIMessage } from "@ai-sdk/react";
-import Image from "next/image";
+import { Bot } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { useMemo } from "react";
 import { SystemMessage } from "@/features/chat/client/components/system-message";
@@ -37,13 +37,13 @@ export function InterviewMessage({
   return (
     <div className="flex flex-col gap-1">
       <div className="flex-shrink-0">
-        <Image
-          src="/icons/ai-chat.svg"
-          alt="AI"
-          width={36}
-          height={36}
-          className="rounded-full"
-        />
+        <span
+          role="img"
+          aria-label="AI"
+          className="flex size-9 items-center justify-center rounded-full bg-brand-accent-tint text-mirai-text"
+        >
+          <Bot className="size-5" aria-hidden />
+        </span>
       </div>
       <div className="flex-1 space-y-2">
         <SystemMessage

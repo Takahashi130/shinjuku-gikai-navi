@@ -21,7 +21,7 @@ export default function TermsPage() {
       title="利用規約"
       enLabel="Terms of Service"
       description={`${SITE.NAME}（以下「本サービス」といいます）の利用条件を定めるものです。`}
-      className="bg-transparent pt-24 md:pt-12"
+      className="py-8 md:py-12"
     >
       <Container className="space-y-8">
         <LegalParagraph className="text-sm text-mirai-text-muted">

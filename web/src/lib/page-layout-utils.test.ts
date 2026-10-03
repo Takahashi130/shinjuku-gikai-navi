@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   extractBillIdFromPath,
+  getMainLayoutKind,
   isInterviewPage,
   isInterviewSection,
   isMainPage,
@@ -92,5 +93,46 @@ describe("extractBillIdFromPath", () => {
 
   it("returns null for the top page", () => {
     expect(extractBillIdFromPath("/")).toBeNull();
+  });
+});
+
+describe("getMainLayoutKind", () => {
+  it.each([
+    "/",
+    "/bills",
+    "/bills/abc-123",
+    "/preview/bills/abc-123",
+    "/kokkai/r8-teirei-3/bills",
+    "/terms",
+    "/privacy",
+  ])("%s は画面幅いっぱいに使う", (pathname) => {
+    expect(getMainLayoutKind(pathname)).toBe("wide");
+  });
+
+  it.each([
+    "/bills/abc-123/interview",
+    "/bills/abc-123/interview/disclosure",
+    "/bills/abc-123/opinions",
+    "/bills/abc-123/topics",
+    "/bills/abc-123/topics/topic-1",
+    "/report/report-1",
+    "/developers",
+  ])("%s は従来の1カラムのまま", (pathname) => {
+    expect(getMainLayoutKind(pathname)).toBe("narrow");
+  });
+
+  it("インタビューのチャットは画面の高さに収める", () => {
+    expect(getMainLayoutKind("/bills/abc-123/interview/chat")).toBe(
+      "interview-chat"
+    );
+    expect(getMainLayoutKind("/preview/bills/abc-123/interview/chat")).toBe(
+      "interview-chat"
+    );
+  });
+
+  // 末尾スラッシュや未知のページは、崩れの少ない従来の組み方に倒す。
+  it("知らないページは narrow にする", () => {
+    expect(getMainLayoutKind("/bills/")).toBe("narrow");
+    expect(getMainLayoutKind("/unknown")).toBe("narrow");
   });
 });

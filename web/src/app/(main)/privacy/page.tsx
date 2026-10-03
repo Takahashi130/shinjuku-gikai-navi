@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <LegalPageLayout
-      className="bg-transparent pt-24 md:pt-12"
+      className="py-8 md:py-12"
       title="プライバシーポリシー"
       enLabel="Privacy Policy"
       description={`${SITE.NAME}（以下「本サービス」といいます）の運営者（以下「運営者」といいます）は、利用者の情報を次のとおり取り扱います。`}

@@ -12,13 +12,11 @@ import { DifficultySelector } from "./difficulty-selector";
 describe("DifficultySelector", () => {
   it("normalでもhardでも同じラベルを出す", () => {
     const { unmount } = render(<DifficultySelector currentLevel="normal" />);
-    expect(screen.getByText("説明をもっと")).toBeInTheDocument();
-    expect(screen.getByText("詳しく")).toBeInTheDocument();
+    expect(screen.getByText("説明をもっと詳しく")).toBeInTheDocument();
     unmount();
 
     render(<DifficultySelector currentLevel="hard" />);
-    expect(screen.getByText("説明をもっと")).toBeInTheDocument();
-    expect(screen.getByText("詳しく")).toBeInTheDocument();
+    expect(screen.getByText("説明をもっと詳しく")).toBeInTheDocument();
   });
 
   it("hardのときだけトグルがオンになる", () => {

@@ -1,7 +1,6 @@
 "use client";
 
-import { ArrowRight, Lock } from "lucide-react";
-import Image from "next/image";
+import { ArrowRight, CircleCheck, Lock } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,12 +20,9 @@ interface MakePrivateModalProps {
 function CheckListItem({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-start gap-3">
-      <Image
-        src="/icons/check-circle.svg"
-        alt=""
-        width={20}
-        height={20}
-        className="flex-shrink-0 mt-1"
+      <CircleCheck
+        className="mt-1 size-5 shrink-0 text-brand-link"
+        aria-hidden
       />
       <p className="text-sm font-medium leading-relaxed">{children}</p>
     </div>

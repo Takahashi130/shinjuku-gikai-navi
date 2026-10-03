@@ -33,7 +33,7 @@ export function BillsPagination({ pageInfo, prevHref, nextHref }: Props) {
   return (
     <nav
       aria-label="ページ送り"
-      className="mt-6 flex flex-col items-center gap-3"
+      className="flex flex-col items-center gap-3 rounded-md bg-white px-4 py-4"
     >
       {/*
         「全N件中」だと、絞り込み中でも全議案の件数に読める。上の「N件の議案」
@@ -48,7 +48,7 @@ export function BillsPagination({ pageInfo, prevHref, nextHref }: Props) {
         「ページ」を2行目に送る。ボタンを固定幅にすると、360px 以下の画面で
         横にはみ出す。
       */}
-      <div className="flex w-full items-center justify-between gap-2 sm:gap-3">
+      <div className="flex w-full max-w-md items-center justify-between gap-2 sm:gap-3">
         <PageButton href={prevHref} direction="prev" />
         <p className="min-w-0 text-center text-sm leading-tight font-bold text-mirai-text">
           {/* 「3 スラッシュ 32」と読まれて意味が取りにくいので、読み上げには文で渡す */}

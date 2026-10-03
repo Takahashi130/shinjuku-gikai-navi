@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SendHorizontal } from "lucide-react";
 import type { ChangeEvent } from "react";
 import { useEffect, useRef } from "react";
 import {
@@ -11,6 +11,7 @@ import {
   type PromptInputMessage,
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
+import { Button } from "@/components/ui/button";
 import { useIsDesktop } from "@/hooks/use-is-desktop";
 
 interface InterviewChatInputProps {
@@ -66,19 +67,16 @@ export function InterviewChatInput({
             className="!min-h-0 min-w-0 wrap-anywhere text-sm font-medium leading-[1.5em] tracking-[0.01em] placeholder:text-mirai-text-placeholder placeholder:font-medium placeholder:leading-[1.5em] placeholder:tracking-[0.01em] placeholder:no-underline border-none focus:ring-0 bg-transparent shadow-none !py-2 !px-0"
           />
         </PromptInputBody>
-        <button
+        {/* アクセント地にチャコールの矢印（主要な操作のボタンと同じ見た目） */}
+        <Button
           type="submit"
+          size="icon"
+          aria-label="送信"
           disabled={!input || isResponding}
-          className="flex-shrink-0 w-10 h-10 disabled:opacity-50"
+          className="size-10 shrink-0 rounded-full"
         >
-          <Image
-            src="/icons/send-button-icon.svg"
-            alt="送信"
-            width={40}
-            height={40}
-            className="w-full h-full"
-          />
-        </button>
+          <SendHorizontal className="size-5" aria-hidden />
+        </Button>
       </PromptInput>
       <PromptInputError status={error ? "error" : undefined} error={error} />
       {/* {showHint && <PromptInputHint />} */}

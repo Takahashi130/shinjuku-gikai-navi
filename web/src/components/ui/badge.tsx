@@ -22,6 +22,14 @@ const badgeVariants = cva(
         dark: "border-transparent bg-gray-300 text-black [a&]:hover:bg-gray-400",
         light:
           "border-primary bg-transparent text-primary [a&]:hover:opacity-90",
+        // 議案のステータス。可決=緑系・否決=赤系（会派の賛成・反対と同じ系統）
+        "status-deliberating":
+          "border-brand-link/30 bg-brand-accent-tint text-brand-link",
+        "status-enacted":
+          "border-stance-for/30 bg-stance-for-bg text-stance-for-strong",
+        "status-rejected":
+          "border-stance-against/30 bg-stance-against-bg text-stance-against",
+        "status-pending": "border-mirai-border bg-white text-mirai-text-muted",
       },
     },
     defaultVariants: {

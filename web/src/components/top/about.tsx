@@ -1,39 +1,16 @@
-import Image from "next/image";
 import { SITE } from "@/config/site";
 
+/** トップの最後に置く「新宿区議会ナビとは」。 */
 export function About() {
   return (
-    <div className="py-10">
-      <div className="flex flex-col gap-4">
-        {/* ヘッダー */}
-        <div className="flex flex-col gap-4">
-          <h2>
-            <Image
-              src="/icons/about-typography.svg"
-              alt="About"
-              width={143}
-              height={36}
-              priority
-            />
-          </h2>
-          <p className="text-sm font-bold text-primary-accent">
-            {SITE.NAME}とは
-          </p>
-        </div>
-
-        {/* コンテンツ */}
-        <div className="flex flex-col gap-3">
-          <h3 className="text-2xl font-bold leading-[43.2px]">
-            新宿区議会での議論を
-            <br />
-            できる限りわかりやすく
-          </h3>
-          <p className="text-[15px] leading-[28px] text-black">
-            {SITE.NAME}
-            は、新宿区議会でどんな議案が審議され、どの会派が賛成・反対したのかをわかりやすく伝えるアプリです。区民が区政を身近に感じ、参加できるようにすることを目指して、継続的にアップデートしていきます。
-          </p>
-        </div>
-      </div>
+    <div className="flex flex-col gap-2">
+      <h2 className="text-lg font-bold text-mirai-text md:text-xl">
+        {SITE.NAME}とは
+      </h2>
+      <p className="text-sm leading-relaxed text-mirai-text">
+        {SITE.NAME}
+        は、新宿区議会でどんな議案が審議され、どの会派が賛成・反対したのかをわかりやすく伝えるアプリです。区民が議案を知り、自分の考えを示し、議会の議決と見比べられること（直接民主主義をあなたの手に）を目指して、継続的にアップデートしていきます。
+      </p>
     </div>
   );
 }

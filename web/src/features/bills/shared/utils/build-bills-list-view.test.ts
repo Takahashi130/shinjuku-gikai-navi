@@ -22,6 +22,8 @@ const bills: BillListItem[] = Array.from({ length: 40 }, (_, i) => ({
   updated_at: "2026-06-01T00:00:00Z",
   thumbnail_url: null,
   is_review_completed: false,
+  // 5の倍数番目は会派の賛否が分かれた議案
+  is_featured: i % 5 === 0,
   bill_content: { title: `議案${i}のタイトル`, summary: "" },
   tags: i % 4 === 0 ? [zei] : [kyoiku],
   hasPublicInterview: false,
@@ -154,6 +156,31 @@ describe("buildBillsListView", () => {
     expect(ids(view.pageBills)).toEqual(["bill-1"]);
     expect(view.statusCounts).toMatchObject({ all: 1, deliberating: 1 });
     expect(view.tagChips[0]).toMatchObject({ id: "all", count: 1 });
+  });
+
+  // 0, 5, 10, ..., 35 の8件。偶数番目（0, 10, 20, 30）が成立、残りが審議中。
+  it("賛否が分かれた議案のみの絞り込みは件数にも効く", () => {
+    const view = buildBillsListView(
+      bills,
+      featuredTags,
+      params({ splitOnly: true })
+    );
+
+    expect(view.statusCounts).toMatchObject({
+      all: 8,
+      enacted: 4,
+      deliberating: 4,
+    });
+    expect(ids(view.pageBills)).toEqual([
+      "bill-35",
+      "bill-30",
+      "bill-25",
+      "bill-20",
+      "bill-15",
+      "bill-10",
+      "bill-5",
+      "bill-0",
+    ]);
   });
 
   // 絞り込みで件数が減ったあとに古いページ番号の URL が開かれても空にしない。

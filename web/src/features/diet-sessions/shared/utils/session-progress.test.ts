@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateSessionProgress } from "./session-progress";
+import { calculateSessionProgress, formatDaysLeft } from "./session-progress";
 
 const session = { start_date: "2026-02-18", end_date: "2026-07-17" };
 /**
@@ -78,5 +78,22 @@ describe("calculateSessionProgress", () => {
       percentage: 0,
       daysLeft: 0,
     });
+  });
+});
+
+describe("formatDaysLeft", () => {
+  it("残り日数を文にする", () => {
+    expect(formatDaysLeft(12)).toBe("閉会まであと12日");
+    expect(formatDaysLeft(1)).toBe("閉会まであと1日");
+  });
+
+  // 「あと0日」だと閉会済みに読めるので、当日は言い方を変える。
+  it("当日は「本日閉会予定」にする", () => {
+    expect(formatDaysLeft(0)).toBe("本日閉会予定");
+  });
+
+  it("負数や数でない値も当日扱いにして崩さない", () => {
+    expect(formatDaysLeft(-3)).toBe("本日閉会予定");
+    expect(formatDaysLeft(Number.NaN)).toBe("本日閉会予定");
   });
 });

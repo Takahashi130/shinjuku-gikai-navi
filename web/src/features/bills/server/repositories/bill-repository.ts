@@ -42,6 +42,7 @@ export async function findPublishedBillsForList(
           updated_at,
           thumbnail_url,
           is_review_completed,
+          is_featured,
           bill_contents!inner (
             title,
             summary

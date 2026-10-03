@@ -89,7 +89,10 @@ export function buildContent(
   ].join("\n");
 }
 
-/** 賛成と反対に会派が分かれた議案か（「注目」として表示する） */
+/**
+ * 賛成と反対に会派が分かれた議案か。bills.is_featured に入れ、公開サイトでは
+ * 「賛否が分かれた」の目印と絞り込みに使う。
+ */
 export function isSplitVote(bill: MatchedBill): boolean {
   const votes = Object.values(bill.result.votes);
   return votes.includes("for") && votes.includes("against");

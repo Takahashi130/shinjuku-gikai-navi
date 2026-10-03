@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 import { useId, useState } from "react";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 import { setDifficultyLevel } from "../../server/actions/set-difficulty-level";
 import type { DifficultyLevelEnum } from "../../shared/types";
 import {
@@ -15,6 +16,7 @@ interface DifficultySelectorProps {
   labelStyle?: CSSProperties;
   scrollToTop?: boolean;
   maintainScrollFromBottom?: boolean;
+  className?: string;
 }
 
 export function DifficultySelector({
@@ -22,6 +24,7 @@ export function DifficultySelector({
   labelStyle,
   scrollToTop,
   maintainScrollFromBottom,
+  className,
 }: DifficultySelectorProps) {
   const [selectedLevel, setSelectedLevel] =
     useState<DifficultyLevelEnum>(currentLevel);
@@ -69,10 +72,9 @@ export function DifficultySelector({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={cn("flex items-center gap-2", className)}>
       <span className="text-sm font-bold" style={labelStyle}>
-        <span className="hidden md:inline-block">説明をもっと</span>
-        詳しく
+        説明をもっと詳しく
       </span>
       <Switch
         id={`${uniqueId}-difficulty-toggle`}

@@ -160,8 +160,10 @@ export function InterviewChatClient({
   );
 
   return (
-    <div className="h-dvh md:h-[calc(100dvh-96px)] bg-mirai-surface-light">
-      <div className="flex flex-col h-full pt-23 md:pt-10 bg-white md:rounded-t-[36px] md:px-12">
+    // 高さは外枠（MainLayout の interview-chat）が画面に収めている。
+    // ヘッダーは固定ではなく通常の流れに置いているので、ここで上余白を取らない。
+    <div className="min-h-0 flex-1 bg-mirai-surface-light">
+      <div className="flex flex-col h-full pt-4 md:pt-10 bg-white md:rounded-t-[36px] md:px-12">
         {showProgressBar && progress && (
           <div className="px-4 pb-1">
             <InterviewProgressBar

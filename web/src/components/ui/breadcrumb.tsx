@@ -13,16 +13,23 @@ interface BreadcrumbProps {
 
 export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
-    <nav className="flex flex-wrap items-center gap-2 text-sm text-gray-800">
+    <nav
+      aria-label="パンくずリスト"
+      className="flex flex-wrap items-center gap-2 text-sm text-mirai-text-secondary"
+    >
       {items.map((item, index) => (
         <span key={item.label} className="flex items-center gap-2">
-          {index > 0 && <ChevronRight className="w-4 h-4" />}
+          {index > 0 && <ChevronRight className="w-4 h-4" aria-hidden />}
           {item.href ? (
-            <Link href={item.href as Route} className="hover:underline">
+            /* 文字の高さのままだと押しにくいので、行の高さを変えずに押せる範囲を上下に広げる */
+            <Link
+              href={item.href as Route}
+              className="-my-3 py-3 hover:text-brand-link hover:underline"
+            >
               {item.label}
             </Link>
           ) : (
-            <span>{item.label}</span>
+            <span aria-current="page">{item.label}</span>
           )}
         </span>
       ))}

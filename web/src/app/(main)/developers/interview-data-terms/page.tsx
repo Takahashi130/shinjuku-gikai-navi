@@ -20,7 +20,7 @@ export default function InterviewDataTermsPage() {
     <LegalPageLayout
       title="新宿区議会ナビAIインタビューデータ利用規約"
       enLabel="Data Terms"
-      className="pt-24 md:pt-12"
+      className="pt-8 md:pt-12"
     >
       <Container className="space-y-10">
         <LegalParagraph className="text-right">

@@ -1,9 +1,10 @@
-import { BillCard } from "@/features/bills/client/components/bill-list/bill-card";
+import { BillSearchCard } from "@/features/bills/client/components/bill-list/bill-search-card";
+import { BillTile } from "@/features/bills/client/components/bill-list/bill-tile";
 import { ComponentShowcase } from "../../../_components/component-showcase";
 import { PreviewSection } from "../../../_components/preview-section";
 import { allBillStatuses, createMockBill } from "../../../_lib/mock-data";
 
-const SAMPLE_THUMBNAIL = "/img/sample-bill-thumbnail.webp";
+const SAMPLE_THUMBNAIL = "/img/thumbnails/budget.png";
 
 export default function BillCardPreview() {
   const defaultBill = createMockBill({
@@ -17,9 +18,9 @@ export default function BillCardPreview() {
     bill_content: {
       id: "mock-content-featured",
       bill_id: "mock-featured",
-      title: "注目の議案タイトル",
+      title: "会派の賛否が分かれた議案のタイトル",
       summary:
-        "注目フラグが立っている議案のカード表示。注目バッジが表示されます。",
+        "is_featured が立っている議案のカード表示。「賛否が分かれた」の目印が表示されます。",
       content: "",
       difficulty_level: "normal",
       created_at: "2026-02-15T00:00:00Z",
@@ -65,57 +66,78 @@ export default function BillCardPreview() {
     },
   });
 
+  const samples = [
+    defaultBill,
+    featuredBill,
+    longTitleBill,
+    longDescriptionBill,
+  ];
+
   return (
     <>
-      <h1 className="text-3xl font-bold text-mirai-text mb-8">BillCard</h1>
+      <h1 className="text-3xl font-bold text-mirai-text mb-4">
+        BillTile / BillSearchCard
+      </h1>
+      {/*
+        BillTile と BillSearchCard は自分で議案詳細へのリンクになる。ここの議案は
+        プレビュー用の架空のもの（id: mock-*）なので、押しても存在しない議案の
+        ページになり、トップへ戻される。
+      */}
+      <p className="mb-8 rounded-md border border-mirai-border bg-white px-4 py-3 text-sm text-mirai-text-secondary">
+        ※
+        ここに並べている議案はプレビュー用の架空のものです。カードは議案詳細へのリンクですが、押しても存在しない議案のページ（トップへ戻されます）になります。
+      </p>
 
-      <ComponentShowcase title="Default" description="基本的な議案カード">
-        <PreviewSection label="通常表示">
-          <BillCard bill={defaultBill} />
-        </PreviewSection>
-      </ComponentShowcase>
-
-      <ComponentShowcase title="Featured" description="注目バッジ付き">
-        <PreviewSection label="is_featured: true">
-          <BillCard bill={featuredBill} />
-        </PreviewSection>
+      <ComponentShowcase
+        title="BillTile"
+        description="トップの横スクロールの列に並べる縦長のカード"
+      >
+        <ul className="flex flex-wrap gap-4">
+          {samples.map((bill) => (
+            <li key={bill.id} className="w-48">
+              <BillTile bill={bill} />
+            </li>
+          ))}
+          <li className="w-48">
+            <BillTile
+              bill={{ ...defaultBill, id: "no-thumb", thumbnail_url: null }}
+            />
+          </li>
+        </ul>
       </ComponentShowcase>
 
       <ComponentShowcase
-        title="Long Title"
-        description="タイトルが長い場合の表示"
+        title="BillSearchCard"
+        description="議案一覧（/bills）・会期別一覧の1行。is_featured は「賛否が分かれた」の目印になる"
       >
-        <PreviewSection label="長いタイトル">
-          <BillCard bill={longTitleBill} />
-        </PreviewSection>
-      </ComponentShowcase>
-
-      <ComponentShowcase
-        title="Long Description"
-        description="要約文が長い場合の表示（132文字で切り詰め）"
-      >
-        <PreviewSection label="長い要約文">
-          <BillCard bill={longDescriptionBill} />
-        </PreviewSection>
+        <ul className="divide-y divide-mirai-border">
+          {samples.map((bill) => (
+            <li key={bill.id}>
+              <BillSearchCard bill={bill} />
+            </li>
+          ))}
+        </ul>
       </ComponentShowcase>
 
       <ComponentShowcase
         title="All Statuses"
         description="全議案ステータスの表示"
       >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ul className="flex flex-wrap gap-4">
           {allBillStatuses.map((status) => (
-            <PreviewSection key={status} label={`status: ${status}`}>
-              <BillCard
-                bill={createMockBill({
-                  id: `mock-${status}`,
-                  status,
-                  thumbnail_url: SAMPLE_THUMBNAIL,
-                })}
-              />
-            </PreviewSection>
+            <li key={status} className="w-48">
+              <PreviewSection label={`status: ${status}`}>
+                <BillTile
+                  bill={createMockBill({
+                    id: `mock-${status}`,
+                    status,
+                    thumbnail_url: SAMPLE_THUMBNAIL,
+                  })}
+                />
+              </PreviewSection>
+            </li>
           ))}
-        </div>
+        </ul>
       </ComponentShowcase>
     </>
   );

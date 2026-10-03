@@ -295,6 +295,12 @@ export function BillFormFields({
         )}
       />
 
+      {/*
+        is_featured は公開サイトで「会派の賛否が分かれた」の目印と絞り込みに
+        使っている。取り込み（shinjuku-importer の isSplitVote）が、賛成と反対の
+        両方に会派がある議案に立てる。全会一致の議案に付けると、公開サイトが
+        事実と違う表示をするので、手で付けるための項目ではない。
+      */}
       <FormField
         control={control}
         name="is_featured"
@@ -307,9 +313,11 @@ export function BillFormFields({
               />
             </FormControl>
             <div className="space-y-1 leading-none">
-              <FormLabel>注目の議案</FormLabel>
+              <FormLabel>
+                会派の賛否が分かれた議案（取り込みで自動設定）
+              </FormLabel>
               <FormDescription>
-                トップページなどで優先的に表示されます
+                データの取り込みで、賛成と反対の両方に会派がある議案に自動で付きます。公開サイトでは「賛否が分かれた」と表示し、絞り込みにも使います。取り込みの誤りを直すとき以外は変更しないでください。
               </FormDescription>
             </div>
           </FormItem>

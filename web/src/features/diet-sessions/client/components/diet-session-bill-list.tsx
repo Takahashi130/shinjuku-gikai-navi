@@ -1,6 +1,8 @@
 import { ExternalLink } from "lucide-react";
-import Image from "next/image";
+import type { Route } from "next";
+import Link from "next/link";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import { formatDateWithDots } from "@/lib/utils/date";
 import type { DietSession } from "../../shared/types";
 import { BillListWithStatusFilter } from "./bill-list-with-status-filter";
 
@@ -10,62 +12,41 @@ type Props = {
 };
 
 export function DietSessionBillList({ session, bills }: Props) {
-  const startDate = new Date(session.start_date);
-  const endDate = new Date(session.end_date);
-  const sessionDescription = `${startDate.getFullYear()}.${startDate.getMonth() + 1}月〜${endDate.getMonth() + 1}月に実施された${session.name}`;
-
   return (
-    <div className="flex flex-col gap-8">
-      {/* Archiveヘッダー */}
-      <div className="flex flex-col gap-1">
-        <h1>
-          <Image
-            src="/icons/archive-typography.svg"
-            alt="Archive"
-            width={156}
-            height={36}
-            priority
-          />
-        </h1>
-        <p className="text-sm font-bold text-primary-accent">
-          過去の会期に提出された議案
-        </p>
+    <div className="flex flex-col gap-3">
+      {/* 見出し。会期名・期間・件数 */}
+      <div className="flex flex-wrap items-end gap-x-4 gap-y-2 rounded-md bg-white px-4 py-3">
+        <div className="min-w-0">
+          <h1 className="text-lg font-bold text-mirai-text md:text-xl">
+            {session.name}の議案
+          </h1>
+          <p className="text-[13px] text-mirai-text-secondary">
+            {formatDateWithDots(session.start_date)} 〜{" "}
+            {formatDateWithDots(session.end_date)}・
+            <span className="font-bold">{bills.length}件</span>
+          </p>
+        </div>
+        {/* 区議会の会期ページへのリンク */}
+        {session.shugiin_url && (
+          <Link
+            href={session.shugiin_url as Route}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto inline-flex min-h-11 items-center gap-1 text-[13px] font-bold text-brand-link hover:text-brand-link-hover hover:underline"
+          >
+            新宿区議会の公式ページ
+            <ExternalLink className="h-3 w-3" aria-hidden />
+            <span className="sr-only">（新しいタブで開きます）</span>
+          </Link>
+        )}
       </div>
 
-      {/* セクションヘッダー */}
-      <div className="flex flex-col gap-0.5">
-        <h2 className="text-[22px] font-bold text-black leading-[1.48] flex items-center gap-4">
-          {session.name}の提出議案
-          <span>{bills.length}件</span>
-        </h2>
-        <p className="text-xs font-medium text-mirai-text">
-          {sessionDescription}
-        </p>
-      </div>
-
-      {/* フィルター付き議案リスト */}
       {bills.length === 0 ? (
-        <p className="text-center py-12 text-muted-foreground">
+        <p className="rounded-md bg-white py-12 text-center text-mirai-text-muted">
           この会期の議案はまだありません
         </p>
       ) : (
         <BillListWithStatusFilter bills={bills} />
-      )}
-
-      {/* 区議会の会期ページへのリンク */}
-      {session.shugiin_url && (
-        <div className="flex items-center gap-1 text-[13px] font-medium text-mirai-text">
-          {session.name}に提出された全ての議案は
-          <a
-            href={session.shugiin_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1"
-          >
-            新宿区議会の公式ページへ
-            <ExternalLink className="h-3 w-3" />
-          </a>
-        </div>
       )}
     </div>
   );

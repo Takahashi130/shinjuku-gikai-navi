@@ -88,7 +88,7 @@ function LinkRowBody({
 export default function DevelopersPage() {
   return (
     <div className="min-h-dvh bg-white">
-      <section className="py-12 pt-24 md:pt-12">
+      <section className="py-8 md:py-12">
         <Container className="space-y-10">
           {/* Team Mirai デザインシステムの節見出し: 英字ラベル + 日本語見出し */}
           <header className="space-y-2">

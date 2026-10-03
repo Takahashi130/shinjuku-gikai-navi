@@ -52,9 +52,9 @@ export function OpenDataApiReference() {
             --scalar-background-3: var(--color-mirai-surface-tag);
             --scalar-sidebar-background-1: var(--color-white);
             --scalar-color-accent: var(--color-mirai-brand-teal-hover);
-            /* サイト共通の浮動ヘッダーの下に潜り込まないよう、ヘッダー分の高さを
-               Scalarに伝える（(developers) レイアウトの pt-24 = 6rem と揃える） */
-            --scalar-custom-header-height: 6rem;
+            /* サイト共通のヘッダーは固定せず通常の流れに置いているので、
+               Scalarの固定要素はページ上端から始めてよい */
+            --scalar-custom-header-height: 0px;
           }
           /* 開いた直後にサイドバーのSearchと本文の上端が揃うよう、
              イントロセクションの上余白（既定48px）を詰める */

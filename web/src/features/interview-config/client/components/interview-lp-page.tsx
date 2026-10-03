@@ -1,4 +1,12 @@
-import { ArrowRight, Undo2 } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Ear,
+  Landmark,
+  type LucideIcon,
+  MessagesSquare,
+  Undo2,
+} from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,24 +33,18 @@ interface InterviewLPPageProps {
   userReports?: UserReportsResult | null;
 }
 
-const FEATURES: {
-  iconSrc: string;
-  iconSize: { w: number; h: number };
-  text: string;
-}[] = [
+// アイコンの色はトークン（text-brand-link）で付ける。配色を差し替えると追従する。
+const FEATURES: { icon: LucideIcon; text: string }[] = [
   {
-    iconSrc: "/icons/interview-ear.svg",
-    iconSize: { w: 21, h: 29 },
+    icon: Ear,
     text: "あなたの経験や考えをAIがチャットで深掘りします",
   },
   {
-    iconSrc: "/icons/interview-messages.svg",
-    iconSize: { w: 33, h: 26 },
+    icon: MessagesSquare,
     text: "寄せられた回答はアプリの改善や区政への提言に活用します",
   },
   {
-    iconSrc: "/icons/interview-landmark.svg",
-    iconSize: { w: 30, h: 29 },
+    icon: Landmark,
     text: "ご意見は新宿区議会や新宿区に届けられる可能性があります",
   },
 ];
@@ -104,11 +106,10 @@ function _InterviewLPHero({
         {FEATURES.map((feature) => (
           <div key={feature.text} className="flex items-center gap-4">
             <div className="flex-shrink-0 w-[54px] h-[54px] bg-white rounded-[30px] flex items-center justify-center">
-              <Image
-                src={feature.iconSrc}
-                alt=""
-                width={feature.iconSize.w}
-                height={feature.iconSize.h}
+              <feature.icon
+                className="size-7 text-brand-link"
+                strokeWidth={1.75}
+                aria-hidden
               />
             </div>
             <span className="text-[15px] font-medium text-black leading-[1.73] whitespace-pre-line">
@@ -218,13 +219,7 @@ function _InterviewThemesSection({
         {themes.map((theme) => (
           <div key={theme} className="flex gap-2">
             <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center">
-              <Image
-                src="/icons/check-icon.svg"
-                alt=""
-                width={24}
-                height={24}
-                className="object-contain mt-2"
-              />
+              <Check className="mt-2 size-6 text-brand-link" aria-hidden />
             </div>
             <span className="text-[15px] font-normal text-black leading-[1.87]">
               {theme}

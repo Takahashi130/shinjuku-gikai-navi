@@ -55,24 +55,53 @@
 
   --color-gray-300: #c7c7cc;
 
+  /*
+   * --- ブランド配色（値は下の :root の --brand-* で決める） ---
+   * コンポーネントからはこの名前（bg-brand-header, text-brand-link 等）で使う。
+   * 配色を差し替えるときは :root の値だけを変えればよい。
+   */
+  /* ヘッダー・フッターなど濃色の帯 */
+  --color-brand-header: var(--brand-header);
+  --color-brand-header-sub: var(--brand-header-sub);
+  --color-brand-header-deep: var(--brand-header-deep);
+  --color-brand-header-hover: var(--brand-header-hover);
+  /* トップの大きなバナーの地。ヘッダー下段の帯と見分けられる色にする */
+  --color-brand-hero: var(--brand-hero);
+  /* 濃色の帯の上の文字 */
+  --color-brand-on-header: var(--brand-on-header);
+  --color-brand-on-header-muted: var(--brand-on-header-muted);
+  /* アクセント。地の色・塗りとして使う（白地の文字色には使わない） */
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-hover: var(--brand-accent-hover);
+  --color-brand-accent-light: var(--brand-accent-light);
+  --color-brand-accent-tint: var(--brand-accent-tint);
+  /* アクセント地の上の文字 */
+  --color-brand-on-accent: var(--brand-on-accent);
+  /* 白地のリンク・強調（白地で 4.5:1 以上） */
+  --color-brand-link: var(--brand-link);
+  --color-brand-link-hover: var(--brand-link-hover);
+  /* 本文の背景（薄いグレー）。カードは白（bg-white / bg-card） */
+  --color-page: var(--page-bg);
+
   /* --- Mirai Design System Color Tokens --- */
 
   /* Text */
   --color-mirai-text: #1f2937;
   --color-mirai-text-secondary: #404040;
-  --color-mirai-text-muted: #8e8e93;
+  /* 白地・ページ背景のどちらでも 4.5:1 以上になる濃さにしている */
+  --color-mirai-text-muted: #646b75;
   --color-mirai-text-placeholder: #aeaeb2;
   --color-mirai-text-note: #4c4c4c;
   --color-mirai-text-subtle: #666666;
   --color-mirai-text-close: #9f9b9b;
 
   /* Surface / Background */
-  --color-mirai-surface: #f7f4f0;
+  --color-mirai-surface: #f3f4f6;
   --color-mirai-surface-light: #eeeeee;
   --color-mirai-surface-grouped: #f2f2f7;
   --color-mirai-surface-muted: #e5e5ea;
   --color-mirai-surface-tag: #e8e8e8;
-  --color-mirai-surface-warm: #eae6dd;
+  --color-mirai-surface-warm: #e5e7eb;
   --color-mirai-surface-gray: #f6f6f6;
 
   /* Border */
@@ -80,7 +109,9 @@
   --color-mirai-border-light: #b1b1b1;
   --color-mirai-border-muted: #bebcbc;
 
-  /* Stance semantic colors */
+  /* Stance semantic colors（賛成=緑系、反対=赤系） */
+  --color-stance-for: #15803d;
+  --color-stance-for-strong: #166534;
   --color-stance-for-bg: #ecfcf1;
   --color-stance-for-badge-start: #e2f6f3;
   --color-stance-for-badge-end: #eef6e2;
@@ -90,6 +121,11 @@
   --color-stance-against-badge-bg: #ffeaea;
   --color-stance-neutral: #805f34;
   --color-stance-neutral-badge-bg: #f7e8db;
+  /*
+   * 「会派の賛否が分かれた」の目印。賛成（緑）・反対（赤）のどちらでもない中立の色。
+   * 白地で 5.8:1、ページ背景で 4.9:1
+   */
+  --color-vote-split: #805f34;
 
   /* Reaction */
   --color-mirai-reaction-active: #dd425f;
@@ -103,47 +139,130 @@
 
   /* Progress */
   --color-mirai-progress-track: #d9d9d9;
-  --color-mirai-progress-fill: #a9e89d;
+  --color-mirai-progress-fill: var(--brand-accent);
 
-  /* Gradient endpoints */
-  --color-mirai-gradient-start: #f4a6c6;
-  --color-mirai-gradient-end: #fbe0eb;
+  /*
+   * 元のソフトウェアから引き継いだ「グラデーション」の名前。
+   * 元のブランドのティール→ミントのグラデーション（#64d8c6→#bcecd3）を
+   * 再現しないよう、始点と終点を同じアクセント色にして単色の塗りにしている。
+   * （bg-mirai-gradient / border-mirai-gradient / bg-mirai-light-gradient も単色）
+   */
+  --color-mirai-gradient-start: var(--brand-accent);
+  --color-mirai-gradient-end: var(--brand-accent);
 
-  /* ブランドカラー（トークン名は元のソフトウェアのまま） */
-  --color-mirai-brand-teal: #d4588f;
-  --color-mirai-brand-teal-hover: #9c2a5e;
-  --color-mirai-brand-teal-deep: #6e1c42;
-  --color-mirai-brand-mint: #fdeef4;
+  /* 元のソフトウェアから引き継いだトークン名。値はブランド配色に寄せている */
+  --color-mirai-brand-teal: var(--brand-link);
+  --color-mirai-brand-teal-hover: var(--brand-link-hover);
+  --color-mirai-brand-teal-deep: var(--brand-header);
+  --color-mirai-brand-mint: var(--brand-accent-tint);
 
   /* Topic analysis */
-  --color-topic-info-bg: #fbeef3;
+  --color-topic-info-bg: var(--brand-accent-tint);
   --color-topic-chip-bg: #f1f1f1;
   --color-topic-count: #6b7775;
   --color-topic-label: #909090;
   --color-topic-affected: #c8642a;
   --color-topic-industry: #2563a8;
-  --color-topic-expert: #9c2a5e;
+  --color-topic-expert: #6d28d9;
   --color-topic-citizen: #909090;
 
   /* 引用文の明朝体（Noto Serif JP） */
   --font-mirai-serif: var(--font-noto-serif-jp);
 }
 
+/*
+ * ブランド配色：デザイン案C「声とチェック」（区民の声が議会に届く）
+ *
+ * ほかの配色に変えるときは、この --brand-* と --page-bg の値だけを差し替える。
+ * 下に案A・案Bの値を [data-palette] として用意しているので、
+ * <html data-palette="a"> のように属性を付けるだけでも画面の色は切り替えられる
+ * （試すとき用。本番で切り替えるときは :root の値を差し替え、下の手順も行う）。
+ *
+ * CSS 変数を読めないものは、次の手順で合わせる。
+ * 1. 画像とマニフェストを作り直す（リポジトリのルートで）
+ *      pnpm brand:assets --palette a   （案C は c、案B は b）
+ *    作り直すもの: web/public/img/logo.svg, web/public/img/ogp-logo.png,
+ *    web/public/ogp.jpg, web/public/icons/pwa/*.png,
+ *    web/public/img/thumbnails/*.png, web/public/manifest.json のテーマカラー
+ *    （スクリプト: scripts/brand-assets/gen-brand-assets.mjs。配色の値もそこにある）
+ * 2. web/src/config/brand-colors.ts の値を、ここの --brand-* と同じにする。
+ *    レポートの OG 画像（/api/og/report）と site.ts の THEME_COLOR が使う
+ *    （brand-colors.test.ts が食い違いを検出する）
+ * アイコンは lucide-react に色のトークン（text-brand-link など）を付けて使う。
+ * web/public/icons に残っている SVG は白・黒など配色に依存しない色だけ。
+ *
+ * 守ること（WCAG AA 4.5:1）
+ * - --brand-accent は白地の文字色に使わない（案Cのティールは白地で約2.2:1）。
+ *   白地のリンク・強調には --brand-link を使う
+ * - アクセント地の上の文字は --brand-on-accent
+ */
+:root {
+  --brand-header: #1b1f24;
+  --brand-header-sub: #2a3038;
+  --brand-header-deep: #121519;
+  --brand-header-hover: #3a414b;
+  --brand-hero: #1f3a3d;
+  --brand-on-header: #ffffff;
+  --brand-on-header-muted: #c5cbd3;
+  --brand-accent: #2ec4b6;
+  --brand-accent-hover: #5fd3c8;
+  --brand-accent-light: #a8e8e1;
+  --brand-accent-tint: #e6f7f5;
+  --brand-on-accent: #1b1f24;
+  --brand-link: #0f766e;
+  --brand-link-hover: #115e59;
+  --page-bg: #eaeded;
+}
+
+/* 案A：投票箱（ネイビー × オレンジ） */
+:root[data-palette="a"] {
+  --brand-header: #14213d;
+  --brand-header-sub: #1f3157;
+  --brand-header-deep: #0d1629;
+  --brand-header-hover: #2c4270;
+  --brand-hero: #2a4374;
+  --brand-on-header-muted: #c8d0e0;
+  --brand-accent: #fca311;
+  --brand-accent-hover: #fdb94a;
+  --brand-accent-light: #fdd38a;
+  --brand-accent-tint: #fff4e0;
+  --brand-on-accent: #14213d;
+  --brand-link: #9a5b00;
+  --brand-link-hover: #7a4800;
+}
+
+/* 案B：手をあげる（ネイビー × イエロー） */
+:root[data-palette="b"] {
+  --brand-header: #0b2545;
+  --brand-header-sub: #13315c;
+  --brand-header-deep: #071a33;
+  --brand-header-hover: #1e4373;
+  --brand-hero: #1d4a7a;
+  --brand-on-header-muted: #c3cfe0;
+  --brand-accent: #f4d35e;
+  --brand-accent-hover: #f7df8a;
+  --brand-accent-light: #fbe9a6;
+  --brand-accent-tint: #fdf8e1;
+  --brand-on-accent: #0b2545;
+  --brand-link: #7a5c00;
+  --brand-link-hover: #5f4700;
+}
+
 :root {
   --radius: 0.625rem;
-  --background: #f7f4ee;
+  --background: var(--page-bg);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #c2417b;
-  --primary-accent: #9c2a5e;
+  --primary: var(--brand-link);
+  --primary-accent: var(--brand-link-hover);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.656 0 0);
+  --muted-foreground: #646b75;
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -245,22 +364,27 @@
     outline-offset: 2px;
   }
 
+  /* 濃色の帯（ヘッダー・フッター）の上では、濃いリンク色だと見えないのでアクセント色にする */
+  [data-surface="dark"] :focus-visible {
+    outline-color: var(--brand-accent);
+  }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
 @layer components {
+  /*
+   * 元のソフトウェアから引き継いだクラス名。元のブランドのグラデーションを
+   * 再現しないよう、どれも単色の塗りにしている（名前だけ残している）。
+   */
   .bg-mirai-gradient {
-    background-image: linear-gradient(
-      to bottom right,
-      var(--color-mirai-gradient-start),
-      var(--color-mirai-gradient-end)
-    );
+    background-color: var(--brand-accent);
   }
 
   .bg-mirai-light-gradient {
-    background-image: linear-gradient(to bottom, #fdeef4, #fbe0eb);
+    background-color: var(--brand-accent-tint);
   }
 
   .bg-mirai-white-fade {
@@ -272,16 +396,7 @@
   }
 
   .border-mirai-gradient {
-    border: 2px solid transparent;
-    background-image:
-      linear-gradient(white, white),
-      linear-gradient(
-        -45deg,
-        var(--color-mirai-gradient-end) 0%,
-        var(--color-mirai-gradient-start) 100%
-      );
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
+    border: 2px solid var(--brand-accent);
   }
 
   .font-lexend {

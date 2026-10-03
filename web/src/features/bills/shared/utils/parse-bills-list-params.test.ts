@@ -14,6 +14,7 @@ const defaults: BillsListParams = {
   tagId: null,
   sort: "new",
   interviewOnly: false,
+  splitOnly: false,
   page: 1,
 };
 
@@ -30,6 +31,7 @@ describe("parseBillsListParams", () => {
         tag: "zeikin",
         sort: "old",
         interview: "1",
+        split: "1",
         page: "3",
       })
     ).toEqual({
@@ -38,6 +40,7 @@ describe("parseBillsListParams", () => {
       tagId: "zeikin",
       sort: "old",
       interviewOnly: true,
+      splitOnly: true,
       page: 3,
     });
   });
@@ -64,6 +67,17 @@ describe("parseBillsListParams", () => {
 
   it("空文字のタグは「すべて」扱いにする", () => {
     expect(parseBillsListParams({ tag: "   " }).tagId).toBeNull();
+  });
+
+  it("split は 1 のときだけ真", () => {
+    expect(parseBillsListParams({ split: "1" }).splitOnly).toBe(true);
+    expect(parseBillsListParams({ split: "true" }).splitOnly).toBe(false);
+    expect(parseBillsListParams({}).splitOnly).toBe(false);
+  });
+
+  it("split=1 は既定では URL に出さず、立てたときだけ出す", () => {
+    expect(buildBillsListQuery(defaults)).toBe("");
+    expect(buildBillsListQuery(defaults, { splitOnly: true })).toBe("?split=1");
   });
 
   it("interview は 1 のときだけ真", () => {
@@ -167,6 +181,7 @@ describe("buildBillsListQuery", () => {
       tagId: "zeikin",
       sort: "old",
       interviewOnly: true,
+      splitOnly: true,
       page: 3,
     };
     const queryString = buildBillsListQuery(current, { page: current.page });

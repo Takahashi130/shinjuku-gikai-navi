@@ -4,13 +4,16 @@ import { type SearchableBill, searchBills } from "./search-bills";
 
 /**
  * 絞り込みに必要な最小の形。検索の対象（名称・タイトル・要約・タグ名）に、
- * カテゴリと受付中の判定に使う項目を足したもの。
+ * カテゴリ・受付中・賛否が分かれたかの判定に使う項目を足したもの。
  */
 type FilterableBill = Omit<SearchableBill, "tags"> &
-  Pick<BillListItem, "tags" | "hasPublicInterview">;
+  Pick<BillListItem, "tags" | "hasPublicInterview"> & {
+    is_featured?: boolean;
+  };
 
 /**
- * ステータス以外の絞り込み（キーワード・カテゴリ・受付中）をまとめて適用する。
+ * ステータス以外の絞り込み（キーワード・カテゴリ・受付中・賛否が分かれた議案）を
+ * まとめて適用する。
  *
  * ステータスのタブに出す件数は、この結果を母集合にして数える。先に適用しないと
  * タブの数字が実際に表示される件数とずれる。
@@ -20,7 +23,10 @@ type FilterableBill = Omit<SearchableBill, "tags"> &
  */
 export function filterBills<T extends FilterableBill>(
   bills: readonly T[],
-  params: Pick<BillsListParams, "query" | "tagId" | "interviewOnly">
+  params: Pick<
+    BillsListParams,
+    "query" | "tagId" | "interviewOnly" | "splitOnly"
+  >
 ): T[] {
   let filtered = searchBills(bills, params.query);
 
@@ -31,6 +37,10 @@ export function filterBills<T extends FilterableBill>(
   }
   if (params.interviewOnly) {
     filtered = filtered.filter((bill) => bill.hasPublicInterview);
+  }
+  // 取り込み時に「会派の賛成と反対が分かれた議案」へ is_featured を立てている。
+  if (params.splitOnly) {
+    filtered = filtered.filter((bill) => bill.is_featured === true);
   }
   return filtered;
 }

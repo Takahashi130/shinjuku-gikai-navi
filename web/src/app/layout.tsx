@@ -93,9 +93,13 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${notoSansJP.variable} ${lexendGiga.variable} ${notoSerifJP.variable} font-sans antialiased bg-mirai-surface-light`}
+        className={`${notoSansJP.variable} ${lexendGiga.variable} ${notoSerifJP.variable} font-sans antialiased bg-page text-mirai-text`}
       >
-        <NextTopLoader showSpinner={false} color={SITE.THEME_COLOR} />
+        {/*
+          読み込み中のバーは濃色のヘッダーの上に重なるので、アクセント色にする。
+          色はトークン（CSS変数）を渡し、配色の差し替えに追従させる。
+        */}
+        <NextTopLoader showSpinner={false} color="var(--brand-accent)" />
         {children}
       </body>
     </html>

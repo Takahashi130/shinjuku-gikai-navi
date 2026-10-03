@@ -1,12 +1,7 @@
-import { ChevronRight } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Container } from "@/components/layouts/container";
-import { getBillsByDietSession } from "@/features/bills/server/loaders/get-bills-by-diet-session";
-import { DietSessionBillList } from "@/features/diet-sessions/client/components/diet-session-bill-list";
+import { SITE } from "@/config/site";
+import { DietSessionBillsPage } from "@/features/diet-sessions/server/components/diet-session-bills-page";
 import { getDietSessionBySlug } from "@/features/diet-sessions/server/loaders/get-diet-session-by-slug";
-import { routes } from "@/lib/routes";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -21,12 +16,12 @@ export async function generateMetadata({ params }: Props) {
   }
 
   return {
-    title: `${session.name}の議案一覧 | 新宿区議会ナビ`,
+    title: `${session.name}の議案一覧 | ${SITE.NAME}`,
     description: `${session.name}（${session.start_date}〜${session.end_date}）に提出された議案の一覧です。`,
   };
 }
 
-export default async function DietSessionBillsPage({ params }: Props) {
+export default async function DietSessionBillsRoute({ params }: Props) {
   const { slug } = await params;
   const session = await getDietSessionBySlug(slug);
 
@@ -34,37 +29,5 @@ export default async function DietSessionBillsPage({ params }: Props) {
     notFound();
   }
 
-  const bills = await getBillsByDietSession(session.id);
-
-  return (
-    <div className="bg-mirai-surface-muted">
-      {/* ヒーロー画像 */}
-      <div className="relative w-full h-[285px]">
-        <Image
-          src="/img/archive-hero-7f3d06.png"
-          alt={`${session.name}の議案一覧`}
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-          quality={85}
-        />
-      </div>
-
-      <Container className="py-8">
-        <DietSessionBillList session={session} bills={bills} />
-      </Container>
-
-      {/* パンくずリスト */}
-      <Container className="py-8">
-        <nav className="flex items-center gap-2 text-[15px]">
-          <Link href={routes.home()} className="text-black">
-            TOP
-          </Link>
-          <ChevronRight className="h-5 w-5 text-black" />
-          <span className="text-black">過去の議案</span>
-        </nav>
-      </Container>
-    </div>
-  );
+  return <DietSessionBillsPage session={session} />;
 }

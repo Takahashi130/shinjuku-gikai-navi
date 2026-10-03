@@ -7,6 +7,7 @@ function bill(
     title?: string;
     tags?: string[];
     hasPublicInterview?: boolean;
+    isFeatured?: boolean;
   } = {}
 ) {
   return {
@@ -15,11 +16,17 @@ function bill(
     bill_content: { title: overrides.title ?? `${id} のタイトル` } as never,
     tags: (overrides.tags ?? []).map((label) => ({ id: label, label })),
     hasPublicInterview: overrides.hasPublicInterview ?? false,
+    is_featured: overrides.isFeatured ?? false,
   };
 }
 
 const ids = (bills: { id: string }[]) => bills.map((b) => b.id);
-const base = { query: "", tagId: null, interviewOnly: false };
+const base = {
+  query: "",
+  tagId: null,
+  interviewOnly: false,
+  splitOnly: false,
+};
 
 describe("filterBills", () => {
   it("既定では絞り込まない", () => {
@@ -52,6 +59,16 @@ describe("filterBills", () => {
     ]);
   });
 
+  it("会派の賛否が分かれた議案のみに絞る", () => {
+    const bills = [
+      bill("split", { isFeatured: true }),
+      bill("unanimous", { isFeatured: false }),
+    ];
+    expect(ids(filterBills(bills, { ...base, splitOnly: true }))).toEqual([
+      "split",
+    ]);
+  });
+
   it("複数の条件を重ねる", () => {
     const bills = [
       bill("hit", {
@@ -73,6 +90,7 @@ describe("filterBills", () => {
           query: "ガソリン",
           tagId: "税金",
           interviewOnly: true,
+          splitOnly: false,
         })
       )
     ).toEqual(["hit"]);

@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import { BRAND_COLORS } from "@/config/brand-colors";
+import { SITE } from "@/config/site";
 import { getReportOgData } from "@/features/interview-report/server/loaders/get-report-og-data";
 import { truncateText } from "@/features/interview-report/shared/utils/truncate-text";
 
@@ -112,6 +114,8 @@ export async function GET(request: Request) {
       }
     : {};
 
+  // Satori は CSS 変数を読めないので、色は BRAND_COLORS（globals.css と同じ値）から取る。
+  // 濃色の地に白いカードを置き、右上にアクセント地のサービス名を重ねる（デザイン案C）。
   return new ImageResponse(
     <div
       style={{
@@ -120,20 +124,16 @@ export async function GET(request: Request) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundImage:
-          "linear-gradient(177deg, rgb(226, 246, 243) 0%, rgb(238, 246, 226) 100%)",
+        backgroundColor: BRAND_COLORS.header,
       }}
     >
-      {/* グラデーションborder用ラッパー */}
       <div
         style={{
           display: "flex",
           width: 1140,
           height: 560,
-          borderRadius: 30,
-          backgroundImage:
-            "linear-gradient(-30deg, rgb(188, 236, 211) 1%, rgb(100, 216, 198) 99%)",
-          padding: 6,
+          borderRadius: 24,
+          backgroundColor: "white",
           position: "relative",
         }}
       >
@@ -143,8 +143,6 @@ export async function GET(request: Request) {
             flexDirection: "column",
             width: "100%",
             height: "100%",
-            backgroundColor: "white",
-            borderRadius: 24,
             padding: "48px 56px",
           }}
         >
@@ -172,7 +170,7 @@ export async function GET(request: Request) {
               maxHeight: OG_BILL_NAME_MAX_HEIGHT,
               fontSize: 32,
               fontWeight: 800,
-              color: "#9c2a5e",
+              color: BRAND_COLORS.link,
               lineHeight: 1.5,
               overflow: "hidden",
               wordBreak: "break-all",
@@ -182,7 +180,7 @@ export async function GET(request: Request) {
           </div>
         </div>
 
-        {/* 新宿区議会ナビバッジ */}
+        {/* サービス名のバッジ */}
         <div
           style={{
             position: "absolute",
@@ -191,25 +189,24 @@ export async function GET(request: Request) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            paddingLeft: 20,
-            paddingRight: 18,
+            paddingLeft: 24,
+            paddingRight: 22,
             paddingTop: 10,
             paddingBottom: 10,
-            borderBottomLeftRadius: 30,
-            borderTopRightRadius: 30,
-            backgroundImage:
-              "linear-gradient(-30deg, rgb(188, 236, 211) 1%, rgb(100, 216, 198) 99%)",
+            borderBottomLeftRadius: 24,
+            borderTopRightRadius: 24,
+            backgroundColor: BRAND_COLORS.accent,
           }}
         >
           <span
             style={{
               fontSize: 28,
               fontWeight: 800,
-              color: "#1f2937",
+              color: BRAND_COLORS.onAccent,
               letterSpacing: "0.03em",
             }}
           >
-            新宿区議会ナビ
+            {SITE.NAME}
           </span>
         </div>
 

@@ -1,27 +1,7 @@
 import type { BillTag, BillWithContent } from "../types";
 
-/** タグのチップに出す最小限。件数はそのタグに紐づく議案数。 */
+/** タグの絞り込みに出す最小限。件数はそのタグに紐づく議案数。 */
 export type TagChipItem = BillTag & { count: number };
-
-/**
- * タグ別にグループ化された議案から、チップの並びを作る。
- *
- * 0件のタグは落とす。選んでも何も出ないチップを並べる意味がない。
- *
- * カテゴリタブと検索モーダルの両方がこれを使う。別々に導出すると、片方だけ
- * 0件を落とすといった食い違いが起きて、同じタグの数字が画面ごとに変わる。
- */
-export function toTagChipItems(
-  billsByTag: readonly { tag: BillTag; bills: readonly unknown[] }[]
-): TagChipItem[] {
-  return billsByTag
-    .filter(({ bills }) => bills.length > 0)
-    .map(({ tag, bills }) => ({
-      id: tag.id,
-      label: tag.label,
-      count: bills.length,
-    }));
-}
 
 /**
  * タグの一覧と議案の一覧から、チップの並びを作る。

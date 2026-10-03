@@ -1,12 +1,10 @@
 "use client";
 
-import type { Route } from "next";
-import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CompactBillCard } from "@/features/bills/client/components/bill-list/compact-bill-card";
+import { BillSearchCard } from "@/features/bills/client/components/bill-list/bill-search-card";
 import type { BillWithContent } from "@/features/bills/shared/types";
-import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 
 type FilterType = "all" | "enacted" | "rejected" | "other";
 
@@ -46,45 +44,58 @@ export function BillListWithStatusFilter({ bills }: Props) {
   const filteredBills = filterBills(bills, activeFilter);
 
   const filters: { key: FilterType; label: string; count: number }[] = [
-    { key: "all", label: "ALL", count: counts.all },
+    { key: "all", label: "すべて", count: counts.all },
     { key: "enacted", label: "可決", count: counts.enacted },
     { key: "rejected", label: "否決", count: counts.rejected },
-    { key: "other", label: "その他", count: counts.other },
+    { key: "other", label: "審議中など", count: counts.other },
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       {/* フィルターボタン */}
-      <div className="flex flex-wrap gap-3">
-        {filters.map((filter) => (
-          <Button
-            key={filter.key}
-            variant="ghost"
-            onClick={() => setActiveFilter(filter.key)}
-            className={`h-[29px] px-4 py-1.5 rounded-full text-sm font-bold transition-colors ${
-              activeFilter === filter.key
-                ? "bg-mirai-gradient text-black hover:bg-mirai-gradient"
-                : "bg-mirai-surface-grouped text-mirai-text-muted hover:bg-mirai-surface-muted"
-            }`}
-          >
-            {filter.label} {filter.count}
-          </Button>
-        ))}
+      <div
+        role="group"
+        aria-label="ステータスで絞り込む"
+        className="flex flex-wrap gap-1.5 rounded-md bg-white p-3"
+      >
+        {filters.map((filter) => {
+          const active = activeFilter === filter.key;
+          return (
+            <Button
+              key={filter.key}
+              variant="ghost"
+              aria-pressed={active}
+              onClick={() => setActiveFilter(filter.key)}
+              className={cn(
+                "h-8 gap-1.5 rounded-full border px-3 text-[13px] font-bold shadow-none",
+                active
+                  ? "border-brand-link bg-brand-accent-tint text-brand-link hover:bg-brand-accent-tint hover:text-brand-link"
+                  : "border-mirai-border bg-white text-mirai-text hover:bg-mirai-surface"
+              )}
+            >
+              {filter.label}
+              <span className="font-lexend text-xs text-mirai-text-muted">
+                {filter.count}
+              </span>
+            </Button>
+          );
+        })}
       </div>
 
-      {/* 議案リスト */}
+      {/* 議案リスト。見出し（h1）と各議案（h3）の間を埋める */}
+      <h2 className="sr-only">議案の一覧</h2>
       {filteredBills.length === 0 ? (
-        <p className="text-center py-12 text-muted-foreground">
+        <p className="rounded-md bg-white py-12 text-center text-mirai-text-muted">
           該当する議案がありません
         </p>
       ) : (
-        <div className="flex flex-col gap-3">
+        <ul className="divide-y divide-mirai-border rounded-md bg-white px-4">
           {filteredBills.map((bill) => (
-            <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-              <CompactBillCard bill={bill} />
-            </Link>
+            <li key={bill.id}>
+              <BillSearchCard bill={bill} />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

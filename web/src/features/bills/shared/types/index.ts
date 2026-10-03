@@ -73,6 +73,7 @@ export type BillListItem = Pick<
   | "updated_at"
   | "thumbnail_url"
   | "is_review_completed"
+  | "is_featured"
 > & {
   bill_content?: Pick<BillContent, "title" | "summary">;
   tags: BillTag[];

@@ -25,22 +25,22 @@ describe("getCardStatusLabel", () => {
 
 describe("getStatusVariant", () => {
   it.each([
-    ["introduced", "light"],
-    ["in_originating_house", "light"],
-    ["in_receiving_house", "light"],
+    ["introduced", "status-deliberating"],
+    ["in_originating_house", "status-deliberating"],
+    ["in_receiving_house", "status-deliberating"],
   ] as const)("審議中ステータス %s → %s", (status, expected) => {
     expect(getStatusVariant(status)).toBe(expected);
   });
 
-  it("enacted → default", () => {
-    expect(getStatusVariant("enacted")).toBe("default");
+  it("enacted → status-enacted", () => {
+    expect(getStatusVariant("enacted")).toBe("status-enacted");
   });
 
-  it("rejected → dark", () => {
-    expect(getStatusVariant("rejected")).toBe("dark");
+  it("rejected → status-rejected", () => {
+    expect(getStatusVariant("rejected")).toBe("status-rejected");
   });
 
-  it("preparing → muted", () => {
-    expect(getStatusVariant("preparing")).toBe("muted");
+  it("preparing → status-pending", () => {
+    expect(getStatusVariant("preparing")).toBe("status-pending");
   });
 });

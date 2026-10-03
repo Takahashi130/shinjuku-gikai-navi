@@ -121,3 +121,27 @@ export async function findLatestClosedDietSession(
   }
   return data;
 }
+
+/**
+ * 開始日が新しい順に会期を返す。ヘッダーのメニューやトップの「会期から探す」に使う。
+ * 一覧ページ（/kokkai/[slug]/bills）へリンクするので、slug の無い会期は除く。
+ */
+export async function findRecentDietSessions(
+  limit: number
+): Promise<DietSession[]> {
+  const supabase = createAdminClient();
+
+  const { data, error } = await supabase
+    .from("diet_sessions")
+    .select("*")
+    .not("slug", "is", null)
+    .order("start_date", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    // メニューの補助的な情報なので、失敗しても画面全体は落とさない。
+    console.error("Failed to fetch recent diet sessions:", error);
+    return [];
+  }
+  return data;
+}

@@ -17,6 +17,8 @@ export type BillsListParams = {
   sort: BillSortKey;
   /** AIインタビュー受付中のみに絞るか。 */
   interviewOnly: boolean;
+  /** 会派の賛否が分かれた議案（is_featured）のみに絞るか。 */
+  splitOnly: boolean;
   /**
    * 1始まりのページ番号。最終ページを超える値もありうるので、表示の前に
    * `getPageInfo` で丸める。
@@ -31,6 +33,7 @@ export type BillsListSearchParams = {
   tag?: string | string[];
   sort?: string | string[];
   interview?: string | string[];
+  split?: string | string[];
   page?: string | string[];
 };
 
@@ -45,6 +48,7 @@ export const DEFAULT_BILLS_LIST_PARAMS: Readonly<BillsListParams> = {
   tagId: null,
   sort: DEFAULT_BILL_SORT,
   interviewOnly: false,
+  splitOnly: false,
   page: 1,
 };
 
@@ -65,6 +69,7 @@ export function parseBillsListParams(
     tagId: tag || null,
     sort: isBillSortKey(sort) ? sort : DEFAULT_BILL_SORT,
     interviewOnly: firstValue(searchParams.interview) === "1",
+    splitOnly: firstValue(searchParams.split) === "1",
     page: parsePageParam(firstValue(searchParams.page)),
   };
 }
@@ -89,6 +94,7 @@ export function buildBillsListQuery(
   if (next.tagId) params.set("tag", next.tagId);
   if (next.sort !== DEFAULT_BILL_SORT) params.set("sort", next.sort);
   if (next.interviewOnly) params.set("interview", "1");
+  if (next.splitOnly) params.set("split", "1");
   if (next.page > 1) params.set("page", String(next.page));
 
   const queryString = params.toString();
