@@ -2,7 +2,6 @@ import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
-import { getFactionMemberLinks } from "@/features/members/server/loaders/get-faction-member-links";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
 import { routes } from "@/lib/routes";
@@ -42,12 +41,11 @@ interface BillDetailLayoutProps {
  * 構造化して出し、解説の本文からはその節を取り除いて二重に出さない。
  */
 export async function BillDetailLayout({ bill }: BillDetailLayoutProps) {
-  const [interviewConfig, publicReportsResult, topicAnalysis, memberLinks] =
+  const [interviewConfig, publicReportsResult, topicAnalysis] =
     await Promise.all([
       getInterviewConfig(bill.id),
       getPublicReportsByBillId(bill.id),
       getPublicTopicAnalysis(bill.id),
-      getFactionMemberLinks(),
     ]);
 
   const markdown = bill.bill_content?.content;
@@ -115,9 +113,7 @@ export async function BillDetailLayout({ bill }: BillDetailLayoutProps) {
                 statusNote={bill.status_note}
               />
 
-              {votes?.hasFactionVotes && (
-                <FactionVotes votes={votes} memberLinks={memberLinks} />
-              )}
+              {votes?.hasFactionVotes && <FactionVotes votes={votes} />}
 
               <BillContent markdown={contentMarkdown} />
 

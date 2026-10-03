@@ -1,9 +1,4 @@
 import { CircleCheck, CircleX, type LucideIcon } from "lucide-react";
-import Link from "next/link";
-import {
-  type FactionMemberLinkLookup,
-  findFactionMembersHref,
-} from "@/features/members/shared/utils/faction-member-links";
 import { cn } from "@/lib/utils";
 import { VoteSplitBar } from "../../../client/components/bill-detail/vote-split-bar";
 import {
@@ -12,23 +7,9 @@ import {
   tallyFactionVotes,
 } from "../../../shared/utils/parse-bill-votes";
 
-/**
- * 議案詳細の「会派ごとの賛否」。賛成=緑系・反対=赤系で2列に並べる。
- *
- * memberLinks があれば、今ある会派の名前をその会派の議員の一覧へのリンクにする
- * （解散した会派・名前を引けなかった会派は文字のまま）。
- */
-export function FactionVotes({
-  votes,
-  memberLinks = {},
-}: {
-  votes: BillVotes;
-  memberLinks?: FactionMemberLinkLookup;
-}) {
+/** 議案詳細の「会派ごとの賛否」。賛成=緑系・反対=赤系で2列に並べる。 */
+export function FactionVotes({ votes }: { votes: BillVotes }) {
   const tally = tallyFactionVotes(votes);
-  const hasLinks = [...votes.for, ...votes.against].some(
-    (faction) => findFactionMembersHref(memberLinks, faction.name) !== null
-  );
 
   return (
     <section
@@ -53,22 +34,14 @@ export function FactionVotes({
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <FactionList
-          tone="for"
-          factions={votes.for}
-          memberLinks={memberLinks}
-        />
-        <FactionList
-          tone="against"
-          factions={votes.against}
-          memberLinks={memberLinks}
-        />
+        <FactionList tone="for" factions={votes.for} />
+        <FactionList tone="against" factions={votes.against} />
       </div>
 
       <p className="text-xs leading-relaxed text-mirai-text-muted">
-        {hasLinks
-          ? "※ 会派の数で数えています（議員の人数ではありません）。（）内は、会派の中で賛否が分かれたときの補足です。会派名を押すと、その会派の今の議員の一覧が開きます。"
-          : "※ 会派の数で数えています（議員の人数ではありません）。（）内は、会派の中で賛否が分かれたときの補足です。"}
+        {
+          "※ 会派の数で数えています（議員の人数ではありません）。（）内は、会派の中で賛否が分かれたときの補足です。"
+        }
       </p>
     </section>
   );
@@ -95,11 +68,9 @@ const TONES: Record<
 function FactionList({
   tone,
   factions,
-  memberLinks,
 }: {
   tone: "for" | "against";
   factions: FactionVote[];
-  memberLinks: FactionMemberLinkLookup;
 }) {
   const { label, icon: Icon, header, iconClass } = TONES[tone];
 
@@ -128,7 +99,7 @@ function FactionList({
                 aria-hidden
               />
               <span>
-                <FactionName name={faction.name} memberLinks={memberLinks} />
+                {faction.name}
                 {faction.note && (
                   <span className="ml-1 text-xs text-mirai-text-muted">
                     （{faction.note}）
@@ -140,25 +111,5 @@ function FactionList({
         </ul>
       )}
     </div>
-  );
-}
-
-/** 会派名。今ある会派なら、その会派の議員の一覧へのリンクにする。 */
-function FactionName({
-  name,
-  memberLinks,
-}: {
-  name: string;
-  memberLinks: FactionMemberLinkLookup;
-}) {
-  const href = findFactionMembersHref(memberLinks, name);
-  if (!href) return name;
-  return (
-    <Link
-      href={href}
-      className="text-brand-link underline-offset-2 hover:text-brand-link-hover hover:underline"
-    >
-      {name}
-    </Link>
   );
 }

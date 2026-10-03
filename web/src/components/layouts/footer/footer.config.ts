@@ -1,7 +1,4 @@
-import {
-  BILL_FINDER_LINKS,
-  MEMBER_FINDER_LINKS,
-} from "@/components/header/header-nav";
+import { BILL_FINDER_LINKS } from "@/components/header/header-nav";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { routes } from "@/lib/routes";
 
@@ -21,10 +18,6 @@ export const footerColumns: FooterColumn[] = [
   {
     title: "議案をさがす",
     links: BILL_FINDER_LINKS.map(({ label, href }) => ({ label, href })),
-  },
-  {
-    title: "議員をさがす",
-    links: MEMBER_FINDER_LINKS.map(({ label, href }) => ({ label, href })),
   },
   {
     title: "このサイトについて",

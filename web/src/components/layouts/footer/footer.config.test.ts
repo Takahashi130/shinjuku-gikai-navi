@@ -12,7 +12,6 @@ describe("footer.config", () => {
     expect(hrefs).toContain(routes.privacy());
     expect(hrefs).toContain(routes.developers());
     expect(hrefs).toContain(routes.billsList());
-    expect(hrefs).toContain(routes.membersList());
   });
 
   it("内部リンクには external フラグが付かず、外部リンクには付く", () => {

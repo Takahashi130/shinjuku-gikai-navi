@@ -8,10 +8,6 @@ import {
   calculateSessionProgress,
   formatDaysLeft,
 } from "@/features/diet-sessions/shared/utils/session-progress";
-import {
-  DEFAULT_MEMBERS_LIST_PARAMS,
-  membersListHref,
-} from "@/features/members/shared/utils/members-list-params";
 import { routes } from "@/lib/routes";
 
 /** ヘッダー・メニューに並べるリンク1つ分。 */
@@ -41,18 +37,6 @@ export const BILL_FINDER_LINKS: readonly HeaderNavLink[] = [
   },
 ];
 
-/**
- * 議員の一覧へのリンク。ヘッダーの帯・「すべて」メニュー・フッターで使う。
- * 並び順は議席番号順と五十音順だけ（ランキングは出さない）。
- */
-export const MEMBER_FINDER_LINKS: readonly HeaderNavLink[] = [
-  { label: "議員の一覧", href: routes.membersList() },
-  {
-    label: "議員を五十音順で見る",
-    href: membersListHref(DEFAULT_MEMBERS_LIST_PARAMS, { sort: "kana" }),
-  },
-];
-
 /** テーマ（タグ）で絞った議案一覧へのリンク。並びは渡したタグの順のまま。 */
 export function buildThemeLinks(themes: readonly BillTag[]): HeaderNavLink[] {
   return themes.map((theme) => ({
@@ -64,17 +48,15 @@ export function buildThemeLinks(themes: readonly BillTag[]): HeaderNavLink[] {
 /**
  * ヘッダー下段の帯に横並びにするリンク。
  *
- * 先頭に「議員の一覧」を置く（議案とは別の入り口なので、スマホで帯を横に
- * 送らなくても見えるようにする）。続けて審議の状況から探す2つ、テーマを並べる。
- * 「すべての議案」は検索バーと「すべて」メニューから行けるので帯には置かない。
- * 可決・否決は件数が多く帯が長くなるので「すべて」メニューに回す。
+ * 審議の状況から探す2つを先に置き、続けてテーマを並べる。「すべての議案」は
+ * 検索バーと「すべて」メニューから行けるので帯には置かない。可決・否決は
+ * 件数が多く帯が長くなるので「すべて」メニューに回す。
  */
 export function buildHeaderBandLinks(
   themes: readonly BillTag[]
 ): HeaderNavLink[] {
   const [, deliberating, split] = BILL_FINDER_LINKS;
-  const [members] = MEMBER_FINDER_LINKS;
-  return [members, deliberating, split, ...buildThemeLinks(themes)];
+  return [deliberating, split, ...buildThemeLinks(themes)];
 }
 
 /** 会期1つ分の最小限。DietSession からヘッダーに要るものだけを受け取る。 */

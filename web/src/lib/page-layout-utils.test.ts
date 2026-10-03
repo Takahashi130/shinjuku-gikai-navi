@@ -103,8 +103,6 @@ describe("getMainLayoutKind", () => {
     "/bills/abc-123",
     "/preview/bills/abc-123",
     "/kokkai/r8-teirei-3/bills",
-    "/members",
-    "/members/abc-123",
     "/terms",
     "/privacy",
   ])("%s は画面幅いっぱいに使う", (pathname) => {

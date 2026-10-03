@@ -26,7 +26,6 @@ import {
   BILL_FINDER_LINKS,
   buildThemeLinks,
   type HeaderNavLink,
-  MEMBER_FINDER_LINKS,
 } from "./header-nav";
 
 interface AllMenuProps {
@@ -40,6 +39,7 @@ interface AllMenuProps {
 const UPCOMING_FEATURES = [
   "区民投票（1台につき1票）",
   "あなたの投票履歴",
+  "議員ごとのページ",
 ] as const;
 
 const SITE_LINKS: readonly HeaderNavLink[] = [
@@ -49,7 +49,7 @@ const SITE_LINKS: readonly HeaderNavLink[] = [
 ];
 
 /**
- * ヘッダー下段の「≡ すべて」。左から開くメニューに、議案の探し方・議員・テーマ・
+ * ヘッダー下段の「≡ すべて」。左から開くメニューに、議案の探し方・テーマ・
  * 会期・表示設定・サイトの情報をまとめる（Amazon の「すべて」メニューの位置づけ）。
  */
 export function AllMenu({
@@ -102,10 +102,6 @@ export function AllMenu({
 
         <MenuSection title="議案をさがす">
           <MenuLinks links={BILL_FINDER_LINKS} onNavigate={close} />
-        </MenuSection>
-
-        <MenuSection title="議員をさがす">
-          <MenuLinks links={MEMBER_FINDER_LINKS} onNavigate={close} />
         </MenuSection>
 
         {themes.length > 0 && (
