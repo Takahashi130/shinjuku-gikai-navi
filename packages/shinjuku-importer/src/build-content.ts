@@ -1,3 +1,4 @@
+import { PERSONNEL_BILL_NAME_PATTERN } from "@mirai-gikai/shared/bill-explainer/explainer-readiness";
 import type { Faction } from "./parse-results-pdf";
 import { type MatchedBill, normalizeName } from "./match-bills";
 import type { SessionBill, SessionPage } from "./parse-session-page";
@@ -113,4 +114,23 @@ export function buildPendingContent(session: SessionPage, sessionUrl: string, bi
 /** 会期中かどうか（日付は YYYY-MM-DD の文字列で比べる） */
 export function isSessionActive(session: SessionPage, today: string): boolean {
   return session.startDate <= today && today <= session.endDate;
+}
+
+/**
+ * 区民投票（議決への賛否）の対象にする議案か。
+ * 人事案件は特定の人への賛否になるため、投票と解説の対象にしない。
+ * - 同意・諮問
+ * - 議員提出議案などでも、議案名に「候補者の推薦」を含むもの（web の isPersonnelBill と同じ条件）
+ */
+export function isPollTarget(bill: Pick<SessionBill, "kind" | "name">): boolean {
+  if (bill.kind === "consent" || bill.kind === "inquiry") return false;
+  return !PERSONNEL_BILL_NAME_PATTERN.test(bill.name);
+}
+
+/**
+ * 「議決」の投票の締切。会期の採決予定（本会議の開始時刻）、
+ * 読めなければ会期の最終日 14:00（日本時間）。UTC の ISO 文字列で返す。
+ */
+export function decisionPollClosesAt(session: Pick<SessionPage, "finalVoteAt" | "endDate">): string {
+  return new Date(session.finalVoteAt ?? `${session.endDate}T14:00:00+09:00`).toISOString();
 }

@@ -25,6 +25,9 @@ const tables = [
   "interview_sessions",
   "interview_messages",
   "interview_report",
+  "bill_explainers",
+  "polls",
+  "poll_responses",
 ] as const;
 
 describe("RLS default deny（全テーブル共通）", () => {
@@ -61,6 +64,16 @@ describe("RLS default deny（全テーブル共通）", () => {
         slug: "rls-test",
       });
       expect(error).not.toBeNull();
+    });
+
+    it("poll_responses: INSERT が拒否される（票はサーバー経由でのみ保存する）", async () => {
+      const { error } = await anon.from("poll_responses").insert({
+        poll_id: crypto.randomUUID(),
+        user_id: crypto.randomUUID(),
+        choice: "for",
+      });
+      // 外部キー違反（23503）ではなく、権限で拒否される（42501）ことを確かめる
+      expect(error?.code).toBe("42501");
     });
   });
 
@@ -111,6 +124,17 @@ describe("RLS default deny（全テーブル共通）", () => {
         slug: "rls-test",
       });
       expect(error).not.toBeNull();
+    });
+
+    it("poll_responses: INSERT が拒否される（票はサーバー経由でのみ保存する）", async () => {
+      const client = await getAuthenticatedClient(email, password);
+      const { error } = await client.from("poll_responses").insert({
+        poll_id: crypto.randomUUID(),
+        user_id: userId,
+        choice: "for",
+      });
+      // 外部キー違反（23503）ではなく、権限で拒否される（42501）ことを確かめる
+      expect(error?.code).toBe("42501");
     });
   });
 });

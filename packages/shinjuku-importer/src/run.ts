@@ -1,5 +1,7 @@
 /**
  * 新宿区議会の会期ページから議案と会派ごとの賛否を取り込む
+ * あわせて、会期の採決予定（final_vote_at / early_vote_at）と、議案ごとの「議決」の投票の回（polls）を用意する
+ * 書き込むテーブルは writable-tables.ts の IMPORTER_WRITABLE_TABLES に限る
  *
  * 使い方:
  *   # 会期ページを指定して取り込む
@@ -14,6 +16,8 @@ import {
   billSlug,
   buildContent,
   buildPendingContent,
+  decisionPollClosesAt,
+  isPollTarget,
   isSessionActive,
   isSplitVote,
   sessionSlug,
@@ -30,6 +34,7 @@ import {
   type ResultRow,
 } from "./parse-results-pdf";
 import { parseSessionPage, type SessionBill, type SessionPage } from "./parse-session-page";
+import { staleClosedPollWarning, updatableScheduleCloseFilter, voteScheduleWarnings } from "./poll-schedule";
 import { THEMES, pickTheme } from "./pick-thumbnail";
 import { extractSessionLinks } from "./session-index";
 
@@ -71,7 +76,7 @@ async function upsertBill(
   session: SessionPage,
   sessionUrl: string,
   bill: BillRecord
-) {
+): Promise<string> {
   const theme = pickTheme(bill.name, bill.kind);
   const { data: row, error } = await db
     .from("bills")
@@ -115,6 +120,60 @@ async function upsertBill(
     const { error: tagError } = await db.from("bills_tags").insert({ bill_id: row.id, tag_id: tagId });
     if (tagError) throw tagError;
   }
+  return row.id;
+}
+
+/**
+ * 議案ごとに「議決」の投票の回を用意する（採決後も投票できる）。
+ * - 新しい回だけを追加し、すでにある回（票が入っている回）には触らない
+ * - 締切が日程由来（closes_at_source = 'schedule'）の回のうち、締切が未設定か、
+ *   まだ来ていない回だけ、締切を会期の日程に合わせる。運営が個別に決めた締切（manual）は変えない
+ * - 締切を過ぎた回は、採決前・後の区分が入れ替わらないよう変えない（食い違えば警告だけ出す）
+ */
+async function ensureDecisionPolls(db: Db, slugById: Map<string, string>, closesAt: string) {
+  const billIds = [...slugById.keys()];
+  if (billIds.length === 0) return;
+  const rows = billIds.map((bill_id) => ({
+    bill_id,
+    kind: "decision",
+    round: 0,
+    response_type: "choice",
+    options: ["for", "against"],
+    closes_at: closesAt,
+    closes_at_source: "schedule",
+  }));
+  const { error: insertError } = await db
+    .from("polls")
+    .upsert(rows, { onConflict: "bill_id,kind,round", ignoreDuplicates: true });
+  if (insertError) throw insertError;
+
+  const now = new Date();
+  const { error: updateError } = await db
+    .from("polls")
+    .update({ closes_at: closesAt })
+    .in("bill_id", billIds)
+    .eq("kind", "decision")
+    .eq("round", 0)
+    .eq("closes_at_source", "schedule")
+    .or(updatableScheduleCloseFilter(closesAt, now));
+  if (updateError) throw updateError;
+
+  const { data: closed, error: closedError } = await db
+    .from("polls")
+    .select("bill_id, closes_at")
+    .in("bill_id", billIds)
+    .eq("kind", "decision")
+    .eq("round", 0)
+    .eq("closes_at_source", "schedule")
+    .lte("closes_at", now.toISOString());
+  if (closedError) throw closedError;
+  const warning = staleClosedPollWarning(
+    closed.flatMap((p) =>
+      p.bill_id && p.closes_at ? [{ billSlug: slugById.get(p.bill_id) ?? p.bill_id, closesAt: p.closes_at }] : []
+    ),
+    closesAt
+  );
+  if (warning) console.warn(warning);
 }
 
 /** 審議結果 PDF を読み、議案ごとの登録内容を作る */
@@ -201,6 +260,12 @@ async function importSession(sessionUrl: string, opts: Options): Promise<Outcome
     return { status: "skipped", reason: "「議案の概要と審議結果」PDF が未掲載" };
   }
 
+  console.log(
+    `🗳️  採決予定 ${session.finalVoteAt ?? "（読めず。会期の最終日 14 時を締切にする）"}${
+      session.earlyVoteAt ? `／先議 ${session.earlyVoteAt}` : ""
+    }`
+  );
+  for (const warning of voteScheduleWarnings(session)) console.warn(warning);
   if (!opts.db) {
     for (const r of records) console.log(`  ${r.label} ${r.status}${r.featured ? " ★賛否が分かれた" : ""} ${r.name}`);
     return { status: "imported", count: records.length };
@@ -216,6 +281,8 @@ async function importSession(sessionUrl: string, opts: Options): Promise<Outcome
         end_date: session.endDate,
         shugiin_url: sessionUrl,
         is_active: active,
+        final_vote_at: session.finalVoteAt,
+        early_vote_at: session.earlyVoteAt,
       },
       { onConflict: "slug" }
     )
@@ -223,10 +290,13 @@ async function importSession(sessionUrl: string, opts: Options): Promise<Outcome
     .single();
   if (sessionError) throw sessionError;
 
+  const pollSlugById = new Map<string, string>();
   for (const record of records) {
-    await upsertBill(opts.db, opts, dietSession.id, session, sessionUrl, record);
+    const billId = await upsertBill(opts.db, opts, dietSession.id, session, sessionUrl, record);
+    if (isPollTarget(record)) pollSlugById.set(billId, record.slug);
   }
-  console.log(`✅ ${records.length} 件を取り込みました`);
+  await ensureDecisionPolls(opts.db, pollSlugById, decisionPollClosesAt(session));
+  console.log(`✅ ${records.length} 件を取り込みました（投票の回の対象 ${pollSlugById.size} 件）`);
   return { status: "imported", count: records.length };
 }
 

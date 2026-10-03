@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.18"
+  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -88,6 +93,68 @@ export type Database = {
             foreignKeyName: "bill_contents_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_explainers: {
+        Row: {
+          bill_id: string
+          body: Json
+          content_hash: string
+          created_at: string
+          first_published_at: string | null
+          generated_by: string | null
+          id: string
+          publish_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_path: string | null
+          sources: Json
+          status: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          bill_id: string
+          body: Json
+          content_hash: string
+          created_at?: string
+          first_published_at?: string | null
+          generated_by?: string | null
+          id?: string
+          publish_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_path?: string | null
+          sources?: Json
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          bill_id?: string
+          body?: Json
+          content_hash?: string
+          created_at?: string
+          first_published_at?: string | null
+          generated_by?: string | null
+          id?: string
+          publish_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_path?: string | null
+          sources?: Json
+          status?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_explainers_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: true
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },
@@ -292,7 +359,9 @@ export type Database = {
       diet_sessions: {
         Row: {
           created_at: string
+          early_vote_at: string | null
           end_date: string
+          final_vote_at: string | null
           id: string
           is_active: boolean
           name: string
@@ -303,7 +372,9 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          early_vote_at?: string | null
           end_date: string
+          final_vote_at?: string | null
           id?: string
           is_active?: boolean
           name: string
@@ -314,7 +385,9 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          early_vote_at?: string | null
           end_date?: string
+          final_vote_at?: string | null
           id?: string
           is_active?: boolean
           name?: string
@@ -747,6 +820,115 @@ export type Database = {
           },
         ]
       }
+      poll_responses: {
+        Row: {
+          choice: string | null
+          created_at: string
+          eligibility: Database["public"]["Enums"]["participant_eligibility"]
+          id: string
+          poll_id: string
+          read_explainer: boolean
+          resident_subject_hash: string | null
+          responded_at: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          choice?: string | null
+          created_at?: string
+          eligibility?: Database["public"]["Enums"]["participant_eligibility"]
+          id?: string
+          poll_id: string
+          read_explainer?: boolean
+          resident_subject_hash?: string | null
+          responded_at?: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          choice?: string | null
+          created_at?: string
+          eligibility?: Database["public"]["Enums"]["participant_eligibility"]
+          id?: string
+          poll_id?: string
+          read_explainer?: boolean
+          resident_subject_hash?: string | null
+          responded_at?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_responses_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      polls: {
+        Row: {
+          accepts_after_close: boolean
+          audience: string
+          bill_id: string | null
+          closes_at: string | null
+          closes_at_source: string
+          created_at: string
+          id: string
+          is_hidden: boolean
+          kind: string
+          opens_at: string
+          options: string[] | null
+          question: string | null
+          response_type: string
+          round: number
+          updated_at: string
+        }
+        Insert: {
+          accepts_after_close?: boolean
+          audience?: string
+          bill_id?: string | null
+          closes_at?: string | null
+          closes_at_source?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          kind: string
+          opens_at?: string
+          options?: string[] | null
+          question?: string | null
+          response_type: string
+          round?: number
+          updated_at?: string
+        }
+        Update: {
+          accepts_after_close?: boolean
+          audience?: string
+          bill_id?: string | null
+          closes_at?: string | null
+          closes_at_source?: string
+          created_at?: string
+          id?: string
+          is_hidden?: boolean
+          kind?: string
+          opens_at?: string
+          options?: string[] | null
+          question?: string | null
+          response_type?: string
+          round?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "polls_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       preview_tokens: {
         Row: {
           bill_id: string
@@ -1153,6 +1335,16 @@ export type Database = {
         }
         Returns: number
       }
+      count_poll_responses_by_bill_ids: {
+        Args: { p_bill_ids: string[]; p_kind?: string }
+        Returns: {
+          bill_id: string
+          cast_before_close: boolean
+          choice: string
+          cnt: number
+          eligibility: Database["public"]["Enums"]["participant_eligibility"]
+        }[]
+      }
       count_public_reports_by_bill_ids: {
         Args: { p_bill_ids: string[] }
         Returns: {
@@ -1415,6 +1607,11 @@ export type Database = {
         | "general_citizen"
       interview_role_enum: "assistant" | "user"
       moderation_status_enum: "ok" | "warning" | "ng"
+      participant_eligibility:
+        | "unverified"
+        | "self_declared_resident"
+        | "self_declared_nonresident"
+        | "verified_resident"
       stance_type_enum:
         | "for"
         | "against"
@@ -1440,12 +1637,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1469,11 +1666,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1494,11 +1691,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1519,11 +1716,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1536,11 +1733,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1584,6 +1781,12 @@ export const Constants = {
       ],
       interview_role_enum: ["assistant", "user"],
       moderation_status_enum: ["ok", "warning", "ng"],
+      participant_eligibility: [
+        "unverified",
+        "self_declared_resident",
+        "self_declared_nonresident",
+        "verified_resident",
+      ],
       stance_type_enum: [
         "for",
         "against",
@@ -1598,4 +1801,3 @@ export const Constants = {
     },
   },
 } as const
-

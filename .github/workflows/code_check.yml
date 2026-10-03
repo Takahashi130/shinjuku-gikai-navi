@@ -41,6 +41,11 @@ jobs:
       - name: Run Test with Coverage
         run: pnpm run test:coverage
 
+      # test:coverage を持つのは web だけなので、packages/ のテスト
+      # （解説の照合 bill-explainer・navi-ops・shinjuku-importer など）はここで回す
+      - name: Run package tests
+        run: pnpm --filter "./packages/**" run test
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5
         with:

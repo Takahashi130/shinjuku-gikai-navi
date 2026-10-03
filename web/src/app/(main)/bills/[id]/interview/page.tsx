@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AuthGate } from "@/components/layouts/auth-gate";
 import { getBillById } from "@/features/bills/server/loaders/get-bill-by-id";
 import { InterviewLPPage } from "@/features/interview-config/client/components/interview-lp-page";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
@@ -81,11 +82,14 @@ export default async function InterviewPage({ params }: InterviewPageProps) {
   ]);
 
   return (
-    <InterviewLPPage
-      bill={bill}
-      interviewConfig={interviewConfig}
-      sessionInfo={latestSession}
-      userReports={userReports}
-    />
+    <>
+      <AuthGate />
+      <InterviewLPPage
+        bill={bill}
+        interviewConfig={interviewConfig}
+        sessionInfo={latestSession}
+        userReports={userReports}
+      />
+    </>
   );
 }

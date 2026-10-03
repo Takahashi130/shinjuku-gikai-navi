@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "sessionSlug": "r8-teirei-3",
+  "billSlug": "r8-teirei-3-gian-65",
+  "billLabel": "第65号議案",
+  "billName": "令和8年度新宿区介護保険特別会計補正予算（第2号）",
+  "status": "published",
+  "version": 1,
+  "publishAt": null,
+  "author": {
+    "kind": "ai",
+    "model": "claude-opus-5-5",
+    "generatedAt": "2026-10-04T00:50:00+09:00"
+  },
+  "review": {
+    "reviewedBy": "ai-crosscheck",
+    "reviewedAt": "2026-10-04T01:00:56+09:00",
+    "notes": "AI（Claude）が新宿区の公開資料をもとに作成し、別のAIが資料と照合しました。誤りがあればお知らせください。"
+  },
+  "sources": [
+    {
+      "id": "full-text",
+      "kind": "full_text_pdf",
+      "title": "第65号議案 令和8年度新宿区介護保険特別会計補正予算(第2号)",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [1, 2, 3],
+      "materialKey": "full-text"
+    },
+    {
+      "id": "budget-overview",
+      "kind": "budget_overview_pdf",
+      "title": "令和8年度9月補正予算概要（一般会計(補正第5号)、介護保険特別会計(補正第2号)、後期高齢者医療特別会計(補正第1号)）",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [4],
+      "materialKey": "budget-overview"
+    }
+  ],
+  "body": {
+    "title": "介護保険の会計で、前の年度からの繰越金をおもな財源に、基金への積み立てや返納などを行う追加の予算",
+    "oneLiner": "区の介護保険特別会計の今年度の予算に約7億6,574万円を追加します。前の年度からの繰越金をおもな財源に、介護給付準備基金への積み立て、国や都などへの返納金、高額医療合算サービス費の増加分にあてます。",
+    "purpose": {
+      "text": "前の年度からの繰越金などを財源にして、介護保険特別会計の今年度の予算に765,739千円（約7億6,574万円）を追加します。",
+      "sourceRefs": ["full-text", "budget-overview"],
+      "evidence": ["歳入歳出それぞれ765,739千円を追加し", "前年度繰越金737,034千円"]
+    },
+    "background": [
+      {
+        "text": "前の年度からの繰越金737,034千円を、この補正予算のおもな財源にします。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["前年度繰越金737,034千円"]
+      },
+      {
+        "text": "介護保険料を保険給付費に充てて余った分（剰余金）などを、介護給付準備基金に積み立てます。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["介護保険料の保険給付費への充当剰余金等を積立"]
+      },
+      {
+        "text": "介護保険の給付の一つ「高額医療合算サービス費」が、実績で増えています。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["高額医療合算サービス費の実績増"]
+      },
+      {
+        "text": "国・支払基金・都から受け取ったお金が多すぎた分（収入超過）を返す必要があります。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["国庫支出金、支払基金交付金及び都支出金の収入超過に伴う返納金"]
+      }
+    ],
+    "merits": [
+      {
+        "text": "介護給付準備基金に573,584千円を積み立てます。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["573,584千円介護保険料の保険給付費への充当剰余金等を積立"]
+      },
+      {
+        "text": "実績で増えた高額医療合算サービス費の分として、保険給付費に28,363千円を追加します。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["28,363千円高額医療合算サービス費の実績増"]
+      }
+    ],
+    "concerns": [
+      {
+        "text": "国・支払基金・都から多く受け取りすぎた分を返す返納金として、167,503千円を計上します。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["167,503千円介護給付費負担金(国)、地域支援事業支援交付金"]
+      },
+      {
+        "text": "歳入では、介護給付準備基金から7,046千円を繰り入れます（この基金には、歳出で573,584千円を積み立てます）。",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["介護給付準備基金繰入金7,046千円", "(1)介護給付準備基金積立金"]
+      },
+      {
+        "text": "区の一般会計からこの会計への繰入金（介護給付費繰入金）が3,545千円増えます。",
+        "sourceRefs": ["budget-overview", "full-text"],
+        "evidence": ["一般会計繰入金(介護給付費繰入金)", "3,545千円"]
+      }
+    ],
+    "keyFacts": [
+      {
+        "label": "追加する予算の額",
+        "value": "765,739千円（約7億6,574万円）",
+        "sourceRefs": ["full-text"],
+        "evidence": ["歳入歳出それぞれ765,739千円を追加し"]
+      },
+      {
+        "label": "補正後の介護保険特別会計の総額",
+        "value": "28,973,460千円（約290億円）",
+        "sourceRefs": ["full-text"],
+        "evidence": ["歳入歳出それぞれ28,973,460千円とする"]
+      },
+      {
+        "label": "介護給付準備基金への積み立て",
+        "value": "573,584千円",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["573,584千円介護保険料の保険給付費への充当剰余金等を積立"]
+      },
+      {
+        "label": "国・支払基金・都への返納金",
+        "value": "167,503千円",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["167,503千円介護給付費負担金(国)、地域支援事業支援交付金"]
+      },
+      {
+        "label": "高額医療合算サービス費の増額",
+        "value": "28,363千円",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["28,363千円高額医療合算サービス費の実績増"]
+      },
+      {
+        "label": "第1号被保険者保険料の過誤納還付金",
+        "value": "3,711千円の減額（還付する額が確定したため）",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["△3,711千円還付金額確定に伴う減"]
+      },
+      {
+        "label": "おもな財源",
+        "value": "前年度繰越金737,034千円",
+        "sourceRefs": ["budget-overview"],
+        "evidence": ["前年度繰越金737,034千円"]
+      }
+    ],
+    "notInMaterials": [
+      "高額医療合算サービス費の対象になった人の数や、実績が増えた理由は、資料からは分かりません。",
+      "介護給付準備基金の残高や、積み立てたお金を今後どう使うかは、資料からは分かりません。",
+      "この補正予算で介護保険料の額が変わるかどうかは、資料からは分かりません。",
+      "国・支払基金・都から多く受け取ることになった詳しい理由は、資料からは分かりません。"
+    ]
+  }
+}

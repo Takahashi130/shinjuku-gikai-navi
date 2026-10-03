@@ -36,6 +36,21 @@ export const previewRegistry: PreviewGroup[] = [
     ],
   },
   {
+    name: "Participation",
+    items: [
+      {
+        path: "/dev/features/participation",
+        label: "解説・区民投票",
+        description: "解説スライド・投票カード・一覧の印（架空のデータ）",
+      },
+      {
+        path: "/dev/features/participation/live",
+        label: "解説・区民投票（実データ）",
+        description: "つながっている DB の議案で入口を表示する",
+      },
+    ],
+  },
+  {
     name: "Interview",
     items: [
       {

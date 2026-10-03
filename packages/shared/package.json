@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "exports": {
     "./ai/models": {
@@ -115,6 +116,30 @@
     "./mirai-stance/publish-schedule": {
       "types": "./src/mirai-stance/publish-schedule.ts",
       "default": "./src/mirai-stance/publish-schedule.ts"
+    },
+    "./bill-explainer/schema": {
+      "types": "./src/bill-explainer/schema.ts",
+      "default": "./src/bill-explainer/schema.ts"
+    },
+    "./bill-explainer/normalize-material-text": {
+      "types": "./src/bill-explainer/normalize-material-text.ts",
+      "default": "./src/bill-explainer/normalize-material-text.ts"
+    },
+    "./bill-explainer/extract-figures": {
+      "types": "./src/bill-explainer/extract-figures.ts",
+      "default": "./src/bill-explainer/extract-figures.ts"
+    },
+    "./bill-explainer/validate-explainer": {
+      "types": "./src/bill-explainer/validate-explainer.ts",
+      "default": "./src/bill-explainer/validate-explainer.ts"
+    },
+    "./bill-explainer/explainer-readiness": {
+      "types": "./src/bill-explainer/explainer-readiness.ts",
+      "default": "./src/bill-explainer/explainer-readiness.ts"
+    },
+    "./bill-explainer/stable-json": {
+      "types": "./src/bill-explainer/stable-json.ts",
+      "default": "./src/bill-explainer/stable-json.ts"
     }
   },
   "dependencies": {

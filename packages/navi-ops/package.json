@@ -1,0 +1,27 @@
+{
+  "name": "@mirai-gikai/navi-ops",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "explainers:check": "tsx src/cli.ts explainers:check",
+    "explainers:sync": "tsx src/cli.ts explainers:sync",
+    "explainers:status": "tsx src/cli.ts explainers:status",
+    "polls:set-close": "tsx src/cli.ts polls:set-close",
+    "polls:hide": "tsx src/cli.ts polls:hide",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mirai-gikai/shared": "workspace:*",
+    "@mirai-gikai/supabase": "workspace:*",
+    "@supabase/supabase-js": "^2.57.0",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
+  }
+}

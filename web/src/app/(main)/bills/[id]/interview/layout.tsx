@@ -1,19 +1,14 @@
 import type { ReactNode } from "react";
-import { AuthGate } from "@/components/layouts/auth-gate";
 
 /**
- * AIインタビューは回答者を匿名ユーザーとして識別するため、
- * インタビュー関連のページでだけ匿名ログインを行う。
+ * AIインタビューは回答者を匿名ユーザーとして識別するため、匿名ログイン（AuthGate）を行う。
+ * ただし AuthGate はここ（layout）には置かず、各ページで議案とインタビューの設定が
+ * 見つかったときだけ描画する。存在しない議案の URL（notFound）では匿名ユーザーを作らない。
  */
 export default function InterviewLayout({
   children,
 }: Readonly<{
   children: ReactNode;
 }>) {
-  return (
-    <>
-      <AuthGate />
-      {children}
-    </>
-  );
+  return children;
 }

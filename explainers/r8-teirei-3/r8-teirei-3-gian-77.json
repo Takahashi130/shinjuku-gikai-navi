@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "sessionSlug": "r8-teirei-3",
+  "billSlug": "r8-teirei-3-gian-77",
+  "billLabel": "第77号議案",
+  "billName": "イントラネットシステム及び情報システム統合基盤に係るマイクロソフト社ソフトウェアライセンスの買入れについて",
+  "status": "published",
+  "version": 1,
+  "publishAt": null,
+  "author": {
+    "kind": "ai",
+    "model": "claude-opus-5-5",
+    "generatedAt": "2026-10-04T00:49:30+09:00"
+  },
+  "review": {
+    "reviewedBy": "ai-crosscheck",
+    "reviewedAt": "2026-10-04T00:57:07+09:00",
+    "notes": "AI（Claude）が新宿区の公開資料をもとに作成し、別のAIが資料と照合しました。誤りがあればお知らせください。"
+  },
+  "sources": [
+    {
+      "id": "full-text",
+      "kind": "full_text_pdf",
+      "title": "第77号議案 イントラネットシステム及び情報システム統合基盤に係るマイクロソフト社ソフトウェアライセンスの買入れについて",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [2, 3],
+      "materialKey": "full-text"
+    },
+    {
+      "id": "overview",
+      "kind": "overview_pdf",
+      "title": "令和8年第3回区議会定例会提出案件概要",
+      "pageUrl": "https://www.city.shinjuku.lg.jp/kusei/kuseijoho01_001109_03.html",
+      "pages": [7, 8],
+      "materialKey": "overview"
+    }
+  ],
+  "body": {
+    "title": "区のシステムで使うマイクロソフト社ソフトのライセンスを買う",
+    "oneLiner": "区のイントラネットシステムなどを今後も使い続けるため、マイクロソフト社のソフトウェアを使う権利（ライセンス）21項目を、合わせて5億7,062万7,369円で買います。",
+    "purpose": {
+      "text": "今使っている「イントラネットシステム」と「情報システム統合基盤」を引き続き使うため、マイクロソフト社のソフトウェアライセンスを買い入れることを決める議案です。議会が議決すると、その翌日に本契約になります。",
+      "sourceRefs": ["overview", "full-text"],
+      "evidence": [
+        "現行イントラネットシステム及び情報システム統合基盤を引き続き運用するため",
+        "本契約議決日の翌日"
+      ]
+    },
+    "background": [
+      {
+        "text": "買うライセンスは21項目あります（同じ製品が使い道ごとに分けて載っているものもあります）。パソコンのOSやクラウドの「M365」、セキュリティ対策、共有メール、パソコン用のOfficeなどのほか、「区民意見FAQ」の仕組みや、区の公式ホームページの環境で使うものも含まれます。",
+        "sourceRefs": ["overview"],
+        "evidence": [
+          "現行イントラネットシステム用クラウドM365、パソコンOSライセンス",
+          "区民意見FAQ用CRMライセンス",
+          "区公式ホームページ環境用Azure利用ライセンス"
+        ]
+      },
+      {
+        "text": "相手方は「指名競争入札」（区が指名した会社が参加する入札）で決まり、令和8年8月19日に仮契約（議会の議決を待つ仮の契約）を結んでいます。",
+        "sourceRefs": ["overview"],
+        "evidence": ["契約の方法指名競争入札", "仮契約令和8年8月19日"]
+      }
+    ],
+    "merits": [
+      {
+        "text": "区は、今のイントラネットシステムと情報システム統合基盤を引き続き運用するために、これらのライセンスを買う必要があると説明しています。",
+        "sourceRefs": ["full-text"],
+        "evidence": [
+          "情報システム統合基盤の継続運用用",
+          "引き続き運用するため、マイクロソフト社ソフトウェアライセンスを買い入れる必要がある"
+        ]
+      },
+      {
+        "text": "買うものには、セキュリティ対策や、サーバー用のウイルス対策のライセンスも含まれています。",
+        "sourceRefs": ["overview"],
+        "evidence": [
+          "現行イントラネットシステム用セキュリティライセンス",
+          "現行イントラネットシステムServer用ウイルス対策ライセンス"
+        ]
+      }
+    ],
+    "concerns": [
+      {
+        "text": "買入金額は合わせて5億7,062万7,369円です。",
+        "sourceRefs": ["overview"],
+        "evidence": ["買入金額5億7,062万7,369円"]
+      },
+      {
+        "text": "今のシステムのほかに、「旧イントラネットシステム」のサーバーを監視するためのライセンス（148ライセンスと40ライセンス）も買う中に含まれています。",
+        "sourceRefs": ["overview"],
+        "evidence": [
+          "旧イントラネットシステムServer監視用ライセンス",
+          "CIS Suite DataCenter Core ALng LSA 2L 148ライセンス",
+          "CIS Suite Standard Core ALng LSA 2L 40ライセンス"
+        ]
+      }
+    ],
+    "keyFacts": [
+      {
+        "label": "買入金額",
+        "value": "5億7,062万7,369円",
+        "sourceRefs": ["overview"],
+        "evidence": ["買入金額5億7,062万7,369円"]
+      },
+      {
+        "label": "契約の相手方",
+        "value": "株式会社大塚商会 LA事業部公共グループ（資本金103億7,485万1,000円）",
+        "sourceRefs": ["overview"],
+        "evidence": ["株式会社大塚商会LA事業部公共グループ", "資本金103億7,485万1,000円"]
+      },
+      {
+        "label": "数の多いライセンス",
+        "value": "M365 E3が4,382、Defender Suite（セキュリティ）が4,422、区民意見FAQ用のD365 Team Membersが4,185ライセンス",
+        "sourceRefs": ["overview"],
+        "evidence": [
+          "M365 E3 Original Sub Gov Per User 4,382ライセンス",
+          "Defender Suite Sub Gov Per User 4,422ライセンス",
+          "D365 Team Members Sub Per User 4,185ライセンス"
+        ]
+      },
+      {
+        "label": "ライセンスの項目数",
+        "value": "21項目（同じ製品が使い道ごとに分けて載っているものもある）",
+        "sourceRefs": ["overview"],
+        "evidence": ["(21) SQL Server Enterprise Core ALng LSA 2L 25ライセンス"]
+      },
+      {
+        "label": "納期",
+        "value": "本契約を結んだ日の翌日から令和8年12月28日まで",
+        "sourceRefs": ["overview"],
+        "evidence": ["本契約締結日の翌日から令和8年12月28日まで"]
+      },
+      {
+        "label": "決め方",
+        "value": "指名競争入札",
+        "sourceRefs": ["overview"],
+        "evidence": ["契約の方法指名競争入札"]
+      },
+      {
+        "label": "仮契約の日",
+        "value": "令和8年8月19日（本契約は議決日の翌日）",
+        "sourceRefs": ["overview"],
+        "evidence": ["仮契約令和8年8月19日", "本契約議決日の翌日"]
+      }
+    ],
+    "notInMaterials": [
+      "買ったライセンスを何年分使えるのか（利用できる期間）は、資料からは分からない。",
+      "ライセンスの種類ごとの金額の内訳は、資料からは分からない。",
+      "前に買ったときの金額や、それと比べて金額がどう変わったかは、資料からは分からない。",
+      "マイクロソフト社以外の製品を使うことを検討したかどうかは、資料からは分からない。",
+      "指名競争入札で指名された会社の数や、ほかの会社の入札額は、資料からは分からない。",
+      "旧イントラネットシステムをいつまで動かすのかは、資料からは分からない。"
+    ]
+  }
+}

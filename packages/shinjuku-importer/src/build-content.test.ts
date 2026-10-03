@@ -4,6 +4,8 @@ import {
   billSlug,
   buildContent,
   buildPendingContent,
+  decisionPollClosesAt,
+  isPollTarget,
   isSessionActive,
   isSplitVote,
   sessionSlug,
@@ -20,6 +22,9 @@ const session: SessionPage = {
   type: "regular",
   startDate: "2026-06-10",
   endDate: "2026-06-19",
+  finalVoteAt: "2026-06-19T14:00:00+09:00",
+  finalVoteTimeInferred: false,
+  earlyVoteAt: null,
   bills: [],
   resultsPdfUrl: null,
 };
@@ -121,5 +126,37 @@ describe("buildPendingContent", () => {
     const content = buildPendingContent(session, "https://example.com/s", bill);
     expect(content).toContain("令和8年第2回定例会で審議中です（議員提出議案第7号）");
     expect(content).toContain("(https://example.com/s)");
+  });
+});
+
+describe("isPollTarget", () => {
+  it.each([
+    ["mayor", true],
+    ["member", true],
+    ["accounts", true],
+    ["approval", true],
+    ["consent", false],
+    ["inquiry", false],
+  ] as const)("%s → %s", (kind, expected) => {
+    expect(isPollTarget({ kind, name: "議案" })).toBe(expected);
+  });
+
+  it("議員提出議案でも、特定の人を推薦する議案は対象にしない", () => {
+    expect(
+      isPollTarget({ kind: "member", name: "東京都後期高齢者医療広域連合議会議員選挙候補者の推薦について" })
+    ).toBe(false);
+    expect(isPollTarget({ kind: "member", name: "新宿区議会委員会条例の一部を改正する条例" })).toBe(true);
+  });
+});
+
+describe("decisionPollClosesAt", () => {
+  it("採決予定の時刻を UTC で返す", () => {
+    expect(decisionPollClosesAt({ finalVoteAt: "2026-10-15T14:00:00+09:00", endDate: "2026-10-15" })).toBe(
+      "2026-10-15T05:00:00.000Z"
+    );
+  });
+
+  it("採決予定が無ければ会期の最終日 14 時（日本時間）", () => {
+    expect(decisionPollClosesAt({ finalVoteAt: null, endDate: "2026-06-19" })).toBe("2026-06-19T05:00:00.000Z");
   });
 });
