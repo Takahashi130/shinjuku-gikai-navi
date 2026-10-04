@@ -1,9 +1,3 @@
-## Getting Started
+# admin（管理画面）
 
-First, run the development server:
-
-```bash
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ポート 3001 で動く管理用の Next.js。使い方の未決事項は [docs/HANDOFF.md](../docs/HANDOFF.md) の「未決」。規約は [AGENTS.md](../AGENTS.md)。

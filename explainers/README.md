@@ -24,6 +24,6 @@
 2. 解説を書き、検査する（スキーマ・抜き出し・数字・評価語・私人情報）
    `pnpm explainers:check`
 3. 開発用 DB に同期する
-   `pnpm explainers:sync`（本番は `--env prod`。毎回確認があります）
+   `pnpm explainers:sync`（本番は `--env prod`。毎回確認があります。ユーザーの「本番OK」の後だけ：[docs/guides/release.md](../docs/guides/release.md)）
 4. 状況を見る
    `pnpm explainers:status --session r8-teirei-3`

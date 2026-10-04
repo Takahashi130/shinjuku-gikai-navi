@@ -22,3 +22,7 @@ infra/cloud-run/config.env.*
 
 # 解説の材料（区の資料から抜き出した文字。転載しないためリポジトリに入れない）
 .materials
+
+# pnpm check / release / status の記録とログ（手元だけのもの）
+.cache
+.logs

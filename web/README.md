@@ -1,9 +1,3 @@
-## Getting Started
+# web（公開サイト）
 
-First, run the development server:
-
-```bash
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+新宿区議会ナビの公開サイト（Next.js 15）。起動・検査の手順はルートの [README.md](../README.md)、規約は [AGENTS.md](../AGENTS.md)。

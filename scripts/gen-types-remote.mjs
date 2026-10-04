@@ -15,7 +15,7 @@ const outPath = join(root, "packages/supabase/types/supabase.types.ts");
 
 if (!existsSync(envPath)) {
   console.error(
-    ".env.supabase-dev がありません。設定ファイルの受け渡し（docs の Windows 手順書）を確認してください"
+    ".env.supabase-dev がありません。設定ファイルの受け渡し（docs/guides/windows.md）を確認してください"
   );
   process.exit(1);
 }

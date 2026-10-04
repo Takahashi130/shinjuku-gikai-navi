@@ -24,6 +24,11 @@
     "typecheck": "pnpm -r run typecheck",
     "lint": "biome format . && biome lint .",
     "lint:fix": "biome format --write . && biome lint --write .",
+    "check": "node scripts/check.mjs",
+    "test:scripts": "vitest run --config scripts/vitest.config.mjs",
+    "status": "node scripts/status.mjs",
+    "release": "node scripts/release.mjs",
+    "env:export": "node scripts/export-env.mjs",
     "brand:assets": "node scripts/brand-assets/gen-brand-assets.mjs",
     "postinstall": "npx simple-git-hooks"
   },

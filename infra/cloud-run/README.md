@@ -4,7 +4,7 @@
 冪等な gcloud スクリプト [`provision.sh`](./provision.sh) で構築する。
 
 手順の背景・各リソースの意味は
-[docs/20260609_1230_トピック分析CloudRunプロビジョニング手順.md](../../docs/20260609_1230_トピック分析CloudRunプロビジョニング手順.md)
+[docs/archive/upstream/20260609_1230_トピック分析CloudRunプロビジョニング手順.md](../../docs/archive/upstream/20260609_1230_トピック分析CloudRunプロビジョニング手順.md)
 を参照（このスクリプトは同手順をコード化したもの）。
 
 ## 何を作るか
@@ -85,7 +85,7 @@ CONFIG_FILE=infra/cloud-run/config.env.production bash infra/cloud-run/provision
 Cloud Scheduler ジョブを作成する。スケジュールは `SCHEDULER_CRON` / `SCHEDULER_TIMEZONE`、
 停止したい環境は `SCHEDULER_PAUSED=1` で調整する（config.example.env 参照）。
 設計の背景・動作確認・運用は
-[docs/20260715_1043_トピック分析スケジューラー化.md](../../docs/20260715_1043_トピック分析スケジューラー化.md)
+[docs/archive/upstream/20260715_1043_トピック分析スケジューラー化.md](../../docs/archive/upstream/20260715_1043_トピック分析スケジューラー化.md)
 を参照。
 
 ## 冪等性

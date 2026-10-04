@@ -13,13 +13,14 @@ Mac と Windows のどちらでも開発できるようにするための手順�
 
 ## 1. Mac 側：設定ファイルを SSD に入れる
 
-Mac のプロジェクトフォルダにある次の3つのファイルを、SSD の `chokumin-env` というフォルダにコピーします。この作業は Claude に頼めば行います。
+Mac のプロジェクトフォルダで次のコマンドを実行すると、設定ファイル3つ（`.env`・`.env.supabase-dev`・`.env.supabase-prod`。役割は [README の「設定ファイル」](../../README.md#設定ファイル)）が SSD の `chokumin-env` フォルダにコピーされます。値は画面に出ません。`<SSDの名前>` は書き換えてください。
 
-| ファイル | 中身 |
-|---|---|
-| `.env` | 開発用の設定（開発用データベースの場所と鍵） |
-| `.env.supabase-dev` | 開発用データベースのパスワードと鍵 |
-| `.env.supabase-prod` | 本番データベースのパスワードと鍵 |
+```sh
+pnpm env:export -- --to /Volumes/<SSDの名前>/chokumin-env
+```
+
+- 同じ中身のファイルはそのまま。中身が違うときは上書きしてよいか聞かれます（`--overwrite` で聞かずに上書き）。
+- SSD がつながっていない（親フォルダが無い）ときは止まります。
 
 > ⚠️ これらはパスワードや鍵です。SSD をなくしたり、人に貸したりしないでください。Windows にコピーし終わったら、SSD からは消しておくと安心です。
 
@@ -58,12 +59,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 ### 2-3. 開発用の画面を開く
 
-```powershell
-cd C:\dev\shinjuku-gikai-navi
-pnpm exec dotenv -e .env -- pnpm --filter web dev
-```
-
-ブラウザで http://localhost:3000 を開きます。
+`cd C:\dev\shinjuku-gikai-navi` で移動し、あとは [README の「最短の実行手順」](../../README.md#最短の実行手順) と同じです（開発サーバーは http://localhost:3000）。
 
 ## 3. 公開やデータの取り込みをする場合（必要なときだけ）
 
@@ -86,9 +82,4 @@ Mac と Windows で同じ日に作業するときは、片方で push してか�
 
 ## 5. うまくいかないとき
 
-| 症状 | 対処 |
-|---|---|
-| `winget がありません` と出る | Microsoft Store で「アプリ インストーラー」を更新して、もう一度実行する |
-| `pnpm` や `node` が見つからないと出る | PowerShell を閉じて開き直し、もう一度実行する（インストール直後は PATH が反映されていないことがある） |
-| 文字化けする | スクリプトは UTF-8（BOM付き）で保存してある。手で編集した場合は、同じ形式で保存し直す |
-| 改行のせいで差分が大量に出る | `git config --global core.autocrlf false` を実行してから、プロジェクトをコピーし直す |
+[troubleshooting.md](troubleshooting.md) の「Windows」を見てください。

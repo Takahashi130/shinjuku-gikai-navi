@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # トピック分析 Cloud Run Job 実行基盤の冪等プロビジョニングスクリプト。
-# docs/20260609_1230_…プロビジョニング手順.md の gcloud 手順をコード化したもの。
+# docs/archive/upstream/20260609_1230_…プロビジョニング手順.md の gcloud 手順をコード化したもの。
 #
 # 何度実行しても安全（既存リソースは describe で検知して skip、IAM binding は冪等）。
 # OSS のため project ID や secret 値はスクリプトに埋め込まず、すべて env で注入する。
@@ -228,7 +228,7 @@ log "invoker / scheduler SA に jobs.run/runWithOverrides（custom role）+ runt
 
 # ── 8. Cloud Scheduler（定期実行: 全議案の増分分析）──
 # run.jobs.run（Cloud Run Admin API v2）を OAuth で叩き、overrides で --mode=analyze-all を渡す。
-# 設計・運用は docs/20260715_1043_トピック分析スケジューラー化.md を参照。
+# 設計・運用は docs/archive/upstream/20260715_1043_トピック分析スケジューラー化.md を参照。
 RUN_JOB_URI="https://run.googleapis.com/v2/projects/${PROJECT_ID}/locations/${REGION}/jobs/${JOB}:run"
 SCHEDULER_BODY='{"overrides":{"containerOverrides":[{"args":["--mode=analyze-all"]}]}}'
 scheduler_flags=(
