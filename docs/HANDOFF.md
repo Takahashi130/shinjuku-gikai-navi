@@ -39,7 +39,7 @@
 - Windows は `C:\dev\shinjuku-gikai-navi`（2026-10-04 に b92f1126 から準備。`pnpm check` 全部 OK、web・admin の表示も確認。Supabase・Vercel にはログインしていないので、反映・取り込みは Mac で行う）。手順は [guides/windows.md](guides/windows.md)。
 - 始める前に `git pull`。push したら、どのコミットまで送ったかをもう一方に伝える。
 - 2026-10-04 時点で Windows に未 push の変更がある：`admin/src/lib/routes.test.ts`（パスの区切り文字 `\` を `/` にそろえる）。Windows から push するので、Mac では同じ修正をしない。
-- `.env` 系の値を変えたら `pnpm env:export -- --to /Volumes/<SSDの名前>/chokumin-env` で SSD にもコピーする（Windows はそこから受け取る）。
+- `.env` 系の値を変えたら `pnpm env:export -- --to /Volumes/<SSDの名前>/直民アプリ` で SSD にもコピーする（Windows はそこから受け取る）。
 
 ## 作業別の参照先
 

@@ -13,10 +13,10 @@ Mac と Windows のどちらでも開発できるようにするための手順�
 
 ## 1. Mac 側：設定ファイルを SSD に入れる
 
-Mac のプロジェクトフォルダで次のコマンドを実行すると、設定ファイル3つ（`.env`・`.env.supabase-dev`・`.env.supabase-prod`。役割は [README の「設定ファイル」](../../README.md#設定ファイル)）が SSD の `chokumin-env` フォルダにコピーされます。値は画面に出ません。`<SSDの名前>` は書き換えてください。
+Mac のプロジェクトフォルダで次のコマンドを実行すると、設定ファイル3つ（`.env`・`.env.supabase-dev`・`.env.supabase-prod`。役割は [README の「設定ファイル」](../../README.md#設定ファイル)）が SSD の `直民アプリ` フォルダにコピーされます（プロジェクトと同じ名前ですが、SSD のこのフォルダには設定ファイル3つだけを入れます。プロジェクト本体は置きません）。値は画面に出ません。`<SSDの名前>` は書き換えてください。
 
 ```sh
-pnpm env:export -- --to /Volumes/<SSDの名前>/chokumin-env
+pnpm env:export -- --to /Volumes/<SSDの名前>/直民アプリ
 ```
 
 - 同じ中身のファイルはそのまま。中身が違うときは上書きしてよいか聞かれます（`--overwrite` で聞かずに上書き）。
@@ -41,7 +41,7 @@ Claude の「Code」画面で話しかければ、ここから先の作業は Cl
 ```powershell
 Invoke-WebRequest https://raw.githubusercontent.com/Takahashi130/shinjuku-gikai-navi/develop/scripts/setup-windows.ps1 -OutFile setup-windows.ps1
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\setup-windows.ps1 -EnvSource "E:\chokumin-env"
+.\setup-windows.ps1 -EnvSource "E:\直民アプリ"
 ```
 
 `E:` の部分は、確かめた SSD のドライブ名に合わせて書き換えてください。

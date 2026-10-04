@@ -2,7 +2,7 @@
 #
 # 使い方（PowerShell を「管理者ではない普通の状態」で開いて実行）:
 #   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-#   .\setup-windows.ps1 -EnvSource "E:\chokumin-env"
+#   .\setup-windows.ps1 -EnvSource "E:\直民アプリ"
 #
 #   -EnvSource : SSD に入れた設定ファイル（.env など）のフォルダ。省略すると設定ファイルのコピーを飛ばす
 #   -Target    : プロジェクトを置く場所（既定 C:\dev\shinjuku-gikai-navi）

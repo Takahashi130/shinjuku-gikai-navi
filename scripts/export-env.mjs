@@ -1,8 +1,8 @@
 // 設定ファイル（.env・.env.supabase-dev・.env.supabase-prod）を、指定したフォルダにコピーする。
-// 別の PC（Windows）へ移すとき用。受け取る側は scripts/setup-windows.ps1 が SSD の chokumin-env から読む。
+// 別の PC（Windows）へ移すとき用。受け取る側は scripts/setup-windows.ps1 が SSD の 直民アプリ から読む。
 //
 // 使い方:
-//   pnpm env:export -- --to <フォルダ>               例: --to /Volumes/SSD/chokumin-env
+//   pnpm env:export -- --to <フォルダ>               例: --to /Volumes/SSD/直民アプリ
 //   pnpm env:export -- --to <フォルダ> --overwrite   中身の違うファイルがあっても確認せずに上書きする
 //
 // 値は表示しない（ファイル名と変数の数だけ）。同じ中身のファイルはそのまま。
@@ -20,7 +20,7 @@ const ENV_FILES = [".env", ".env.supabase-dev", ".env.supabase-prod"];
 const { flags } = parseArgs(process.argv.slice(2), ["--to"]);
 const to = flagValue(flags, "--to");
 if (!to) {
-  console.error("コピー先を --to で指定してください（例: pnpm env:export -- --to /Volumes/SSD/chokumin-env）");
+  console.error("コピー先を --to で指定してください（例: pnpm env:export -- --to /Volumes/SSD/直民アプリ）");
   process.exit(2);
 }
 const dest = resolve(to);
