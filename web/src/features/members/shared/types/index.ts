@@ -40,6 +40,36 @@ export type QuestionStats = {
   topicCount: number;
 };
 
+/** 政務活動費の1人あたりの目安を出すときに割る人数（resolveExpenseDivisor）。 */
+export type ExpenseDivisor = {
+  /** 人数（平均の人数は小数になる） */
+  value: number;
+  /**
+   * - member_count：収支一覧の人数（期間を通して人数が変わっていない）
+   * - average：交付額 ÷（15万円 × 月数）で出した、期間を通した平均の人数
+   *   （年度の途中で人数が変わった会派）
+   */
+  basis: "member_count" | "average";
+};
+
+/**
+ * 所属会派の政務活動費の、いちばん新しい期間の1人あたりの目安
+ * （latestExpenseEstimate）。区は議員個人の金額を公表していないので、
+ * 画面では必ず「目安」と書く。
+ */
+export type ExpenseEstimate = {
+  fiscalYear: number;
+  /** 収支一覧の期間の表記（「令和7年4月～令和8年3月分」など） */
+  periodLabel: string;
+  totalExpense: number;
+  /** 収支一覧の人数。分からなければ null */
+  memberCount: number | null;
+  /** 割った人数（年度の途中で人数が変わった会派は平均の人数）。分からなければ null */
+  divisor: ExpenseDivisor | null;
+  /** 1人あたりの目安（円）。人数が分からなければ null */
+  perMember: number | null;
+};
+
 /** 議員の一覧（/members）の1人分。 */
 export type MemberListItem = {
   id: string;
@@ -49,7 +79,10 @@ export type MemberListItem = {
   electedCount: number | null;
   factionId: string | null;
   positions: MemberPosition[];
+  /** 今の任期の本会議の質問の回数（全員同じ期間で数える） */
   questions: QuestionStats;
+  /** 所属会派の政務活動費の1人あたりの目安。会派なし・収支一覧なしは null */
+  expenseEstimate: ExpenseEstimate | null;
 };
 
 /** 本会議の質問の題名1つ分。 */
@@ -83,6 +116,8 @@ export type MembershipPeriod = Pick<
   factionName: string;
   factionSlug: string;
   factionIsCurrent: boolean;
+  /** この期間に使われていた、今とは違う会派名（formerFactionNamesDuring） */
+  formerNames: { name: string; validTo: string | null }[];
 };
 
 /** 会派の賛否1件分（議案と会期つき）。 */
@@ -104,11 +139,3 @@ export type FactionExpense = Omit<
   FactionExpenseRow,
   "created_at" | "updated_at" | "faction_id" | "sort_order" | "id"
 > & { id: string };
-
-/** 議員提出議案（区議会全体。提出者は区の資料に無い）。 */
-export type MemberSubmittedBill = {
-  id: string;
-  name: string;
-  status: Database["public"]["Enums"]["bill_status_enum"];
-  submittedDate: string | null;
-};

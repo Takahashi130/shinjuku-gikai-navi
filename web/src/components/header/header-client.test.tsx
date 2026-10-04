@@ -130,9 +130,16 @@ describe("HeaderClient", () => {
     expect(within(live).getByText("準備中")).toBeInTheDocument();
     // 生中継が今まさに行われているように見せる印は出さない
     expect(screen.queryByText("LIVE")).not.toBeInTheDocument();
+  });
 
-    const members = screen.getByRole("link", { name: /議員カルテ/ });
-    expect(members).toHaveAttribute("href", "/upcoming/members");
+  it("議員カルテのタブは議員の一覧へ送り、準備中と添えない", () => {
+    renderHeader();
+
+    const members = screen.getByRole("link", {
+      name: "議員カルテ・政務活動費",
+    });
+    expect(members).toHaveAttribute("href", "/members");
+    expect(within(members).queryByText("準備中")).not.toBeInTheDocument();
   });
 
   it("お知らせ帯に会期の状況と、その会期の議案へのリンクを出す", () => {

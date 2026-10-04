@@ -3,6 +3,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { LabelPill } from "@/components/ui/label-pill";
 import { RoundCard } from "@/components/ui/round-card";
+import type { ParticipationBadgesByBillId } from "@/features/bill-participation/shared/types";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { DietSession } from "../../shared/types";
@@ -11,10 +12,16 @@ import { BillListWithStatusFilter } from "./bill-list-with-status-filter";
 type Props = {
   session: DietSession;
   bills: BillWithContent[];
+  /** 議案ごとの解説・区民投票の印 */
+  participationBadges?: ParticipationBadgesByBillId;
 };
 
 /** 会期ごとの議案一覧の本体。見出しのカードと、ステータスの絞り込みつきの一覧。 */
-export function DietSessionBillList({ session, bills }: Props) {
+export function DietSessionBillList({
+  session,
+  bills,
+  participationBadges,
+}: Props) {
   return (
     <div className="flex flex-col gap-5">
       <RoundCard className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -50,7 +57,10 @@ export function DietSessionBillList({ session, bills }: Props) {
           この会期の議案はまだありません
         </RoundCard>
       ) : (
-        <BillListWithStatusFilter bills={bills} />
+        <BillListWithStatusFilter
+          bills={bills}
+          participationBadges={participationBadges}
+        />
       )}
     </div>
   );

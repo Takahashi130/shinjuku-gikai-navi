@@ -72,7 +72,7 @@ export function Footer() {
 
         <div className="flex flex-col items-center gap-1.5 border-brand-header-hover border-t pt-6 text-center text-xs leading-relaxed text-brand-on-header-muted">
           <p>
-            掲載している議案の情報は、新宿区議会が公開している資料をもとに整理したものです。新宿区・新宿区議会の公式サービスではありません。
+            掲載している議案・議員の情報は、新宿区・新宿区議会が公開している資料をもとに整理したものです。新宿区・新宿区議会の公式サービスではありません。
           </p>
           <p>{SITE.DISCLAIMER}</p>
           <p>

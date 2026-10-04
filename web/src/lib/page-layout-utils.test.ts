@@ -103,8 +103,12 @@ describe("getMainLayoutKind", () => {
     "/bills/abc-123",
     "/preview/bills/abc-123",
     "/kokkai/r8-teirei-3/bills",
+    "/members",
+    "/members/abc-123",
     "/terms",
     "/privacy",
+    // 規約のページ（LegalPageLayout）は、自分で幅と角丸のカードを持つ
+    "/developers/interview-data-terms",
     "/upcoming/live",
   ])("%s は画面幅いっぱいに使う", (pathname) => {
     expect(getMainLayoutKind(pathname)).toBe("wide");

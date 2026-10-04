@@ -22,18 +22,15 @@ export type HeaderTab = {
 /**
  * ヘッダーのタブ。フッターも同じものを並べる。
  *
- * 「議案・区民投票」はトップ（議案）へ。ほかはまだ無い機能なので、準備中の
+ * 「議案・区民投票」はトップ（議案）へ、「議員カルテ・政務活動費」は議員の
+ * 一覧（/members）へ。LIVE中継と効果測定はまだ無い機能なので、準備中の
  * 説明ページ（/upcoming/[feature]）へ送る。
  *
- * 機能ができたら、そのタブのオブジェクトだけを書き換える。例：議員カルテ
- * （別ブランチで /members を作っている）は
- *
- *   { id: "members", label: "議員カルテ・政務活動費",
- *     href: routes.membersList(), comingSoon: false, icon: IdCard }
- *
- * にする。説明ページ（/upcoming/members）も要らなくなったら、
- * features/upcoming/shared/utils/upcoming-features.ts の UPCOMING_FEATURE_IDS・
- * UPCOMING_FEATURES と upcoming-feature-icons.ts から members を消す。
+ * 機能ができたら、そのタブのオブジェクトだけを書き換える（議員カルテと同じく
+ * href を本物のページにし、comingSoon を false にする）。説明ページも要らなく
+ * なったら、features/upcoming/shared/utils/upcoming-features.ts の
+ * UPCOMING_FEATURE_IDS・UPCOMING_FEATURES と upcoming-feature-icons.ts から
+ * その id を消す。
  *
  * 「住民投票」は法律・条例にもとづく正式な投票を指す語なので使わず、
  * このサービスでの意思表示は「区民投票」と呼ぶ。
@@ -63,8 +60,8 @@ export const HEADER_TABS: readonly HeaderTab[] = [
   {
     id: "members",
     label: "議員カルテ・政務活動費",
-    href: upcomingFeatureHref("members"),
-    comingSoon: true,
+    href: routes.membersList(),
+    comingSoon: false,
     icon: IdCard,
   },
 ];

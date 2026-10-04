@@ -35,17 +35,18 @@ export type VoteRateLimitRule = {
  * 同じ人の連打を先に止め、通過したものだけが接続元の枠を使う。
  * 携帯回線などで多くの人が同じ接続元を使うため、接続元の上限は緩めにする。
  *
+ * userKey は匿名 ID を HMAC（用途 user）に通した値。秘密鍵が無いときだけ匿名 ID
+ * そのもの（取り消しは秘密鍵が無くてもできるようにするため）。
  * ipHash が null（秘密鍵が無く接続元をハッシュできない）のときは、同じ人の制限だけにする。
- * 取り消しは秘密鍵が無くてもできるようにするため。
  */
 export function buildVoteRateLimitRules(input: {
-  userId: string;
+  userKey: string;
   ipHash: string | null;
   limits: Pick<VoteRateLimits, "perUser" | "perIp">;
 }): VoteRateLimitRule[] {
   const rules: VoteRateLimitRule[] = [
     {
-      key: `vote:user:${input.userId}`,
+      key: `vote:user:${input.userKey}`,
       limit: input.limits.perUser,
       windowSeconds: VOTE_RATE_LIMIT_WINDOW_SECONDS,
     },

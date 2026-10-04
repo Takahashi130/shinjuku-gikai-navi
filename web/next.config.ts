@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
       destination: "/developers/interview-data-terms",
       permanent: true,
     },
+    {
+      // 議員カルテの準備中の説明ページ（ヘッダーのタブの旧行き先）。本物の一覧へ送る
+      source: "/upcoming/members",
+      destination: "/members",
+      permanent: true,
+    },
   ],
   turbopack: {
     root: "../",

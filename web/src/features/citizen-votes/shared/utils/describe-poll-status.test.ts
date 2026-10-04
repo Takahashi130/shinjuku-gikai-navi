@@ -23,7 +23,11 @@ describe("describePollStatus", () => {
 
   it("採決後も受け付けているときは、採決後の票として数えると説明する", () => {
     const result = describePollStatus(
-      { state: "open_after_close", closesAt: CLOSES_AT },
+      {
+        state: "open_after_close",
+        closesAt: CLOSES_AT,
+        openedAfterClose: false,
+      },
       NOW
     );
     expect(result.headline).toBe(
@@ -33,9 +37,30 @@ describe("describePollStatus", () => {
     expect(result.remaining).toBeNull();
   });
 
+  // 過去の議案にあとから作った回。採決前の票は無いので「これからの票は」と書かない
+  it("採決のあとに受付を始めた回は、票がすべて採決後の票になると説明する", () => {
+    const result = describePollStatus(
+      {
+        state: "open_after_close",
+        closesAt: CLOSES_AT,
+        openedAfterClose: true,
+      },
+      NOW
+    );
+    expect(result.headline).toBe(
+      "採決の予定（10月15日（木）14:00）のあとに受付を始めました"
+    );
+    expect(result.detail).toBe(
+      "票はすべて「採決後の票」として数え、議会の議決とは比べません。"
+    );
+  });
+
   it("受付終了・受付前を説明する", () => {
     expect(
-      describePollStatus({ state: "closed", closesAt: CLOSES_AT }, NOW)
+      describePollStatus(
+        { state: "closed", closesAt: CLOSES_AT, openedAfterClose: false },
+        NOW
+      )
     ).toMatchObject({
       headline: "投票の受付は終了しました",
       detail: "締切：10月15日（木）14:00",

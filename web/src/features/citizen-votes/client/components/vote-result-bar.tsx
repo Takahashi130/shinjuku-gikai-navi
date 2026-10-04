@@ -10,8 +10,10 @@ interface VoteResultBarProps {
 }
 
 /**
- * 賛成・反対の横棒。色だけに頼らないよう、割合と票数を文字でも出す。
- * 賛成・反対のどちらかを良い／悪いと受け取られないよう、警告色は使わない。
+ * 区民投票の賛成・反対の横棒。色だけに頼らないよう、割合と票数を文字でも出す。
+ *
+ * 色は議会の議決の面（会派の賛否）と同じ系統（賛成=緑・反対=赤）にして、
+ * 左右に並べたときに見比べやすくする。どちらかを良い／悪いと示す色ではない。
  */
 export function VoteResultBar({ label, tally, className }: VoteResultBarProps) {
   const percent = toVotePercentages(tally);
@@ -22,39 +24,36 @@ export function VoteResultBar({ label, tally, className }: VoteResultBarProps) {
       : `${label}：賛成 ${percent.for}%（${tally.for}票）、反対 ${percent.against}%（${tally.against}票）`;
 
   return (
-    <div className={cn("space-y-1.5", className)}>
-      <div className="flex items-baseline justify-between text-sm">
-        <span className="font-bold">{label}</span>
-        <span className="text-muted-foreground">{total}票</span>
+    <div className={cn("flex flex-col gap-1.5", className)}>
+      <div className="flex items-baseline justify-between gap-2 text-xs font-bold text-mirai-text-secondary">
+        <span>{label}</span>
+        <span>
+          <span className="font-lexend">{total.toLocaleString("ja-JP")}</span>票
+        </span>
       </div>
       <div
         role="img"
         aria-label={description}
-        className="flex h-3 w-full overflow-hidden rounded-full bg-muted"
+        className="flex h-2.5 w-full overflow-hidden rounded-full bg-mirai-surface-muted"
       >
         {total > 0 && (
           <>
             <div
-              className="h-full bg-primary"
+              className="h-full bg-stance-for"
               style={{ width: `${percent.for}%` }}
             />
-            <div
-              className="h-full bg-muted-foreground"
-              style={{ width: `${percent.against}%` }}
-            />
+            <div className="h-full flex-1 bg-stance-against" />
           </>
         )}
       </div>
       <div
         aria-hidden="true"
-        className="flex items-center justify-between text-xs text-muted-foreground"
+        className="flex items-center justify-between gap-2 text-xs text-mirai-text-muted"
       >
-        <span className="flex items-center gap-1">
-          <span className="inline-block size-2 rounded-full bg-primary" />
+        <span>
           賛成 {total > 0 ? `${percent.for}%` : "-"}（{tally.for}票）
         </span>
-        <span className="flex items-center gap-1">
-          <span className="inline-block size-2 rounded-full bg-muted-foreground" />
+        <span>
           反対 {total > 0 ? `${percent.against}%` : "-"}（{tally.against}票）
         </span>
       </div>

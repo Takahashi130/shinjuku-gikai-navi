@@ -62,7 +62,7 @@ export default async function PreviewBillPage({
   return (
     <>
       <PreviewBanner />
-      <BillDetailLayout bill={bill} />
+      <BillDetailLayout bill={bill} preview />
     </>
   );
 }

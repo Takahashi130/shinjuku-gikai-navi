@@ -44,9 +44,9 @@ const _getCachedBills = unstable_cache(
       };
     });
   },
-  // 形が変わったらキーを変える（本文を含んでいた頃の形、is_featured を
+  // 形が変わったらキーを変える（本文を含んでいた頃の形、is_featured・slug を
   // 持たない頃の形と区別する）。Vercel のデータキャッシュはデプロイをまたいで残る。
-  ["bills-list-items-v2"],
+  ["bills-list-items-v3"],
   {
     revalidate: 600, // 10分（600秒）
     tags: [CACHE_TAGS.BILLS, CACHE_TAGS.INTERVIEW_CONFIGS],

@@ -36,6 +36,7 @@ export async function findPublishedBillsForList(
         .select(
           `
           id,
+          slug,
           name,
           status,
           submitted_date,

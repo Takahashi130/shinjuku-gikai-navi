@@ -8,8 +8,8 @@ import { VersusLayout } from "@/components/ui/versus-layout";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { CitizenVoteSlot } from "../../../client/components/bill-detail/bill-slots";
-import { BillTitleText } from "../../../client/components/bill-list/bill-title-text";
 import { CouncilDecisionPanel } from "../../../client/components/bill-detail/council-decision-panel";
+import { BillTitleText } from "../../../client/components/bill-list/bill-title-text";
 import type { SplitVoteExample } from "../../loaders/get-split-vote-example";
 
 /**
@@ -17,17 +17,15 @@ import type { SplitVoteExample } from "../../loaders/get-split-vote-example";
  *
  * 会派の賛否が分かれた直近の議案を例に、議会の議決（実際のデータ）と区民の
  * 意思を並べる（広い画面では左右、狭い画面では上下。説明文では位置を言わない）。
- * 区民投票はまだ無いので、区民の面は「準備中」と書く。
- *
- * 区民投票ができたら、例の議案の区民投票の結果を citizenVote に渡す
- * （議案ページと同じ差し込み口 CitizenVoteSlot を使っている）。
+ * 区民の面（citizenVote）は HomeCitizenVotePanel：票があれば実際の結果、無ければ
+ * その議案の投票への案内（議案ページと同じ差し込み口 CitizenVoteSlot を使う）。
  */
 export function HomeComparisonCard({
   example,
   citizenVote,
 }: {
   example: SplitVoteExample;
-  /** 例の議案の区民投票の結果。まだ無いので、渡さなければ準備中の説明を出す。 */
+  /** 例の議案の区民投票の面。渡さなければ準備中の説明を出す。 */
   citizenVote?: ReactNode;
 }) {
   const { bill, votes, billNumber } = example;
@@ -39,7 +37,7 @@ export function HomeComparisonCard({
         <SectionHeading
           id="comparison-title"
           title="区民の意思 vs 議会の議決"
-          description="会派の賛否が分かれた直近の議案を例に、2つを見比べます。区民投票が始まると、「区民の意思」の欄に区民の賛成・反対が並びます。"
+          description="会派の賛否が分かれた直近の議案を例に、区民投票（参考値）と議会の議決を見比べます。"
         />
 
         <Link

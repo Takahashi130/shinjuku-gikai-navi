@@ -18,6 +18,7 @@ const defaults: BillsListParams = {
   sort: "new",
   interviewOnly: false,
   splitOnly: false,
+  memberSubmittedOnly: false,
   page: 1,
 };
 
@@ -35,6 +36,7 @@ describe("parseBillsListParams", () => {
         sort: "old",
         interview: "1",
         split: "1",
+        giin: "1",
         page: "3",
       })
     ).toEqual({
@@ -44,6 +46,7 @@ describe("parseBillsListParams", () => {
       sort: "old",
       interviewOnly: true,
       splitOnly: true,
+      memberSubmittedOnly: true,
       page: 3,
     });
   });
@@ -70,6 +73,17 @@ describe("parseBillsListParams", () => {
 
   it("空文字のタグは「すべて」扱いにする", () => {
     expect(parseBillsListParams({ tag: "   " }).tagId).toBeNull();
+  });
+
+  // 議員のページの「議員提出議案を見る」から送る
+  it("giin は 1 のときだけ真で、URL にも giin=1 として出す", () => {
+    expect(parseBillsListParams({ giin: "1" }).memberSubmittedOnly).toBe(true);
+    expect(parseBillsListParams({ giin: "0" }).memberSubmittedOnly).toBe(false);
+    expect(
+      buildBillsListQuery(DEFAULT_BILLS_LIST_PARAMS, {
+        memberSubmittedOnly: true,
+      })
+    ).toBe("?giin=1");
   });
 
   it("split は 1 のときだけ真", () => {
@@ -185,6 +199,7 @@ describe("buildBillsListQuery", () => {
       sort: "old",
       interviewOnly: true,
       splitOnly: true,
+      memberSubmittedOnly: true,
       page: 3,
     };
     const queryString = buildBillsListQuery(current, { page: current.page });

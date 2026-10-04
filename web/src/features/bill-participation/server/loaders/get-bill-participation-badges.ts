@@ -10,6 +10,7 @@ import {
   findBillsForVoteByIds,
   findDecisionPollsByBillIds,
 } from "@/features/citizen-votes/server/repositories/citizen-vote-repository";
+import { isCitizenVotingEnabled } from "@/features/citizen-votes/server/utils/is-citizen-voting-enabled";
 import { resolvePollState } from "@/features/citizen-votes/shared/utils/resolve-poll-state";
 import { summarizeCitizenVotesByBill } from "@/features/citizen-votes/shared/utils/summarize-citizen-votes";
 import { CACHE_TAGS } from "@/lib/cache-tags";
@@ -62,6 +63,7 @@ export async function getBillParticipationBadges(
     );
     const summaries = summarizeCitizenVotesByBill(sources.counts);
     const now = new Date();
+    const votingEnabled = isCitizenVotingEnabled();
 
     for (const bill of sources.bills) {
       const explainerRow = explainers.get(bill.id);
@@ -78,6 +80,7 @@ export async function getBillParticipationBadges(
         }),
         councilStatus: bill.status,
         billSlug: bill.slug,
+        votingEnabled,
         beforeClose: summaries.get(bill.id)?.beforeClose ?? null,
         now,
       });

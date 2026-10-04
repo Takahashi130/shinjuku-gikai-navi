@@ -73,8 +73,10 @@ async function consumeRules(
 /**
  * 投票・取り消し1回ごとの回数制限を消費する（既存の increment_api_rate_limit を使う）。
  *
- * - 接続元は HMAC（PARTICIPATION_HASH_SECRET）を通した値だけをキーにし、生の IP は保存しない
- * - secret が null（秘密鍵が無い）のときは同じ人の制限だけをかける（取り消しを止めないため）
+ * - 接続元と匿名 ID は HMAC（PARTICIPATION_HASH_SECRET）を通した値だけをキーにし、
+ *   生の IP や匿名 ID は回数の記録に残さない（票と結びつけないため）
+ * - secret が null（秘密鍵が無い）のときは同じ人の制限だけをかける（取り消しを止めないため）。
+ *   このときだけ、ハッシュにできないので匿名 ID をそのままキーにする
  * - 将来ロボット確認（Turnstile）を足すときは、この関数の前に検証を挟む
  */
 export async function consumeVoteRateLimit(input: {
@@ -88,9 +90,13 @@ export async function consumeVoteRateLimit(input: {
     input.secret === null
       ? null
       : hashForPurpose(input.secret, "ip", clientIpForRateLimit(input.headers));
+  const userKey =
+    input.secret === null
+      ? input.userId
+      : hashForPurpose(input.secret, "user", input.userId);
   return consumeRules(
     buildVoteRateLimitRules({
-      userId: input.userId,
+      userKey,
       ipHash,
       limits: readLimits(),
     }),

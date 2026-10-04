@@ -1,0 +1,9 @@
+# Mac と Windows で改行をそろえる（リポジトリは LF）
+* text=auto eol=lf
+
+# 画像などはそのまま扱う
+*.png binary
+*.jpg binary
+*.webp binary
+*.pdf binary
+*.ico binary

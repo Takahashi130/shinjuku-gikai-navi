@@ -8,15 +8,16 @@ import type {
   FactionVoteRecord,
   MemberPosition,
   MemberQuestion,
-  MemberSubmittedBill,
   MembershipPeriod,
 } from "../../shared/types";
 import {
   selectExpensesInWindow,
   sortExpensesNewestFirst,
 } from "../../shared/utils/faction-expenses";
+import { formerFactionNamesDuring } from "../../shared/utils/faction-name-history";
 import {
-  resolveMembershipWindowStart,
+  type MembershipWindowBasis,
+  resolveMembershipWindowWithHistory,
   sortMembershipsNewestFirst,
 } from "../../shared/utils/membership-window";
 import {
@@ -32,19 +33,17 @@ import {
   summarizeFactionVotes,
 } from "../../shared/utils/summarize-faction-votes";
 import {
+  countMemberSubmittedBills,
   findFactionById,
   findFactionExpenses,
+  findFactionHistory,
   findFactionMemberships,
   findFactionVotesWithBills,
   findMemberById,
   findMemberPositions,
-  findMemberSubmittedBills,
   findMemberTerms,
   findPlenaryQuestionsByMemberId,
 } from "../repositories/member-repository";
-
-/** 議員のページに出す議員提出議案（区議会全体）の件数。 */
-const SUBMITTED_BILLS_LIMIT = 5;
 
 export type MemberProfile = {
   member: {
@@ -70,13 +69,19 @@ export type MemberProfile = {
   questions: MemberQuestion[];
   /**
    * 今の会派の賛否・政務活動費を、この議員に結び付ける期間の始まり
-   * （resolveMembershipWindowStart）。null は区切らない
+   * （resolveMembershipWindowWithHistory）。null は区切らない
    */
   windowStart: string | null;
+  /** windowStart を選んだ理由（今の任期の始まり・会派の結成などの日・最初に確認した日） */
+  windowBasis: MembershipWindowBasis;
   votes: FactionVotesSummary;
   /** 期間内の政務活動費（新しい順） */
   expenses: FactionExpense[];
-  submittedBills: { bills: MemberSubmittedBill[]; totalCount: number };
+  /**
+   * 区議会全体の議員提出議案の件数（このサイトに載っているもの）。議員ごとの
+   * 提出者は区の議案一覧に無いので、この議員の件数ではない
+   */
+  submittedBillCount: number;
   sources: ProfileSource[];
 };
 
@@ -106,7 +111,8 @@ const _getCachedMemberProfile = unstable_cache(
       questionRows,
       voteRows,
       expenseRows,
-      submittedBills,
+      submittedBillCount,
+      history,
     ] = await Promise.all([
       factionId ? findFactionById(factionId) : null,
       findMemberTerms(id),
@@ -115,7 +121,8 @@ const _getCachedMemberProfile = unstable_cache(
       findPlenaryQuestionsByMemberId(id),
       factionId ? findFactionVotesWithBills(factionId) : [],
       factionId ? findFactionExpenses(factionId) : [],
-      findMemberSubmittedBills(SUBMITTED_BILLS_LIMIT),
+      countMemberSubmittedBills(),
+      findFactionHistory(),
     ]);
 
     const [latestTerm] = terms;
@@ -127,12 +134,20 @@ const _getCachedMemberProfile = unstable_cache(
       factionName: row.factions.name,
       factionSlug: row.factions.slug,
       factionIsCurrent: row.factions.is_current,
+      formerNames: formerFactionNamesDuring(history.names, {
+        factionId: row.faction_id,
+        currentName: row.factions.name,
+        from: row.first_seen_on,
+        to: row.last_seen_on,
+      }),
     }));
-    const windowStart = resolveMembershipWindowStart({
-      memberships,
-      currentFactionId: factionId,
-      termStart: latestTerm?.term_start ?? null,
-    });
+    const { start: windowStart, basis: windowBasis } =
+      resolveMembershipWindowWithHistory({
+        memberships,
+        currentFactionId: factionId,
+        termStart: latestTerm?.term_start ?? null,
+        history,
+      });
 
     const votes: FactionVoteRecord[] = voteRows.map((row) => ({
       vote: row.vote,
@@ -200,17 +215,10 @@ const _getCachedMemberProfile = unstable_cache(
         }))
       ),
       windowStart,
+      windowBasis,
       votes: summarizeFactionVotes(votes, windowStart),
       expenses,
-      submittedBills: {
-        bills: submittedBills.bills.map((bill) => ({
-          id: bill.id,
-          name: bill.name,
-          status: bill.status,
-          submittedDate: bill.submitted_date,
-        })),
-        totalCount: submittedBills.totalCount,
-      },
+      submittedBillCount,
       sources: buildProfileSources({
         memberSourceUrl: member.source_url,
         factionSourceUrl: faction?.source_url ?? null,
@@ -219,7 +227,7 @@ const _getCachedMemberProfile = unstable_cache(
       }),
     };
   },
-  ["member-profile-v1"],
+  ["member-profile-v3"],
   {
     revalidate: 3600,
     // 会派の賛否は議案の公開状態にも左右される

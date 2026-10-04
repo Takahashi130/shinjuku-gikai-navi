@@ -6,6 +6,7 @@ import type { ParticipantEligibility } from "@/lib/participation/resolve-eligibi
 import { chunk, IN_QUERY_CHUNK_SIZE } from "@/lib/utils/chunk";
 import type { DecisionPoll, VoteChoice } from "../../shared/types";
 import type { PollResponseCountRow } from "../../shared/utils/summarize-citizen-votes";
+import type { OpenVoteCandidate } from "../../shared/utils/summarize-open-votes";
 import { toDecisionPoll } from "../../shared/utils/to-decision-poll";
 
 /** 議決への賛否の回（polls.kind = 'decision', round = 0） */
@@ -117,6 +118,39 @@ export async function findDecisionPollsByBillIds(
     }
   }
   return polls;
+}
+
+/**
+ * 締切が sinceIso より後（または締切未定）の、表示中の「議決」の回と議案を返す。
+ * トップの「区民投票を受付中の議案」の数に使う。受付中かどうかの最終的な判断は、
+ * 呼び出し側が現在時刻で行う（summarizeOpenVotes）。
+ */
+export async function findDecisionPollsClosingAfter(
+  sinceIso: string
+): Promise<OpenVoteCandidate[]> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("polls")
+    .select(
+      `${POLL_COLUMNS}, bills!inner(id, slug, name, publish_status, diet_session_id)`
+    )
+    .eq("kind", DECISION_KIND)
+    .eq("round", DECISION_ROUND)
+    .eq("is_hidden", false)
+    .or(`closes_at.is.null,closes_at.gt.${sinceIso}`);
+  if (error) {
+    throw new Error(`Failed to fetch open polls: ${error.message}`);
+  }
+  return data.map((row) => ({
+    poll: toDecisionPoll(row),
+    bill: {
+      id: row.bills.id,
+      slug: row.bills.slug,
+      name: row.bills.name,
+      publishStatus: row.bills.publish_status,
+      dietSessionId: row.bills.diet_session_id,
+    },
+  }));
 }
 
 /**

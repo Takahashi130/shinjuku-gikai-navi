@@ -13,12 +13,13 @@ describe("buildParticipationBadges", () => {
         pollState: { state: "open", closesAt: CLOSES_AT },
         councilStatus: "in_originating_house",
         billSlug: "r8-teirei-3-gian-63",
+        votingEnabled: true,
         beforeClose: null,
         now: NOW,
       })
     ).toEqual([
-      { kind: "explainer", label: "解説あり" },
       { kind: "vote_open", label: "投票受付中", detail: "あと3日" },
+      { kind: "explainer", label: "解説あり" },
     ]);
   });
 
@@ -28,6 +29,7 @@ describe("buildParticipationBadges", () => {
       pollState: { state: "open", closesAt: CLOSES_AT },
       councilStatus: "in_originating_house",
       billSlug: null,
+      votingEnabled: true,
       beforeClose: AGAINST,
       now: NOW,
     });
@@ -38,9 +40,14 @@ describe("buildParticipationBadges", () => {
     expect(
       buildParticipationBadges({
         explainerPublic: true,
-        pollState: { state: "open_after_close", closesAt: CLOSES_AT },
+        pollState: {
+          state: "open_after_close",
+          closesAt: CLOSES_AT,
+          openedAfterClose: false,
+        },
         councilStatus: "enacted",
         billSlug: "r8-teirei-3-gian-63",
+        votingEnabled: true,
         beforeClose: AGAINST,
         now: NOW,
       })
@@ -53,9 +60,14 @@ describe("buildParticipationBadges", () => {
   it("議会がまだ議決していなければ diverges にしない", () => {
     const [badge] = buildParticipationBadges({
       explainerPublic: false,
-      pollState: { state: "closed", closesAt: CLOSES_AT },
+      pollState: {
+        state: "closed",
+        closesAt: CLOSES_AT,
+        openedAfterClose: false,
+      },
       councilStatus: "in_receiving_house",
       billSlug: null,
+      votingEnabled: true,
       beforeClose: AGAINST,
       now: NOW,
     });
@@ -70,9 +82,14 @@ describe("buildParticipationBadges", () => {
     expect(
       buildParticipationBadges({
         explainerPublic: false,
-        pollState: { state: "open_after_close", closesAt: CLOSES_AT },
+        pollState: {
+          state: "open_after_close",
+          closesAt: CLOSES_AT,
+          openedAfterClose: false,
+        },
         councilStatus: "enacted",
         billSlug: null,
+        votingEnabled: true,
         beforeClose: { for: 3, against: 1, total: 4 },
         now: NOW,
       })
@@ -80,15 +97,35 @@ describe("buildParticipationBadges", () => {
     expect(
       buildParticipationBadges({
         explainerPublic: false,
-        pollState: { state: "open_after_close", closesAt: CLOSES_AT },
+        pollState: {
+          state: "open_after_close",
+          closesAt: CLOSES_AT,
+          openedAfterClose: false,
+        },
         councilStatus: "enacted",
         billSlug: null,
+        votingEnabled: true,
         beforeClose: { for: 20, against: 20, total: 40 },
         now: NOW,
       })
     ).toEqual([
       { kind: "citizens_result", label: "区民 拮抗", diverges: false },
     ]);
+  });
+
+  // 緊急停止中に「投票受付中」を出すと、押した先の議案ページで投票できない
+  it("投票の受付を止めているあいだは「投票受付中」を出さない", () => {
+    expect(
+      buildParticipationBadges({
+        explainerPublic: true,
+        pollState: { state: "open", closesAt: CLOSES_AT },
+        councilStatus: "in_originating_house",
+        billSlug: "r8-teirei-3-gian-63",
+        votingEnabled: false,
+        beforeClose: null,
+        now: NOW,
+      })
+    ).toEqual([{ kind: "explainer", label: "解説あり" }]);
   });
 
   it("投票の対象外なら投票の印は出さない", () => {
@@ -98,6 +135,7 @@ describe("buildParticipationBadges", () => {
         pollState: { state: "not_applicable", reason: "personnel" },
         councilStatus: "enacted",
         billSlug: "r8-teirei-3-doi-1",
+        votingEnabled: true,
         beforeClose: AGAINST,
         now: NOW,
       })

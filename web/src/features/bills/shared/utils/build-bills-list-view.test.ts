@@ -16,6 +16,7 @@ const featuredTags = [zei, kyoiku];
  */
 const bills: BillListItem[] = Array.from({ length: 40 }, (_, i) => ({
   id: `bill-${i}`,
+  slug: `r8-teirei-3-gian-${i}`,
   name: `議案${i}`,
   status: i % 2 === 0 ? "enacted" : "introduced",
   submitted_date: new Date(Date.UTC(2026, 0, 1 + i)).toISOString(),

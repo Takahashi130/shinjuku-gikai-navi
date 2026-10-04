@@ -39,6 +39,7 @@ const member = (
     generalCount: 0,
     topicCount: 0,
   },
+  expenseEstimate: null,
 });
 
 const factions = [

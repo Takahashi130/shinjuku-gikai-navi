@@ -41,7 +41,7 @@ export function ExplainerSourceSheet({
     >
       <SheetContent
         side="bottom"
-        className="mx-auto max-h-[85dvh] max-w-2xl overflow-y-auto rounded-t-2xl"
+        className="mx-auto max-h-[85dvh] max-w-2xl overflow-y-auto rounded-t-3xl"
       >
         {target && (
           <>
@@ -51,14 +51,16 @@ export function ExplainerSourceSheet({
                 {target.heading}：{target.text}
               </SheetDescription>
             </SheetHeader>
-            <div className="space-y-5 px-4 pb-8">
+            <div className="flex flex-col gap-5 px-4 pb-8">
               {target.evidence.length > 0 && (
-                <section className="space-y-2">
-                  <h3 className="text-sm font-bold">資料の記載（抜き出し）</h3>
-                  <ul className="space-y-2">
+                <section className="flex flex-col gap-2">
+                  <h3 className="text-sm font-bold text-mirai-text">
+                    資料の記載（抜き出し）
+                  </h3>
+                  <ul className="flex flex-col gap-2">
                     {target.evidence.map((quote) => (
                       <li key={quote}>
-                        <blockquote className="border-l-4 border-primary bg-muted py-2 pr-2 pl-3 text-sm leading-relaxed">
+                        <blockquote className="rounded-r-xl border-brand-link border-l-4 bg-mirai-surface py-2.5 pr-3 pl-3 text-sm leading-relaxed text-mirai-text">
                           「{quote}」
                         </blockquote>
                       </li>
@@ -66,13 +68,18 @@ export function ExplainerSourceSheet({
                   </ul>
                 </section>
               )}
-              <section className="space-y-2">
-                <h3 className="text-sm font-bold">資料</h3>
-                <ul className="space-y-2">
+              <section className="flex flex-col gap-2">
+                <h3 className="text-sm font-bold text-mirai-text">資料</h3>
+                <ul className="flex flex-col gap-2">
                   {target.sources.map((source) => (
-                    <li key={source.id} className="rounded-lg border p-3">
-                      <p className="text-sm font-bold">{source.title}</p>
-                      <p className="text-xs text-muted-foreground">
+                    <li
+                      key={source.id}
+                      className="rounded-xl border border-line-soft p-3"
+                    >
+                      <p className="text-sm font-bold text-mirai-text">
+                        {source.title}
+                      </p>
+                      <p className="text-xs text-mirai-text-muted">
                         {source.kindLabel}
                         {source.pagesLabel && `・${source.pagesLabel}`}
                       </p>
@@ -80,7 +87,7 @@ export function ExplainerSourceSheet({
                         href={source.pageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1 inline-flex items-center gap-1 text-sm text-primary underline"
+                        className="mt-1 inline-flex min-h-11 items-center gap-1 text-sm font-bold text-brand-link underline hover:text-brand-link-hover"
                       >
                         新宿区のページを開く
                         <ExternalLink className="size-3.5" aria-hidden="true" />
@@ -91,7 +98,7 @@ export function ExplainerSourceSheet({
                     </li>
                   ))}
                 </ul>
-                <p className="text-xs leading-relaxed text-muted-foreground">
+                <p className="text-xs leading-relaxed text-mirai-text-muted">
                   PDF
                   の資料は、リンク先の新宿区のページから開けます。抜き出しは、資料の文字をそのまま短く引用したものです。
                 </p>

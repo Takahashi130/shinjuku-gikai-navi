@@ -4,6 +4,7 @@ import Script from "next/script";
 import { sendFuriganaStateEvent } from "@/lib/analytics/preference-state-events";
 import { useOnPageView } from "@/lib/analytics/use-on-page-view";
 import { rubyfulClient } from "./index";
+import { RUBYFUL_SELECTOR } from "./selector";
 import "./styles.css";
 
 declare global {
@@ -48,10 +49,11 @@ export function RubyfulInitializer() {
           // 実際に ClampedQuote がこれを踏み、ふりがな表示ONのとき
           // 引用を持つ議案詳細ページが表示されなくなっていた。
           // 動的に変わるテキストは、条件付きの子要素ではなく
-          // ひとつの文字列にまとめて描くこと。
+          // ひとつの文字列にまとめて描くか、要素の key を変えて作り直すこと
+          // （作り直した要素は Rubyful が改めて処理する）。
+          // テストでは simulate-rubyful.ts で同じ差し替えをまねて確かめる。
           window.RubyfulV2.init({
-            selector:
-              "main p, main h1, main h2, main h3, main h4, main h5, main h6, main li, main td, main th, main span, main a",
+            selector: RUBYFUL_SELECTOR,
             defaultDisplay: true,
             observeChanges: true,
             styles: {

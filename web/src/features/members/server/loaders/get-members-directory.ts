@@ -6,6 +6,8 @@ import type {
   MemberListItem,
   MemberPosition,
 } from "../../shared/types";
+import { buildMemberExpenseEstimates } from "../../shared/utils/member-expense-estimate";
+import { isOnOrAfter } from "../../shared/utils/membership-window";
 import {
   buildProfileSources,
   type ProfileSource,
@@ -15,9 +17,12 @@ import {
   tallyQuestionsByMember,
 } from "../../shared/utils/question-stats";
 import {
+  findAllFactionMemberships,
   findAllMemberPositions,
   findCurrentFactions,
   findCurrentMembers,
+  findExpenseEstimateRows,
+  findFactionHistory,
   findLatestTerm,
   findPlenaryQuestionStatsRows,
 } from "../repositories/member-repository";
@@ -31,7 +36,10 @@ export type MembersDirectory = {
     termStart: string;
     termEnd: string;
   } | null;
-  /** 質問の回数を数え始めた会期（いちばん古い質問の会期）。質問が無ければ null */
+  /**
+   * 区の資料にある、いちばん古い本会議の質問の会期（議員のページの「令和元年
+   * からの合計」の説明に使う）。質問が無ければ null
+   */
   questionsSince: { sessionTitle: string; askedOn: string } | null;
   /** 一覧の出典（区の HTML ページ） */
   sources: ProfileSource[];
@@ -39,6 +47,10 @@ export type MembersDirectory = {
 
 /**
  * 議員の一覧（/members）とサイトマップ用に、今の議員と会派をまとめて返す。
+ * カードに出す政務活動費の目安は、議員のページと同じ期間（今の会派にいた
+ * 期間にかかる、いちばん新しい期間）で出す（buildMemberExpenseEstimates）。
+ * カードの本会議の質問の回数は、全員同じ期間（今の任期の始まりから）で数える
+ * （前の任期から議員の人だけ多く見えないように）。
  * 区のデータは取り込みのときにしか変わらないので、1時間キャッシュする
  * （取り込み処理が /api/revalidate でタグごと消す）。
  */
@@ -48,16 +60,40 @@ export async function getMembersDirectory(): Promise<MembersDirectory> {
 
 const _getCachedMembersDirectory = unstable_cache(
   async (): Promise<MembersDirectory> => {
-    const [members, factions, positions, questionRows, term] =
-      await Promise.all([
-        findCurrentMembers(),
-        findCurrentFactions(),
-        findAllMemberPositions(),
-        findPlenaryQuestionStatsRows(),
-        findLatestTerm(),
-      ]);
+    const [
+      members,
+      factions,
+      positions,
+      questionRows,
+      term,
+      memberships,
+      expenseRows,
+      history,
+    ] = await Promise.all([
+      findCurrentMembers(),
+      findCurrentFactions(),
+      findAllMemberPositions(),
+      findPlenaryQuestionStatsRows(),
+      findLatestTerm(),
+      findAllFactionMemberships(),
+      findExpenseEstimateRows(),
+      findFactionHistory(),
+    ]);
 
-    const questionStats = tallyQuestionsByMember(questionRows);
+    const termStart = term?.term_start ?? null;
+    const questionStats = tallyQuestionsByMember(
+      questionRows.filter((row) => isOnOrAfter(row.asked_on, termStart))
+    );
+    const expenseEstimates = buildMemberExpenseEstimates({
+      members: members.map((member) => ({
+        id: member.id,
+        factionId: member.faction_id,
+      })),
+      memberships,
+      expenses: expenseRows,
+      termStart,
+      history,
+    });
     const positionsByMember = new Map<string, MemberPosition[]>();
     for (const {
       member_id,
@@ -84,6 +120,7 @@ const _getCachedMembersDirectory = unstable_cache(
         factionId: member.faction_id,
         positions: positionsByMember.get(member.id) ?? [],
         questions: questionStats.get(member.id) ?? emptyQuestionStats(),
+        expenseEstimate: expenseEstimates.get(member.id) ?? null,
       })),
       factions,
       term: term
@@ -108,7 +145,7 @@ const _getCachedMembersDirectory = unstable_cache(
         : [],
     };
   },
-  ["members-directory-v1"],
+  ["members-directory-v3"],
   {
     revalidate: 3600,
     tags: [CACHE_TAGS.MEMBERS],

@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { DecisionPoll } from "../types";
 import {
+  isAcceptingVotes,
   isBeforeClose,
   isPastClose,
+  pollClosesAt,
   resolvePollState,
   shouldRevealResults,
 } from "./resolve-poll-state";
@@ -46,7 +48,11 @@ describe("resolvePollState", () => {
         billName: null,
         now: AT_CLOSE,
       })
-    ).toEqual({ state: "open_after_close", closesAt: CLOSES_AT });
+    ).toEqual({
+      state: "open_after_close",
+      closesAt: CLOSES_AT,
+      openedAfterClose: false,
+    });
   });
 
   it("採決後に受け付けない回は closed", () => {
@@ -57,7 +63,50 @@ describe("resolvePollState", () => {
         billName: null,
         now: AFTER,
       })
-    ).toEqual({ state: "closed", closesAt: CLOSES_AT });
+    ).toEqual({
+      state: "closed",
+      closesAt: CLOSES_AT,
+      openedAfterClose: false,
+    });
+  });
+
+  // 過去の議案にあとから作った回。採決前の票は入りようがない
+  it("締切より後に受付を始めた回は openedAfterClose", () => {
+    const lateOpened = poll({
+      opensAt: "2026-10-16T00:00:00.000Z",
+      closesAt: CLOSES_AT,
+    });
+    expect(
+      resolvePollState({
+        poll: lateOpened,
+        billSlug: "r8-teirei-2-gian-42",
+        billName: null,
+        now: new Date("2026-10-17T00:00:00.000Z"),
+      })
+    ).toEqual({
+      state: "open_after_close",
+      closesAt: CLOSES_AT,
+      openedAfterClose: true,
+    });
+    expect(
+      resolvePollState({
+        poll: { ...lateOpened, acceptsAfterClose: false },
+        billSlug: "r8-teirei-2-gian-42",
+        billName: null,
+        now: new Date("2026-10-17T00:00:00.000Z"),
+      })
+    ).toEqual({ state: "closed", closesAt: CLOSES_AT, openedAfterClose: true });
+  });
+
+  it("締切と同じ時刻に受付を始めた回も openedAfterClose", () => {
+    expect(
+      resolvePollState({
+        poll: poll({ opensAt: CLOSES_AT }),
+        billSlug: "r8-teirei-3-gian-63",
+        billName: null,
+        now: AFTER,
+      })
+    ).toMatchObject({ state: "open_after_close", openedAfterClose: true });
   });
 
   it("締切が無い回はずっと open", () => {
@@ -160,15 +209,29 @@ describe("isPastClose", () => {
   it("採決後の状態だけ true", () => {
     expect(isPastClose({ state: "open", closesAt: CLOSES_AT })).toBe(false);
     expect(
-      isPastClose({ state: "open_after_close", closesAt: CLOSES_AT })
+      isPastClose({
+        state: "open_after_close",
+        closesAt: CLOSES_AT,
+        openedAfterClose: false,
+      })
     ).toBe(true);
-    expect(isPastClose({ state: "closed", closesAt: CLOSES_AT })).toBe(true);
+    expect(
+      isPastClose({
+        state: "closed",
+        closesAt: CLOSES_AT,
+        openedAfterClose: false,
+      })
+    ).toBe(true);
   });
 });
 
 describe("shouldRevealResults", () => {
   const open = { state: "open", closesAt: CLOSES_AT } as const;
-  const after = { state: "open_after_close", closesAt: CLOSES_AT } as const;
+  const after = {
+    state: "open_after_close",
+    closesAt: CLOSES_AT,
+    openedAfterClose: false,
+  } as const;
 
   it("締切前は、本人が投票するまで見せない", () => {
     expect(shouldRevealResults({ pollState: open, hasVoted: false })).toBe(
@@ -183,7 +246,11 @@ describe("shouldRevealResults", () => {
     );
     expect(
       shouldRevealResults({
-        pollState: { state: "closed", closesAt: CLOSES_AT },
+        pollState: {
+          state: "closed",
+          closesAt: CLOSES_AT,
+          openedAfterClose: false,
+        },
         hasVoted: false,
       })
     ).toBe(true);
@@ -201,6 +268,62 @@ describe("shouldRevealResults", () => {
         pollState: { state: "upcoming", opensAt: CLOSES_AT },
         hasVoted: false,
       })
+    ).toBe(false);
+  });
+});
+
+describe("pollClosesAt", () => {
+  it("締切のある状態では締切の時刻を返す", () => {
+    expect(pollClosesAt({ state: "open", closesAt: CLOSES_AT })).toBe(
+      CLOSES_AT
+    );
+    expect(
+      pollClosesAt({
+        state: "open_after_close",
+        closesAt: CLOSES_AT,
+        openedAfterClose: false,
+      })
+    ).toBe(CLOSES_AT);
+    expect(
+      pollClosesAt({
+        state: "closed",
+        closesAt: CLOSES_AT,
+        openedAfterClose: false,
+      })
+    ).toBe(CLOSES_AT);
+  });
+
+  it("締切未定・受付前・対象外は null", () => {
+    expect(pollClosesAt({ state: "open", closesAt: null })).toBeNull();
+    expect(pollClosesAt({ state: "upcoming", opensAt: CLOSES_AT })).toBeNull();
+    expect(
+      pollClosesAt({ state: "not_applicable", reason: "personnel" })
+    ).toBeNull();
+  });
+});
+
+describe("isAcceptingVotes", () => {
+  it("締切の前と、採決後も受け付けている回だけ true", () => {
+    expect(isAcceptingVotes({ state: "open", closesAt: CLOSES_AT })).toBe(true);
+    expect(
+      isAcceptingVotes({
+        state: "open_after_close",
+        closesAt: CLOSES_AT,
+        openedAfterClose: false,
+      })
+    ).toBe(true);
+    expect(
+      isAcceptingVotes({
+        state: "closed",
+        closesAt: CLOSES_AT,
+        openedAfterClose: false,
+      })
+    ).toBe(false);
+    expect(isAcceptingVotes({ state: "upcoming", opensAt: CLOSES_AT })).toBe(
+      false
+    );
+    expect(
+      isAcceptingVotes({ state: "not_applicable", reason: "hidden" })
     ).toBe(false);
   });
 });

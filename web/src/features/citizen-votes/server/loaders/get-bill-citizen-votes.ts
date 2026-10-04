@@ -1,10 +1,7 @@
 import "server-only";
 
-import { unstable_cache } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
 import { getChatSupabaseUser } from "@/features/chat/server/utils/supabase-server";
-import { CACHE_TAGS } from "@/lib/cache-tags";
-import { getParticipationHashSecret } from "@/lib/participation/get-participation-hash-secret";
 import {
   type BillCitizenVotesView,
   isVoteChoice,
@@ -15,27 +12,9 @@ import {
   resolvePollState,
   shouldRevealResults,
 } from "../../shared/utils/resolve-poll-state";
-import { summarizeCitizenVotes } from "../../shared/utils/summarize-citizen-votes";
-import {
-  countDecisionResponsesByBillIds,
-  findDecisionPollContext,
-  findUserPollResponse,
-} from "../repositories/citizen-vote-repository";
-
-/** 回の設定（締切など）は変わることが少ないので5分。取り込み・同期で消える */
-const getCachedPollContext = unstable_cache(
-  async (billId: string) => findDecisionPollContext(billId),
-  ["citizen-votes-poll-context"],
-  { revalidate: 300, tags: [CACHE_TAGS.CITIZEN_VOTES, CACHE_TAGS.BILLS] }
-);
-
-/** 票の集計は60秒だけ持つ（本人の票はキャッシュしない） */
-const getCachedSummary = unstable_cache(
-  async (billId: string) =>
-    summarizeCitizenVotes(await countDecisionResponsesByBillIds([billId])),
-  ["citizen-votes-summary"],
-  { revalidate: 60, tags: [CACHE_TAGS.CITIZEN_VOTES] }
-);
+import { findUserPollResponse } from "../repositories/citizen-vote-repository";
+import { isCitizenVotingEnabled } from "../utils/is-citizen-voting-enabled";
+import { getCachedPollContext, getCachedSummary } from "./citizen-vote-cache";
 
 /** ログイン中（匿名を含む）なら本人の ID。ページを見ただけではサインインしない */
 async function getViewerId(): Promise<string | null> {
@@ -72,7 +51,7 @@ export async function getBillCitizenVotes(
     billName: bill.name,
     now,
   });
-  const votingEnabled = getParticipationHashSecret() !== null;
+  const votingEnabled = isCitizenVotingEnabled();
 
   // 本人の票は、回が非表示・対象外になっていても読む（いつでも取り消せるようにする）
   let myVote: MyVote | null = null;

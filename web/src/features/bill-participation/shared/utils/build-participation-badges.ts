@@ -9,9 +9,10 @@ import { isPastClose } from "@/features/citizen-votes/shared/utils/resolve-poll-
 import type { ParticipationBadge } from "../types";
 
 /**
- * 一覧のカードに出す印を決める。
+ * 一覧のカードに出す印を決める（この順に並べる）。
+ * - 投票受付中：締切（採決予定）の前で受け付けている（残りの日数を添える）。
+ *   投票の受付を止めている（votingEnabled が false）あいだは出さない
  * - 解説あり：公開中の解説がある
- * - 投票受付中：締切（採決予定）の前で受け付けている（残りの日数を添える）
  * - 区民 ○○多数：締切の後だけ（締切前は、投票した人にしか結果を見せないため）
  *   議会が議決していて多数が分かれていれば diverges
  */
@@ -20,17 +21,16 @@ export function buildParticipationBadges(input: {
   pollState: PollState;
   councilStatus: BillStatusEnum;
   billSlug: string | null;
+  /** 新しい票を受け付けられる設定か（false は受付を止めている） */
+  votingEnabled: boolean;
   /** 締切前の票。集計が無ければ null */
   beforeClose: VoteTally | null;
   now: Date;
 }): ParticipationBadge[] {
   const badges: ParticipationBadge[] = [];
-  if (input.explainerPublic) {
-    badges.push({ kind: "explainer", label: "解説あり" });
-  }
-
+  // 受付中を先頭に出す（締切が近いことをいちばんに伝える）
   const { pollState } = input;
-  if (pollState.state === "open") {
+  if (pollState.state === "open" && input.votingEnabled) {
     badges.push({
       kind: "vote_open",
       label: "投票受付中",
@@ -38,6 +38,9 @@ export function buildParticipationBadges(input: {
         ? formatRemaining(pollState.closesAt, input.now)
         : null,
     });
+  }
+  if (input.explainerPublic) {
+    badges.push({ kind: "explainer", label: "解説あり" });
   }
 
   if (isPastClose(pollState) && input.beforeClose) {

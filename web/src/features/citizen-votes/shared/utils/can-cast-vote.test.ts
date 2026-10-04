@@ -23,7 +23,11 @@ describe("canCastVote", () => {
   it("採決後も受け付けている回なら投票できる", () => {
     expect(
       canCastVote({
-        pollState: { state: "open_after_close", closesAt: CLOSES_AT },
+        pollState: {
+          state: "open_after_close",
+          closesAt: CLOSES_AT,
+          openedAfterClose: false,
+        },
         billPublished: true,
         audience: "anyone",
         eligibility: "unverified",
@@ -66,7 +70,11 @@ describe("canCastVote", () => {
     ).toEqual({ ok: false, reason: "upcoming" });
     expect(
       canCastVote({
-        pollState: { state: "closed", closesAt: CLOSES_AT },
+        pollState: {
+          state: "closed",
+          closesAt: CLOSES_AT,
+          openedAfterClose: false,
+        },
         billPublished: true,
         audience: "anyone",
         eligibility: "unverified",

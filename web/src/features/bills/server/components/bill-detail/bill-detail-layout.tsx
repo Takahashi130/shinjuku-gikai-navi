@@ -1,11 +1,14 @@
+import { Suspense } from "react";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { RoundCard } from "@/components/ui/round-card";
-import { VersusLayout } from "@/components/ui/versus-layout";
+import { BillExplainerSection } from "@/features/bill-explainers/server/components/bill-explainer-section";
+import { ParticipationSkeleton } from "@/features/bill-participation/client/components/participation-skeleton";
 import { getDietSessionById } from "@/features/diet-sessions/server/loaders/get-diet-session-by-id";
 import { formatPendingSessionNote } from "@/features/diet-sessions/shared/utils/session-notice";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
+import { getFactionMemberLinks } from "@/features/members/server/loaders/get-faction-member-links";
 import { BillTopicsPreviewSection } from "@/features/user-topic-analysis/server/components/bill-topics-preview-section";
 import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/loaders/get-public-topic-analysis";
 import { routes } from "@/lib/routes";
@@ -14,8 +17,6 @@ import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disc
 import {
   BillCommentsSlot,
   BillExplainerSlot,
-  CastVoteSlot,
-  CitizenVoteSlot,
 } from "../../../client/components/bill-detail/bill-slots";
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
 import { CouncilDecisionPanel } from "../../../client/components/bill-detail/council-decision-panel";
@@ -34,9 +35,15 @@ import { BillShareButtons } from "../share/bill-share-buttons";
 import { BillContent } from "./bill-content";
 import { BillDetailHeader } from "./bill-detail-header";
 import { BillDetailStrip } from "./bill-detail-strip";
+import { BillVoteSections } from "./bill-vote-sections";
 
 interface BillDetailLayoutProps {
   bill: BillWithContent;
+  /**
+   * トークン付きのプレビュー（/preview/bills/[id]）で描くとき true。
+   * 解説の下書きも見せる（公開前の議案には投票できない）。
+   */
+  preview?: boolean;
 }
 
 /**
@@ -44,28 +51,39 @@ interface BillDetailLayoutProps {
  *
  * 1. 濃色の帯：会期・議案番号・議会の結果のピルと提出日
  * 2. タイトル・要約・テーマ
- * 3. 事前解説（差し込み口・いまは準備中）
- * 4. 区民の意思 vs 議会の議決（区民側は差し込み口・いまは準備中）
- * 5. 「あなたの意思を投じる」の濃色の帯（差し込み口・いまは準備中）
+ * 3. 事前解説（AI が作成し別の AI が照合したスライド。無ければその理由）
+ * 4. 区民の意思 vs 議会の議決（区民投票の結果と議会の議決を並べ、ズレを示す）
+ * 5. 「あなたの意思を投じる」の濃色の帯（賛成・反対・取り消し）
  * 6. 区民のコメント（差し込み口・いまは準備中）
  *
  * を並べ、その下に審議のステータス・議案の内容（解説の本文）・AIインタビュー
- * などを続ける。差し込み口は bill-slots.tsx。
+ * などを続ける。差し込み口は bill-slots.tsx。解説と区民投票は Suspense の中で
+ * 読み込み、議案ページのほかの部分を待たせない（4 と 5 は bill-vote-sections.tsx）。
  *
  * 議決結果と会派ごとの賛否は解説の Markdown から読み取って（parseBillVotes）
  * 構造化して出し、解説の本文からはその節を取り除いて二重に出さない。取り除く
  * のは「議会の議決」の面が実際に出す節だけ（getSectionsShownInDecisionPanel）。
  */
-export async function BillDetailLayout({ bill }: BillDetailLayoutProps) {
-  const [interviewConfig, publicReportsResult, topicAnalysis, session] =
-    await Promise.all([
-      getInterviewConfig(bill.id),
-      getPublicReportsByBillId(bill.id),
-      getPublicTopicAnalysis(bill.id),
-      bill.diet_session_id
-        ? getDietSessionById(bill.diet_session_id)
-        : Promise.resolve(null),
-    ]);
+export async function BillDetailLayout({
+  bill,
+  preview = false,
+}: BillDetailLayoutProps) {
+  const [
+    interviewConfig,
+    publicReportsResult,
+    topicAnalysis,
+    session,
+    memberLinks,
+  ] = await Promise.all([
+    getInterviewConfig(bill.id),
+    getPublicReportsByBillId(bill.id),
+    getPublicTopicAnalysis(bill.id),
+    bill.diet_session_id
+      ? getDietSessionById(bill.diet_session_id)
+      : Promise.resolve(null),
+    // 会派名から議員カルテへのリンク。取れなければリンク無しで出す
+    getFactionMemberLinks(),
+  ]);
 
   const markdown = bill.bill_content?.content;
   const votes = parseBillVotes(markdown);
@@ -115,39 +133,33 @@ export async function BillDetailLayout({ bill }: BillDetailLayoutProps) {
               topicCount={topics.length}
             />
 
-            <BillExplainerSlot />
-
-            <section
-              aria-labelledby="bill-votes-title"
-              className="flex flex-col gap-3"
-            >
-              <h2
-                id="bill-votes-title"
-                className="text-lg font-extrabold text-mirai-text md:text-xl"
-              >
-                区民の意思 vs 議会の議決
-              </h2>
-              {/* 議会の面は会派の一覧で縦に長くなるので、区民の面は伸ばさない */}
-              <VersusLayout
-                stretch={false}
-                left={<CitizenVoteSlot />}
-                right={
-                  <CouncilDecisionPanel
-                    status={bill.status}
-                    votes={votes}
-                    showFactions
-                    pendingNote={
-                      session
-                        ? (formatPendingSessionNote(session, getJapanTime()) ??
-                          undefined)
-                        : undefined
-                    }
-                  />
+            <BillExplainerSlot>
+              <Suspense
+                fallback={
+                  <ParticipationSkeleton label="事前解説" className="h-72" />
                 }
-              />
-            </section>
+              >
+                <BillExplainerSection billId={bill.id} includeDraft={preview} />
+              </Suspense>
+            </BillExplainerSlot>
 
-            <CastVoteSlot />
+            <BillVoteSections
+              billId={bill.id}
+              council={
+                <CouncilDecisionPanel
+                  status={bill.status}
+                  votes={votes}
+                  showFactions
+                  memberLinks={memberLinks}
+                  pendingNote={
+                    session
+                      ? (formatPendingSessionNote(session, getJapanTime()) ??
+                        undefined)
+                      : undefined
+                  }
+                />
+              }
+            />
 
             <BillCommentsSlot />
           </div>

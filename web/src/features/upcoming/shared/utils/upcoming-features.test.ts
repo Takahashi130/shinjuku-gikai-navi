@@ -10,7 +10,8 @@ describe("isUpcomingFeatureId", () => {
   it("準備中の機能の id だけを受け付ける", () => {
     expect(isUpcomingFeatureId("live")).toBe(true);
     expect(isUpcomingFeatureId("impact")).toBe(true);
-    expect(isUpcomingFeatureId("members")).toBe(true);
+    // 議員カルテは本物のページ（/members）ができたので、説明ページは無い
+    expect(isUpcomingFeatureId("members")).toBe(false);
     expect(isUpcomingFeatureId("bills")).toBe(false);
     expect(isUpcomingFeatureId(undefined)).toBe(false);
   });
@@ -24,8 +25,7 @@ describe("UPCOMING_FEATURES", () => {
     }
   });
 
-  // まだ無い機能のページなので、本物の議員ページ（別ブランチで作成中）や
-  // 存在しないページへは送らない。内部リンクは議案一覧だけ。
+  // まだ無い機能のページなので、存在しないページへは送らない。内部リンクは議案一覧だけ。
   it("内部リンクは議案一覧にだけ送る", () => {
     const internal = UPCOMING_FEATURE_IDS.flatMap((id) =>
       UPCOMING_FEATURES[id].links.filter((link) => link.kind === "internal")

@@ -13,6 +13,7 @@ function toTime(iso: string | null): number | null {
  * - 人事案件（同意・諮問・候補者の推薦）は投票の対象外（回があっても受け付けない）
  * - 回が無い・運営が非表示にした回も対象外
  * - 締切（本会議の採決予定）より前は open。後は accepts_after_close に従う
+ * - 締切より後に受付を始めた回（opens_at >= closes_at）は openedAfterClose
  *
  * キャッシュの外で、現在時刻と比べて決める。
  */
@@ -41,10 +42,24 @@ export function resolvePollState(input: {
     return { state: "open", closesAt: null };
   }
   if (nowTime < closesAt) return { state: "open", closesAt: poll.closesAt };
+  // 締切より後に受付を始めた回（過去の議案）には、採決前の票が入りようがない
+  const openedAfterClose = opensAt !== null && opensAt >= closesAt;
   if (poll.acceptsAfterClose) {
-    return { state: "open_after_close", closesAt: poll.closesAt };
+    return {
+      state: "open_after_close",
+      closesAt: poll.closesAt,
+      openedAfterClose,
+    };
   }
-  return { state: "closed", closesAt: poll.closesAt };
+  return { state: "closed", closesAt: poll.closesAt, openedAfterClose };
+}
+
+/** 締切より後に受付を始めた回か（採決前の票が無く、議会の議決とは比べない） */
+export function isOpenedAfterClose(state: PollState): boolean {
+  return (
+    (state.state === "open_after_close" || state.state === "closed") &&
+    state.openedAfterClose
+  );
 }
 
 /**
@@ -55,6 +70,23 @@ export function resolvePollState(input: {
 export function isBeforeClose(closesAt: string | null, at: Date): boolean {
   const closes = toTime(closesAt);
   return closes === null || at.getTime() < closes;
+}
+
+/** 締切（本会議の採決予定）の時刻。締切の無い状態（対象外・受付前・締切未定）なら null */
+export function pollClosesAt(state: PollState): string | null {
+  switch (state.state) {
+    case "open":
+    case "open_after_close":
+    case "closed":
+      return state.closesAt;
+    default:
+      return null;
+  }
+}
+
+/** 新しい票（選び直しを含む）を受け付けている状態か。締切の前後は問わない */
+export function isAcceptingVotes(state: PollState): boolean {
+  return state.state === "open" || state.state === "open_after_close";
 }
 
 /** 締切を過ぎたか（受け付けているかどうかは問わない） */

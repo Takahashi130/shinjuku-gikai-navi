@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { cn } from "@/lib/utils";
 import type { BillCitizenVotesView } from "../../shared/types";
 import type { PollStatusDescription } from "../../shared/utils/describe-poll-status";
-import { useCastVote } from "../hooks/use-cast-vote";
-import { VoteCardView } from "./vote-card-view";
+import { CastVoteAnchor } from "./cast-vote-anchor";
+import { CastVoteBand } from "./cast-vote-band";
+import { CitizenVoteProvider } from "./citizen-vote-provider";
+import { CitizenVoteResultPanel } from "./citizen-vote-result-panel";
 
 interface VoteCardProps {
   view: BillCitizenVotesView;
@@ -13,41 +15,20 @@ interface VoteCardProps {
   className?: string;
 }
 
-/** 投票カード（賛成・反対・取り消し）。押したときにだけ匿名ログインする */
+/**
+ * 投票の帯と結果の面を縦に並べた、1か所で完結する区民投票（BillParticipationPanel
+ * から使う）。議案ページでは、2つを離れた場所に置くので CitizenVoteProvider で
+ * 直接組み立てる。押したときにだけ匿名ログインする。
+ */
 export function VoteCard({ view, status, className }: VoteCardProps) {
-  const closesAt =
-    view.pollState.state === "open" ||
-    view.pollState.state === "open_after_close" ||
-    view.pollState.state === "closed"
-      ? view.pollState.closesAt
-      : null;
-
-  // サーバーから新しい値が届いたときだけ初期値を差し替える
-  const initial = useMemo(
-    () => ({ myVote: view.myVote, summary: view.summary }),
-    [view.myVote, view.summary]
-  );
-
-  const { state, pending, error, cast, withdraw } = useCastVote({
-    billId: view.billId,
-    closesAt,
-    initial,
-  });
-
   return (
-    <VoteCardView
-      pollState={view.pollState}
-      status={status}
-      billPublished={view.billPublished}
-      votingEnabled={view.votingEnabled}
-      councilStatus={view.councilStatus}
-      billSlug={view.billSlug}
-      state={state}
-      pending={pending}
-      error={error}
-      onCast={(choice) => void cast(choice)}
-      onWithdraw={() => void withdraw()}
-      className={className}
-    />
+    <CitizenVoteProvider view={view} status={status}>
+      <div className={cn("flex flex-col gap-3", className)}>
+        <CastVoteAnchor>
+          <CastVoteBand />
+        </CastVoteAnchor>
+        <CitizenVoteResultPanel />
+      </div>
+    </CitizenVoteProvider>
   );
 }

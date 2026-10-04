@@ -1,6 +1,7 @@
 import "server-only";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { getBillParticipationBadges } from "@/features/bill-participation/server/loaders/get-bill-participation-badges";
 import { getBillsByDietSession } from "@/features/bills/server/loaders/get-bills-by-diet-session";
 import { routes } from "@/lib/routes";
 import { DietSessionBillList } from "../../client/components/diet-session-bill-list";
@@ -13,6 +14,10 @@ export async function DietSessionBillsPage({
   session: DietSession;
 }) {
   const bills = await getBillsByDietSession(session.id);
+  // 解説・区民投票の印（投票受付中・解説あり など）。失敗しても一覧は出す
+  const participationBadges = await getBillParticipationBadges(
+    bills.map((bill) => bill.id)
+  );
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6 md:py-8">
@@ -23,7 +28,11 @@ export async function DietSessionBillsPage({
           { label: session.name },
         ]}
       />
-      <DietSessionBillList session={session} bills={bills} />
+      <DietSessionBillList
+        session={session}
+        bills={bills}
+        participationBadges={participationBadges}
+      />
     </div>
   );
 }

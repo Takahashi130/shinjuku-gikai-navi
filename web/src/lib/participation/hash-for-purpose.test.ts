@@ -22,6 +22,15 @@ describe("hashForPurpose", () => {
     );
   });
 
+  // 回数の記録に匿名 ID をそのまま残さないための用途
+  it("匿名 ID の用途（user）も、接続元の用途とは別のハッシュになる", () => {
+    const userId = "11111111-1111-4111-8111-111111111111";
+    const hash = hashForPurpose(SECRET, "user", userId);
+    expect(hash).toMatch(/^[0-9a-f]{32}$/);
+    expect(hash).not.toContain("1111");
+    expect(hash).not.toBe(hashForPurpose(SECRET, "ip", userId));
+  });
+
   it("秘密鍵が違えば別のハッシュになる", () => {
     expect(hashForPurpose(SECRET, "ip", "abc")).not.toBe(
       hashForPurpose(`${SECRET}-other`, "ip", "abc")

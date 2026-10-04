@@ -76,9 +76,13 @@ export type PollState =
   | { state: "upcoming"; opensAt: string }
   /** 締切前（closesAt が null なら締切なし） */
   | { state: "open"; closesAt: string | null }
-  /** 締切（採決）後だが、採決後の票として受け付けている */
-  | { state: "open_after_close"; closesAt: string }
-  | { state: "closed"; closesAt: string };
+  /**
+   * 締切（採決）後だが、採決後の票として受け付けている。
+   * openedAfterClose：受付を始めたのが締切より後の回（過去の議案にあとから回を
+   * 作ったもの）。採決前の票は1票も無く、議会の議決とは比べない
+   */
+  | { state: "open_after_close"; closesAt: string; openedAfterClose: boolean }
+  | { state: "closed"; closesAt: string; openedAfterClose: boolean };
 
 /** 投票カードに渡す、1議案ぶんの表示用データ */
 export type BillCitizenVotesView = {

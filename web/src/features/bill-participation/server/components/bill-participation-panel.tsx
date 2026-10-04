@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { BillExplainerSection } from "@/features/bill-explainers/server/components/bill-explainer-section";
 import { CitizenVoteSection } from "@/features/citizen-votes/server/components/citizen-vote-section";
 import { cn } from "@/lib/utils";
+import { ParticipationSkeleton } from "../../client/components/participation-skeleton";
 
 interface BillParticipationPanelProps {
   billId: string;
@@ -13,25 +14,14 @@ interface BillParticipationPanelProps {
   className?: string;
 }
 
-function SectionSkeleton({ label }: { label: string }) {
-  return (
-    <div
-      role="status"
-      aria-label={`${label}を読み込んでいます`}
-      className="h-40 animate-pulse rounded-xl border bg-muted"
-    />
-  );
-}
-
 /**
- * 議案ページに1行で置ける、区民参加の入口（解説 → 投票の順）。
+ * 1か所に縦に並べる、区民参加の入口（解説 → 投票の帯 → 区民投票の結果）。
+ * 開発用の実データのページ（/dev/features/participation/live）で使う。
  *
- * 置き方：議案詳細の本文の後などに
- *   <BillParticipationPanel billId={bill.id} />
- * プレビューでは
- *   <BillParticipationPanel billId={bill.id} preview />
+ * 議案ページ（BillDetailLayout）では、解説・結果・投票の帯をそれぞれの差し込み口
+ * （bill-slots.tsx）に分けて置くので、このパネルは使わない。
  *
- * それぞれの部分は Suspense で包んでいるので、議案ページのほかの部分を待たせない。
+ * それぞれの部分は Suspense で包んでいるので、ほかの部分を待たせない。
  * データが取れないときは、その部分だけ出さない。
  */
 export function BillParticipationPanel({
@@ -40,11 +30,13 @@ export function BillParticipationPanel({
   className,
 }: BillParticipationPanelProps) {
   return (
-    <div className={cn("min-w-0 space-y-6", className)}>
-      <Suspense fallback={<SectionSkeleton label="議案の解説" />}>
+    <div className={cn("flex min-w-0 flex-col gap-6", className)}>
+      <Suspense fallback={<ParticipationSkeleton label="事前解説" />}>
         <BillExplainerSection billId={billId} includeDraft={preview} />
       </Suspense>
-      <Suspense fallback={<SectionSkeleton label="区民投票" />}>
+      <Suspense
+        fallback={<ParticipationSkeleton label="区民投票" tone="dark" />}
+      >
         <CitizenVoteSection billId={billId} />
       </Suspense>
     </div>

@@ -11,7 +11,7 @@ describe("buildVoteRateLimitRules", () => {
   it("同じ人 → 接続元の順に、それぞれの上限で並べる（どちらも1分の窓）", () => {
     expect(
       buildVoteRateLimitRules({
-        userId: "user-1",
+        userKey: "user-1",
         ipHash: "abc123",
         limits: { perUser: 10, perIp: 20 },
       })
@@ -31,7 +31,7 @@ describe("buildVoteRateLimitRules", () => {
 
   it("キーには渡されたハッシュだけが入る（生の IP は受け取らない）", () => {
     const rules = buildVoteRateLimitRules({
-      userId: "u",
+      userKey: "u",
       ipHash: "0f".repeat(16),
       limits: { perUser: 1, perIp: 1 },
     });
@@ -41,7 +41,7 @@ describe("buildVoteRateLimitRules", () => {
   it("接続元のハッシュが無い（秘密鍵が無い）ときは、同じ人の制限だけにする", () => {
     expect(
       buildVoteRateLimitRules({
-        userId: "u",
+        userKey: "u",
         ipHash: null,
         limits: { perUser: 10, perIp: 20 },
       }).map((r) => r.key)

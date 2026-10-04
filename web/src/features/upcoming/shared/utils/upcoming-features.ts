@@ -13,9 +13,9 @@ import { routes } from "@/lib/routes";
  * HEADER_TABS）のそのオブジェクトだけを本物のページに書き換える。説明ページも
  * 要らなくなったら、ここ（UPCOMING_FEATURE_IDS と UPCOMING_FEATURES）と
  * upcoming-feature-icons.ts からその id を消す。
- * 例：議員カルテは別ブランチで /members（routes.membersList()）を作っている。
+ * 例：議員カルテ（members）は /members（routes.membersList()）ができたので消した。
  */
-export const UPCOMING_FEATURE_IDS = ["live", "impact", "members"] as const;
+export const UPCOMING_FEATURE_IDS = ["live", "impact"] as const;
 
 export type UpcomingFeatureId = (typeof UPCOMING_FEATURE_IDS)[number];
 
@@ -83,27 +83,6 @@ export const UPCOMING_FEATURES: Record<UpcomingFeatureId, UpcomingFeature> = {
         kind: "internal",
         label: "可決された議案を見る",
         href: billsListHref(DEFAULT_BILLS_LIST_PARAMS, { status: "enacted" }),
-      },
-    ],
-  },
-  members: {
-    id: "members",
-    title: "議員カルテ・政務活動費",
-    lead: "議員ごとのページを作り、議会での活動と政務活動費の使いみちを読みやすくまとめる予定です。",
-    points: [
-      "議員ごとに、所属する会派と、その会派の議案への賛否をまとめる",
-      "政務活動費の収支を、区が公開している資料から整理する",
-    ],
-    links: [
-      {
-        kind: "internal",
-        label: "会派の賛否が分かれた議案を見る",
-        href: billsListHref(DEFAULT_BILLS_LIST_PARAMS, { splitOnly: true }),
-      },
-      {
-        kind: "external",
-        label: "新宿区議会（公式）",
-        href: EXTERNAL_LINKS.SHINJUKU_GIKAI,
       },
     ],
   },

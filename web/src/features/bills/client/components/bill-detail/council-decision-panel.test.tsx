@@ -43,6 +43,47 @@ describe("CouncilDecisionPanel", () => {
     expect(screen.getByText("D")).toBeInTheDocument();
   });
 
+  // 今ある会派だけを議員カルテ（会派で絞った議員の一覧）へのリンクにする。
+  it("会派名から、その会派の議員の一覧へ行ける", () => {
+    const { container } = render(
+      <CouncilDecisionPanel
+        status="enacted"
+        votes={votes}
+        showFactions
+        memberLinks={{ A: "party-a", D: "party-d" }}
+      />
+    );
+
+    // 古い議案では採決のときの議員とは限らないので「今の議員」と読み上げる
+    expect(
+      screen.getByRole("link", { name: "Aの今の議員（議員カルテ）" })
+    ).toHaveAttribute("href", "/members?faction=party-a");
+    expect(
+      screen.getByRole("link", { name: "Dの今の議員（議員カルテ）" })
+    ).toHaveAttribute("href", "/members?faction=party-d");
+    // 引けなかった会派は文字のまま。並びと補足は変えない
+    expect(screen.queryByRole("link", { name: /^B/ })).not.toBeInTheDocument();
+    expect(container).toHaveTextContent("A、B（1人反対）、C");
+    expect(
+      screen.getByText(/会派名を押すと、その会派の今の議員の一覧/)
+    ).toBeInTheDocument();
+  });
+
+  it("リンクにできる会派が無ければ、リンクの案内を出さない", () => {
+    render(
+      <CouncilDecisionPanel
+        status="enacted"
+        votes={votes}
+        showFactions
+        memberLinks={{}}
+      />
+    );
+
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByText(/会派名を押すと/)).not.toBeInTheDocument();
+    expect(screen.getByText("A、B（1人反対）、C")).toBeInTheDocument();
+  });
+
   it("解説から会派の賛否が読めなければ、掲載していないと書く", () => {
     render(<CouncilDecisionPanel status="rejected" votes={null} />);
 

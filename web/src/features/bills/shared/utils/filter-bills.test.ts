@@ -8,10 +8,12 @@ function bill(
     tags?: string[];
     hasPublicInterview?: boolean;
     isFeatured?: boolean;
+    slug?: string;
   } = {}
 ) {
   return {
     id,
+    slug: overrides.slug ?? `r8-teirei-3-gian-${id}`,
     name: `${id} 法律案`,
     bill_content: { title: overrides.title ?? `${id} のタイトル` } as never,
     tags: (overrides.tags ?? []).map((label) => ({ id: label, label })),
@@ -26,12 +28,23 @@ const base = {
   tagId: null,
   interviewOnly: false,
   splitOnly: false,
+  memberSubmittedOnly: false,
 };
 
 describe("filterBills", () => {
   it("既定では絞り込まない", () => {
     const bills = [bill("a"), bill("b")];
     expect(ids(filterBills(bills, base))).toEqual(["a", "b"]);
+  });
+
+  it("議員提出議案だけに絞る", () => {
+    const bills = [
+      bill("a", { slug: "r8-teirei-2-giin-10" }),
+      bill("b", { slug: "r8-teirei-2-gian-5" }),
+    ];
+    expect(
+      ids(filterBills(bills, { ...base, memberSubmittedOnly: true }))
+    ).toEqual(["a"]);
   });
 
   it("キーワードで絞る", () => {
@@ -91,6 +104,7 @@ describe("filterBills", () => {
           tagId: "税金",
           interviewOnly: true,
           splitOnly: false,
+          memberSubmittedOnly: false,
         })
       )
     ).toEqual(["hit"]);

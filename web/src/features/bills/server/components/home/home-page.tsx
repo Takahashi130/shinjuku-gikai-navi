@@ -1,10 +1,20 @@
 import "server-only";
 
 import { History, MessageSquare } from "lucide-react";
+import type { Route } from "next";
+import { unstable_rethrow } from "next/navigation";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { getBillParticipationBadges } from "@/features/bill-participation/server/loaders/get-bill-participation-badges";
+import {
+  type CitizenVoteSnapshot,
+  getCitizenVoteSnapshot,
+} from "@/features/citizen-votes/server/loaders/get-citizen-vote-snapshot";
+import { getOpenCitizenVoteStats } from "@/features/citizen-votes/server/loaders/get-open-citizen-vote-stats";
+import type { OpenVoteStats } from "@/features/citizen-votes/shared/utils/summarize-open-votes";
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
 import { getRecentDietSessions } from "@/features/diet-sessions/server/loaders/get-recent-diet-sessions";
 import { formatOpenSessionNote } from "@/features/diet-sessions/shared/utils/session-notice";
+import { routes } from "@/lib/routes";
 import { getJapanTime } from "@/lib/utils/date";
 import { BillCard } from "../../../client/components/bill-list/bill-card";
 import type { BillTag } from "../../../shared/types";
@@ -19,6 +29,7 @@ import {
 import { getBills } from "../../loaders/get-bills";
 import { getFeaturedTags } from "../../loaders/get-featured-tags";
 import { getSplitVoteExample } from "../../loaders/get-split-vote-example";
+import { HomeCitizenVotePanel } from "./home-citizen-vote-panel";
 import { HomeComparisonCard } from "./home-comparison-card";
 import { HomeHero } from "./home-hero";
 import { HomeInterviewBand } from "./home-interview-band";
@@ -28,10 +39,12 @@ import { HomeThemeChips } from "./home-theme-chips";
 /**
  * トップページ。白地に大きな角丸のカードを縦に並べ、情報は絞る。
  *
- * 1. ヒーロー：見出しと大きな数字3つ（審議中・掲載数・賛否が分かれた数）
+ * 1. ヒーロー：見出しと大きな数字（審議中・区民投票を受付中・掲載数・賛否が
+ *    分かれた数）
  * 2. 「区民の意思 vs 議会の議決」：賛否が分かれた直近の議案を例に、議会側は
- *    実データ、区民側は準備中
- * 3. 審議中の議案：大きめのカード最大6件と「すべて見る」
+ *    実データ、区民側はその議案の区民投票（票があれば結果、無ければ投票の案内）
+ * 3. 審議中の議案：大きめのカード最大6件（投票受付中・解説ありの印つき）と
+ *    「すべて見る」
  *    （AIインタビューを受け付けている議案があるときだけ、その下に1行の案内）
  * 4. テーマで探す・会期から探す：小さなチップ
  *
@@ -49,9 +62,22 @@ export async function HomePage() {
   ]);
 
   const view = buildHomeView(bills, themes);
-  const example = await getSplitVoteExample(
-    view.comparisonCandidates.map((bill) => bill.id)
-  );
+  const [example, featuredBadges, openVotes] = await Promise.all([
+    getSplitVoteExample(view.comparisonCandidates.map((bill) => bill.id)),
+    getBillParticipationBadges(view.featured.bills.map((bill) => bill.id)),
+    loadOpenVotesSafely(),
+  ]);
+  const exampleVote = example
+    ? await loadSnapshotSafely(example.bill.id)
+    : null;
+  // 受付中の議案がいまの会期のものだけなら、その会期の議案一覧へ送る
+  // （カードに「投票受付中」の印が並ぶ）
+  const openVotesHref =
+    currentSession?.slug &&
+    openVotes?.dietSessionIds.length === 1 &&
+    openVotes.dietSessionIds[0] === currentSession.id
+      ? (routes.kokkaiSessionBills(currentSession.slug) as Route)
+      : undefined;
   const deliberating = view.featured.kind === "deliberating";
   const featuredCopy = describeFeaturedSection(
     view.featured.kind,
@@ -70,9 +96,16 @@ export async function HomePage() {
         sessionNote={
           currentSession ? formatOpenSessionNote(currentSession, now) : null
         }
+        openVotes={openVotes}
+        openVotesHref={openVotesHref}
       />
 
-      {example && <HomeComparisonCard example={example} />}
+      {example && (
+        <HomeComparisonCard
+          example={example}
+          citizenVote={<HomeCitizenVotePanel snapshot={exampleVote} />}
+        />
+      )}
 
       {view.featured.bills.length > 0 && (
         <section
@@ -99,7 +132,7 @@ export async function HomePage() {
           <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {view.featured.bills.map((bill) => (
               <li key={bill.id}>
-                <BillCard bill={bill} />
+                <BillCard bill={bill} participation={featuredBadges[bill.id]} />
               </li>
             ))}
           </ul>
@@ -118,6 +151,30 @@ export async function HomePage() {
       />
     </div>
   );
+}
+
+/** 区民投票の受付状況。失敗してもトップは出し、数字のカードを出さない */
+async function loadOpenVotesSafely(): Promise<OpenVoteStats | null> {
+  try {
+    return await getOpenCitizenVoteStats();
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("Failed to load open citizen votes for home:", error);
+    return null;
+  }
+}
+
+/** 比較カードの例の議案の区民投票。失敗したら null（区民の面に読み込めないと出す） */
+async function loadSnapshotSafely(
+  billId: string
+): Promise<CitizenVoteSnapshot | null> {
+  try {
+    return await getCitizenVoteSnapshot(billId);
+  } catch (error) {
+    unstable_rethrow(error);
+    console.error("Failed to load citizen votes for home example:", error);
+    return null;
+  }
 }
 
 /**

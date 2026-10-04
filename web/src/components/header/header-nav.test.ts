@@ -33,11 +33,18 @@ describe("HEADER_TABS", () => {
   it("まだ無い機能は準備中の説明ページへ送る", () => {
     expect(
       HEADER_TABS.filter((tab) => tab.comingSoon).map((tab) => tab.href)
-    ).toEqual(["/upcoming/live", "/upcoming/impact", "/upcoming/members"]);
+    ).toEqual(["/upcoming/live", "/upcoming/impact"]);
   });
 
   it("議案のタブはトップへ送る", () => {
     expect(tabOf("bills")).toMatchObject({ href: "/", comingSoon: false });
+  });
+
+  it("議員カルテのタブは議員の一覧へ送る", () => {
+    expect(tabOf("members")).toMatchObject({
+      href: "/members",
+      comingSoon: false,
+    });
   });
 });
 
@@ -55,7 +62,14 @@ describe("getActiveHeaderTabId", () => {
 
   it("説明ページはそれぞれのタブ", () => {
     expect(getActiveHeaderTabId("/upcoming/live")).toBe("live");
-    expect(getActiveHeaderTabId("/upcoming/members")).toBe("members");
+    expect(getActiveHeaderTabId("/upcoming/impact")).toBe("impact");
+  });
+
+  it.each([
+    "/members",
+    "/members/5f6f8051-4b38-44da-9743-83a8fbc27b44",
+  ])("%s は議員カルテのタブ", (pathname) => {
+    expect(getActiveHeaderTabId(pathname)).toBe("members");
   });
 
   it("どのタブにも当たらないページは null", () => {
@@ -63,6 +77,9 @@ describe("getActiveHeaderTabId", () => {
     expect(getActiveHeaderTabId("/developers")).toBeNull();
     expect(getActiveHeaderTabId("/upcoming/unknown")).toBeNull();
     expect(getActiveHeaderTabId("/upcoming/livestream")).toBeNull();
+    // 説明ページは無くなった（/members へ移した）
+    expect(getActiveHeaderTabId("/upcoming/members")).toBeNull();
+    expect(getActiveHeaderTabId("/membership")).toBeNull();
   });
 });
 
@@ -81,6 +98,13 @@ describe("getHeaderTabAriaCurrent", () => {
     "/kokkai/r8-teirei-3/bills",
   ])("同じ区分のほかのページ（%s）では true にする", (pathname) => {
     expect(getHeaderTabAriaCurrent(tabOf("bills"), pathname)).toBe("true");
+  });
+
+  it("議員のページでは議員カルテのタブを true にする", () => {
+    expect(getHeaderTabAriaCurrent(tabOf("members"), "/members")).toBe("page");
+    expect(getHeaderTabAriaCurrent(tabOf("members"), "/members/abc")).toBe(
+      "true"
+    );
   });
 
   it("ほかの区分のページでは付けない", () => {

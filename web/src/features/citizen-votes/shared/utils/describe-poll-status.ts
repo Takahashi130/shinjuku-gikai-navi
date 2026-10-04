@@ -45,12 +45,19 @@ export function describePollStatus(
             remaining: formatRemaining(pollState.closesAt, now),
           };
     case "open_after_close":
-      return {
-        headline: `採決の予定（${formatJstDateTime(pollState.closesAt, now)}）を過ぎました`,
-        detail:
-          "これからの票は「採決後の票」として、採決前の票とは分けて数えます。",
-        remaining: null,
-      };
+      return pollState.openedAfterClose
+        ? {
+            headline: `採決の予定（${formatJstDateTime(pollState.closesAt, now)}）のあとに受付を始めました`,
+            detail:
+              "票はすべて「採決後の票」として数え、議会の議決とは比べません。",
+            remaining: null,
+          }
+        : {
+            headline: `採決の予定（${formatJstDateTime(pollState.closesAt, now)}）を過ぎました`,
+            detail:
+              "これからの票は「採決後の票」として、採決前の票とは分けて数えます。",
+            remaining: null,
+          };
     case "closed":
       return {
         headline: "投票の受付は終了しました",

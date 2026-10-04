@@ -6,13 +6,14 @@ import { FeatureSlot } from "@/components/ui/feature-slot";
 /**
  * 議案ページの「あとから組み込む機能」の差し込み口。
  *
- * いまはどれも準備中の説明を出す。区民投票と議案解説は別ブランチで作って
- * いるので、できたら children に渡すだけで差し替わる。
+ * children を渡せばそれを、渡さなければ準備中の説明を出す。いまは事前解説・
+ * 区民投票の結果・投票の帯に本物の機能を渡している（bill-detail-layout.tsx・
+ * bill-vote-sections.tsx）。区民のコメントだけがまだ準備中。
  *
  * ```tsx
- * <BillExplainerSlot><BillExplainer billId={bill.id} /></BillExplainerSlot>
- * <CitizenVoteSlot><CitizenVoteResult billId={bill.id} /></CitizenVoteSlot>
- * <CastVoteSlot><CitizenVoteSection billId={bill.id} /></CastVoteSlot>
+ * <BillExplainerSlot><BillExplainerSection billId={bill.id} /></BillExplainerSlot>
+ * <CitizenVoteSlot><CitizenVoteResultPanel /></CitizenVoteSlot>
+ * <CastVoteSlot><CastVoteBand /></CastVoteSlot>
  * ```
  *
  * 差し込む部品は自分の中身だけを描けばよい（位置・前後の余白はページ側が

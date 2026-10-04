@@ -90,6 +90,33 @@ export async function findFactionNamesWithFaction() {
   return data;
 }
 
+/**
+ * 会派の結成・消滅の日と、会派名の履歴（区の資料の注記から取り込んだもの。
+ * 今の会派でない会派も含む）。会派に入った日を決めるのと、所属の履歴に
+ * 当時の会派名を添えるのに使う。どちらも20件ほど。
+ */
+export async function findFactionHistory() {
+  const supabase = createAdminClient();
+  const [factions, names] = await Promise.all([
+    supabase
+      .from("factions")
+      .select("id, name, formed_on, dissolved_on")
+      .order("id", { ascending: true }),
+    supabase
+      .from("faction_names")
+      .select("faction_id, name, valid_from, valid_to")
+      .order("faction_id", { ascending: true })
+      .order("valid_from", { ascending: true, nullsFirst: true }),
+  ]);
+  if (factions.error) {
+    throw new Error(`Failed to fetch factions: ${factions.error.message}`);
+  }
+  if (names.error) {
+    throw new Error(`Failed to fetch faction names: ${names.error.message}`);
+  }
+  return { factions: factions.data, names: names.data };
+}
+
 // ============================================================
 // 任期・会派の所属・役職
 // ============================================================
@@ -135,6 +162,27 @@ export async function findFactionMemberships(memberId: string) {
     throw new Error(`Failed to fetch faction memberships: ${error.message}`);
   }
   return data;
+}
+
+/**
+ * 全議員の会派の所属の履歴（一覧のカードの政務活動費の目安を、議員のページと
+ * 同じ期間で出すため。50件ほど）。
+ */
+export async function findAllFactionMemberships() {
+  const supabase = createAdminClient();
+  return fetchAllRows((from, to) =>
+    supabase
+      .from("faction_memberships")
+      .select("member_id, faction_id, first_seen_on, last_seen_on")
+      .order("member_id", { ascending: true })
+      .order("first_seen_on", { ascending: true })
+      .order("id", { ascending: true })
+      .range(from, to)
+  ).catch((error: unknown) => {
+    throw new Error(
+      `Failed to fetch faction memberships: ${error instanceof Error ? error.message : String(error)}`
+    );
+  });
 }
 
 /** 全議員の役職（一覧のカードに委員会を出すため。100件ほど）。 */
@@ -286,21 +334,41 @@ export async function findFactionExpenses(factionId: string) {
 }
 
 /**
- * 議員提出議案（slug が「…-giin-N」の議案）。区の資料には提出者が無いので、
- * 区議会全体の件数と新しいものだけを出す。
+ * 全会派の政務活動費の、1人あたりの目安を出すのに要る列だけ（一覧のカード用。
+ * 令和元年度からで50件ほど）。
  */
-export async function findMemberSubmittedBills(limit: number) {
+export async function findExpenseEstimateRows() {
   const supabase = createAdminClient();
-  const { data, error, count } = await supabase
+  return fetchAllRows((from, to) =>
+    supabase
+      .from("faction_activity_expenses")
+      .select(
+        "faction_id, fiscal_year, period_label, period_start, period_end, total_expense, member_count, income"
+      )
+      .order("period_start", { ascending: false })
+      .order("id", { ascending: true })
+      .range(from, to)
+  ).catch((error: unknown) => {
+    throw new Error(
+      `Failed to fetch faction expenses: ${error instanceof Error ? error.message : String(error)}`
+    );
+  });
+}
+
+/**
+ * 議員提出議案（slug が「…-giin-N」の議案）の件数（区議会全体・公開済み）。
+ * 区のウェブサイトの議案一覧・審議結果には提出者が載っていないので、議員ごと・
+ * 会派ごとには数えない。
+ */
+export async function countMemberSubmittedBills() {
+  const supabase = createAdminClient();
+  const { error, count } = await supabase
     .from("bills")
-    .select("id, name, status, submitted_date", { count: "exact" })
+    .select("id", { count: "exact", head: true })
     .eq("publish_status", "published")
-    .like("slug", "%-giin-%")
-    .order("submitted_date", { ascending: false, nullsFirst: false })
-    .order("slug", { ascending: false })
-    .limit(limit);
+    .like("slug", "%-giin-%");
   if (error) {
-    throw new Error(`Failed to fetch member-submitted bills: ${error.message}`);
+    throw new Error(`Failed to count member-submitted bills: ${error.message}`);
   }
-  return { bills: data, totalCount: count ?? data.length };
+  return count ?? 0;
 }

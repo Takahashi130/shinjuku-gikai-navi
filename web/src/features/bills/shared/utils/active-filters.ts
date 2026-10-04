@@ -5,7 +5,7 @@ import { type BillsListParams, billsListHref } from "./parse-bills-list-params";
 
 /** 一覧の上に並べる「いま効いている絞り込み」1つ分。押すとその条件だけ外す。 */
 export type ActiveFilter = {
-  key: "query" | "status" | "tag" | "split" | "interview";
+  key: "query" | "status" | "tag" | "split" | "giin" | "interview";
   label: string;
   /** この条件だけを外した一覧へのリンク。 */
   removeHref: Route;
@@ -52,6 +52,13 @@ export function buildActiveFilters(
       removeHref: billsListHref(params, { splitOnly: false }),
     });
   }
+  if (params.memberSubmittedOnly) {
+    filters.push({
+      key: "giin",
+      label: "議員提出議案",
+      removeHref: billsListHref(params, { memberSubmittedOnly: false }),
+    });
+  }
   if (params.interviewOnly) {
     filters.push({
       key: "interview",
@@ -69,6 +76,7 @@ export function clearFiltersHref(params: BillsListParams): Route {
     status: "all",
     tagId: null,
     splitOnly: false,
+    memberSubmittedOnly: false,
     interviewOnly: false,
   });
 }

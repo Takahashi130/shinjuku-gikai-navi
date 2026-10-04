@@ -1,7 +1,10 @@
 import { Clock, Landmark } from "lucide-react";
+import type { Route } from "next";
 import { LabelPill } from "@/components/ui/label-pill";
 import { RoundCard } from "@/components/ui/round-card";
 import { StatCard } from "@/components/ui/stat-card";
+import { formatOpenVotesNote } from "@/features/citizen-votes/shared/utils/format-open-votes-note";
+import type { OpenVoteStats } from "@/features/citizen-votes/shared/utils/summarize-open-votes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import {
   billsListHref,
@@ -21,14 +24,18 @@ interface HomeHeroProps {
   lastUpdatedAt: string | null;
   /** 開会中の会期の一言（例：「令和8年第3回定例会・閉会まであと11日」）。閉会中は null。 */
   sessionNote: string | null;
+  /** 区民投票を受け付けている議案（締切前のもの）。読み込めなければ null で、カードを出さない。 */
+  openVotes: OpenVoteStats | null;
+  /** 受付中の議案をまとめて見られるページ（会期の議案一覧など）。無ければリンクにしない。 */
+  openVotesHref?: Route;
 }
 
 /**
  * トップのヒーロー。ラベルのピル＋大きな見出し＋説明＋右上の更新日と、
- * 大きな数字のカード3つ（濃色1・白2）。
+ * 大きな数字のカード（濃色1・白3）。
  *
- * 数字はどれも DB から数えた実際の値。区民投票の数や議会との一致率は、
- * まだ集計していないので出さない（下の比較カードで「準備中」と書く）。
+ * 数字はどれも DB から数えた実際の値。区民投票は「受付中の議案の数」だけを出す
+ * （票の数や議会との一致率は、まだ議案をまたいで集計していないので出さない）。
  */
 export function HomeHero({
   deliberatingCount,
@@ -37,6 +44,8 @@ export function HomeHero({
   earliestYear,
   lastUpdatedAt,
   sessionNote,
+  openVotes,
+  openVotesHref,
 }: HomeHeroProps) {
   const listHref = (patch: Parameters<typeof billsListHref>[1]) =>
     billsListHref(DEFAULT_BILLS_LIST_PARAMS, patch);
@@ -59,7 +68,7 @@ export function HomeHero({
               <span className="inline-block">見える化。</span>
             </h1>
             <p className="max-w-2xl text-sm leading-relaxed text-mirai-text-secondary md:text-base">
-              区議会でいま何が審議され、会派がどう賛成・反対したのかを、議案ごとにまとめています。区民投票で意思を示し、議会の議決とのズレを見比べられるようにする機能は準備中です。
+              区議会でいま何が審議され、会派がどう賛成・反対したのかを、議案ごとにまとめています。区民投票（参考値）で賛成・反対を示し、議会の議決とのズレを見比べられます。
             </p>
           </div>
           {lastUpdatedAt && (
@@ -70,7 +79,13 @@ export function HomeHero({
           )}
         </div>
 
-        <ul className="grid gap-4 sm:grid-cols-3">
+        <ul
+          className={
+            openVotes
+              ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+              : "grid gap-4 sm:grid-cols-3"
+          }
+        >
           <li>
             <StatCard
               tone="dark"
@@ -86,6 +101,18 @@ export function HomeHero({
               linkLabel="審議中の議案を見る"
             />
           </li>
+          {openVotes && (
+            <li>
+              <StatCard
+                label="区民投票を受付中の議案"
+                value={openVotes.count}
+                unit="件"
+                note={formatOpenVotesNote(openVotes, new Date())}
+                href={openVotes.count > 0 ? openVotesHref : undefined}
+                linkLabel="投票できる議案を見る"
+              />
+            </li>
+          )}
           <li>
             <StatCard
               label="掲載している議案"

@@ -31,6 +31,7 @@ export default function ParticipationPreview() {
   const afterState = {
     state: "open_after_close",
     closesAt: CLOSES_AT,
+    openedAfterClose: false,
   } as const;
 
   return (

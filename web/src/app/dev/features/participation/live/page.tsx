@@ -28,8 +28,9 @@ export default async function ParticipationLivePreview({
       <h1 className="mb-2 text-3xl font-bold">区民参加（実データ）</h1>
       <p className="mb-6 text-sm text-muted-foreground">
         いまの会期：{session?.name ?? "（なし）"}
-        。議案を選ぶと、議案ページに置く &lt;BillParticipationPanel /&gt;
-        を表示します。投票すると DB に票が入ります（取り消しで消せます）。
+        。議案を選ぶと、解説と区民投票を1か所に並べた &lt;BillParticipationPanel
+        /&gt; を表示します（議案ページでは、それぞれを差し込み口に分けて置いて
+        います）。投票すると DB に票が入ります（取り消しで消せます）。
       </p>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">

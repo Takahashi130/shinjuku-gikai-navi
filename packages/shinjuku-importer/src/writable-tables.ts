@@ -15,6 +15,17 @@ export const IMPORTER_WRITABLE_TABLES = [
   "bills_tags",
   "diet_sessions",
   "polls",
+  // 議員・会派（members / questions / expenses / faction-votes のコマンド）。
+  // どれも区の公開ページから作るデータで、運営者・区民が作るデータは無い
+  "factions",
+  "faction_names",
+  "members",
+  "member_terms",
+  "faction_memberships",
+  "member_positions",
+  "plenary_questions",
+  "faction_activity_expenses",
+  "bill_faction_votes",
 ] as const;
 
 /** 取り込み処理が決して書き込まないテーブル（運営者・区民が作るデータ） */

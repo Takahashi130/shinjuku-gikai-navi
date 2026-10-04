@@ -1,4 +1,5 @@
 import type { BillListItem } from "../types";
+import { isMemberSubmittedBillSlug } from "./member-submitted-bill";
 import type { BillsListParams } from "./parse-bills-list-params";
 import { type SearchableBill, searchBills } from "./search-bills";
 
@@ -9,10 +10,12 @@ import { type SearchableBill, searchBills } from "./search-bills";
 type FilterableBill = Omit<SearchableBill, "tags"> &
   Pick<BillListItem, "tags" | "hasPublicInterview"> & {
     is_featured?: boolean;
+    slug?: string | null;
   };
 
 /**
- * ステータス以外の絞り込み（キーワード・カテゴリ・受付中・賛否が分かれた議案）を
+ * ステータス以外の絞り込み（キーワード・カテゴリ・受付中・賛否が分かれた議案・
+ * 議員提出議案）を
  * まとめて適用する。
  *
  * ステータスのタブに出す件数は、この結果を母集合にして数える。先に適用しないと
@@ -25,7 +28,7 @@ export function filterBills<T extends FilterableBill>(
   bills: readonly T[],
   params: Pick<
     BillsListParams,
-    "query" | "tagId" | "interviewOnly" | "splitOnly"
+    "query" | "tagId" | "interviewOnly" | "splitOnly" | "memberSubmittedOnly"
   >
 ): T[] {
   let filtered = searchBills(bills, params.query);
@@ -41,6 +44,9 @@ export function filterBills<T extends FilterableBill>(
   // 取り込み時に「会派の賛成と反対が分かれた議案」へ is_featured を立てている。
   if (params.splitOnly) {
     filtered = filtered.filter((bill) => bill.is_featured === true);
+  }
+  if (params.memberSubmittedOnly) {
+    filtered = filtered.filter((bill) => isMemberSubmittedBillSlug(bill.slug));
   }
   return filtered;
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { RoundCard } from "@/components/ui/round-card";
+import type { ParticipationBadgesByBillId } from "@/features/bill-participation/shared/types";
 import { BillCard } from "@/features/bills/client/components/bill-list/bill-card";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { cn } from "@/lib/utils";
@@ -11,6 +12,8 @@ type FilterType = "all" | "enacted" | "rejected" | "other";
 
 type Props = {
   bills: BillWithContent[];
+  /** 議案ごとの解説・区民投票の印 */
+  participationBadges?: ParticipationBadgesByBillId;
 };
 
 function getFilterCounts(bills: BillWithContent[]) {
@@ -39,7 +42,10 @@ function filterBills(
   }
 }
 
-export function BillListWithStatusFilter({ bills }: Props) {
+export function BillListWithStatusFilter({
+  bills,
+  participationBadges,
+}: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
   const counts = getFilterCounts(bills);
   const filteredBills = filterBills(bills, activeFilter);
@@ -100,7 +106,10 @@ export function BillListWithStatusFilter({ bills }: Props) {
         <ul className="grid gap-4 md:grid-cols-2">
           {filteredBills.map((bill) => (
             <li key={bill.id}>
-              <BillCard bill={bill} />
+              <BillCard
+                bill={bill}
+                participation={participationBadges?.[bill.id]}
+              />
             </li>
           ))}
         </ul>

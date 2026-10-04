@@ -10,6 +10,7 @@ describe("footer.config", () => {
     expect(hrefs).toContain(routes.privacy());
     expect(hrefs).toContain(routes.developers());
     expect(hrefs).toContain(routes.billsList());
+    expect(hrefs).toContain(routes.membersList());
   });
 
   it("ヘッダーと同じタブを並べ、まだ無い機能は説明ページへ送る", () => {
@@ -17,7 +18,17 @@ describe("footer.config", () => {
 
     expect(hrefs).toContain("/upcoming/live");
     expect(hrefs).toContain("/upcoming/impact");
-    expect(hrefs).toContain("/upcoming/members");
+    expect(hrefs).not.toContain("/upcoming/members");
+  });
+
+  it("議員カルテには準備中の印を付けない", () => {
+    const members = footerSiteLinks.find(
+      (link) => link.href === routes.membersList()
+    );
+    expect(members).toEqual({
+      label: "議員カルテ・政務活動費",
+      href: "/members",
+    });
   });
 
   it("内部リンクには external フラグが付かず、外部リンクには付く", () => {

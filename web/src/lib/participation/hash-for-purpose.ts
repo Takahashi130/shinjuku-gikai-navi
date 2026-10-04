@@ -10,9 +10,10 @@ import { createHmac } from "node:crypto";
 /**
  * - ip: 接続元ごとの回数制限
  * - ip_bill: 接続元と議案の組ごとの回数制限（値は「接続元|議案ID」）
+ * - user: 匿名 ID ごとの回数制限（回数の記録に匿名 ID をそのまま残さない）
  * - pseudonym: 議案ごとに変わる表示名
  */
-export const HASH_PURPOSES = ["ip", "ip_bill", "pseudonym"] as const;
+export const HASH_PURPOSES = ["ip", "ip_bill", "user", "pseudonym"] as const;
 export type HashPurpose = (typeof HASH_PURPOSES)[number];
 
 /** 出力の長さ（16進の文字数）。128bit あれば衝突は実用上起きない */

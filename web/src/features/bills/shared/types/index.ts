@@ -67,6 +67,7 @@ export type BillWithContent = Bill & {
 export type BillListItem = Pick<
   Bill,
   | "id"
+  | "slug"
   | "name"
   | "status"
   | "submitted_date"

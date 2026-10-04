@@ -25,6 +25,11 @@ export const routes = {
       ? (`/bills/${billId}/topics/${topicId}?filter=${encodeURIComponent(filter)}` as const)
       : (`/bills/${billId}/topics/${topicId}` as const),
 
+  // ── 議員（議員カルテ） ────────────────────────────
+  // 絞り込み・並び順つきの一覧は features/members/shared/utils/members-list-params.ts の membersListHref
+  membersList: () => "/members" as const,
+  memberProfile: (memberId: string) => `/members/${memberId}` as const,
+
   // ── インタビュー ──────────────────────────────────
   interviewLP: (billId: string) => `/bills/${billId}/interview` as const,
   interviewDisclosure: (billId: string) =>

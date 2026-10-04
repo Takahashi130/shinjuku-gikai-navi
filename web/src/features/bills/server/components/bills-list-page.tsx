@@ -3,6 +3,7 @@ import "server-only";
 import {
   Check,
   ExternalLink,
+  FileText,
   MessageSquareText,
   Search,
   Split,
@@ -14,6 +15,7 @@ import type { ReactNode } from "react";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { RoundCard } from "@/components/ui/round-card";
 import { EXTERNAL_LINKS } from "@/config/external-links";
+import { getBillParticipationBadges } from "@/features/bill-participation/server/loaders/get-bill-participation-badges";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import { BillCard } from "../../client/components/bill-list/bill-card";
@@ -74,6 +76,10 @@ export async function BillsListPage({
     allBills,
     featuredTags,
     params
+  );
+  // 解説・区民投票の印は、このページに出す議案の分だけまとめて取る
+  const participationBadges = await getBillParticipationBadges(
+    pageBills.map((bill) => bill.id)
   );
   const activeFilters = buildActiveFilters(params, featuredTags);
   // 「審議待ち」など0件のステータスは選んでも何も出ないので並べない。
@@ -168,6 +174,16 @@ export async function BillsListPage({
                     label="賛否が分かれた議案のみ"
                   />
                 </li>
+                <li>
+                  <TogglePill
+                    href={href({
+                      memberSubmittedOnly: !params.memberSubmittedOnly,
+                    })}
+                    checked={params.memberSubmittedOnly}
+                    icon={<FileText className="size-4" aria-hidden />}
+                    label="議員提出議案のみ"
+                  />
+                </li>
                 {showInterviewToggle && (
                   <li>
                     <TogglePill
@@ -211,7 +227,10 @@ export async function BillsListPage({
           <ul className="grid gap-4 md:grid-cols-2">
             {pageBills.map((bill) => (
               <li key={bill.id}>
-                <BillCard bill={bill} />
+                <BillCard
+                  bill={bill}
+                  participation={participationBadges[bill.id]}
+                />
               </li>
             ))}
           </ul>

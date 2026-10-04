@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Container } from "@/components/layouts/container";
 import {
   LegalList,
   LegalPageLayout,
@@ -23,161 +22,156 @@ export default function TermsPage() {
       title="利用規約"
       enLabel="Terms of Service"
       description={`${SITE.NAME}（以下「本サービス」といいます）の利用条件を定めるものです。`}
-      className="py-8 md:py-12"
     >
-      <Container className="space-y-8">
-        <LegalParagraph className="text-sm text-mirai-text-muted">
-          最終更新日：2026年10月4日
-        </LegalParagraph>
+      <LegalParagraph className="text-sm text-mirai-text-muted">
+        最終更新日：2026年10月4日
+      </LegalParagraph>
 
+      <LegalParagraph>
+        本サービスは個人（以下「運営者」といいます）が運営する非公式のサービスです。新宿区および新宿区議会の公式サービスではありません。また、
+        {SITE.DISCLAIMER}
+        。本サービスを利用した時点で、本規約に同意したものとみなします。
+      </LegalParagraph>
+
+      <section className="space-y-4">
+        <LegalSectionTitle>第1条（本サービスの内容）</LegalSectionTitle>
         <LegalParagraph>
-          本サービスは個人（以下「運営者」といいます）が運営する非公式のサービスです。新宿区および新宿区議会の公式サービスではありません。また、
-          {SITE.DISCLAIMER}
-          。本サービスを利用した時点で、本規約に同意したものとみなします。
+          本サービスは、新宿区議会が公開している資料（会期ごとの議案一覧、議案の概要と審議結果など）をもとに、議案の内容、議決結果、会派ごとの賛否を整理して掲載するものです。また、新宿区・新宿区議会が公開している資料（議員名簿、会派構成、本会議の質問者・質問内容一覧、政務活動費の収支一覧など）をもとに、議員・会派・政務活動費の情報を整理して掲載します。あわせて、AI
+          が作成した議案の解説と、議案への賛成・反対を示せる区民投票（参考値）を提供します。
         </LegalParagraph>
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>第1条（本サービスの内容）</LegalSectionTitle>
-          <LegalParagraph>
-            本サービスは、新宿区議会が公開している資料（会期ごとの議案一覧、議案の概要と審議結果など）をもとに、議案の内容、議決結果、会派ごとの賛否を整理して掲載するものです。あわせて、AI
-            が作成した議案の解説と、議案への賛成・反対を示せる区民投票（参考値）を提供します。
-          </LegalParagraph>
-        </section>
+      <section className="space-y-4">
+        <LegalSectionTitle>第2条（掲載情報について）</LegalSectionTitle>
+        <LegalList
+          items={[
+            "運営者は掲載情報の正確性に努めますが、その正確性・完全性・最新性を保証しません。公開資料の自動読み取りによる誤りや、元の資料の誤りが含まれることがあります。",
+            "正確な情報は、新宿区議会の公式資料でご確認ください。",
+            "掲載情報を利用したことによって生じた損害について、運営者は責任を負いません。ただし、運営者の故意または重大な過失による場合はこの限りではありません。",
+          ]}
+        />
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>第2条（掲載情報について）</LegalSectionTitle>
-          <LegalList
-            items={[
-              "運営者は掲載情報の正確性に努めますが、その正確性・完全性・最新性を保証しません。公開資料の自動読み取りによる誤りや、元の資料の誤りが含まれることがあります。",
-              "正確な情報は、新宿区議会の公式資料でご確認ください。",
-              "掲載情報を利用したことによって生じた損害について、運営者は責任を負いません。ただし、運営者の故意または重大な過失による場合はこの限りではありません。",
-            ]}
-          />
-        </section>
+      <section className="space-y-4">
+        <LegalSectionTitle>第3条（AIによる議案の解説）</LegalSectionTitle>
+        <LegalList
+          items={[
+            "議案の解説は、AI（Claude）が新宿区の公開資料だけをもとに作成し、別のAIが資料と照合したうえで公開しています。原則として、人による確認は行っていません（運営者が資料と照合した解説には、その旨を表示します）。",
+            "解説には誤りが含まれることがあります。正確な内容は、解説に示した出典（新宿区の公開資料）でご確認ください。",
+            "解説は、議案への賛成・反対をすすめるものではありません。",
+            {
+              id: "explainer-corrections",
+              content: (
+                <>
+                  誤りに気づいた場合は、
+                  <a
+                    href={EXPLAINER_CORRECTION_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline"
+                  >
+                    GitHub の Issue
+                  </a>
+                  でお知らせください。確認のうえ、直した版を公開します。
+                </>
+              ),
+            },
+          ]}
+        />
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>第3条（AIによる議案の解説）</LegalSectionTitle>
-          <LegalList
-            items={[
-              "議案の解説は、AI（Claude）が新宿区の公開資料だけをもとに作成し、別のAIが資料と照合したうえで公開しています。人による確認は行っていません。",
-              "解説には誤りが含まれることがあります。正確な内容は、解説に示した出典（新宿区の公開資料）でご確認ください。",
-              "解説は、議案への賛成・反対をすすめるものではありません。",
-              {
-                id: "explainer-corrections",
-                content: (
-                  <>
-                    誤りに気づいた場合は、
-                    <a
-                      href={EXPLAINER_CORRECTION_URL}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline"
-                    >
-                      GitHub の Issue
-                    </a>
-                    でお知らせください。確認のうえ、直した版を公開します。
-                  </>
-                ),
-              },
-            ]}
-          />
-        </section>
+      <section className="space-y-4">
+        <LegalSectionTitle>第4条（区民投票）</LegalSectionTitle>
+        <LegalList
+          items={[
+            "区民投票は、議案への賛成・反対を示せる非公式の投票です。新宿区・新宿区議会の公式の投票や住民投票ではなく、結果は議会の議決に影響しません。",
+            "現在は、新宿区民かどうかを確かめていません。だれでも、1つのブラウザから議案ごとに1票投票でき、結果は「参考値」として表示します。",
+            "投票は、締切（本会議で採決する予定の時刻）のあとも受け付けます。締切の前と後の票は分けて集計し、議会の議決との比較には締切の前の票だけを使います。締切の前に投票した方が締切のあとに選び直したり取り消したりすると、その票は締切の前の票から外れ、元に戻せません。",
+            "人事案件（特定の人の任命などへの同意・意見を求める議案）は、投票の対象にしていません。",
+            "機械的な大量の投票など、不正が疑われる場合には、運営者は、その議案の投票の受付と結果の表示を止めることがあります。また、投票の受付を予告なく停止・変更することがあります。",
+            {
+              id: "vote-privacy",
+              content: (
+                <>
+                  投票の情報の扱いは、
+                  <Link href={routes.privacy()} className="underline">
+                    プライバシーポリシー
+                  </Link>
+                  に定めます。
+                </>
+              ),
+            },
+          ]}
+        />
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>第4条（区民投票）</LegalSectionTitle>
-          <LegalList
-            items={[
-              "区民投票は、議案への賛成・反対を示せる非公式の投票です。新宿区・新宿区議会の公式の投票や住民投票ではなく、結果は議会の議決に影響しません。",
-              "現在は、新宿区民かどうかを確かめていません。だれでも、1つのブラウザから議案ごとに1票投票でき、結果は「参考値」として表示します。",
-              "投票は、締切（本会議で採決する予定の時刻）のあとも受け付けます。締切の前と後の票は分けて集計します。",
-              "人事案件（特定の人の任命などへの同意・意見を求める議案）は、投票の対象にしていません。",
-              "機械的な大量の投票など、不正が疑われる場合には、運営者は、その議案の投票の受付と結果の表示を止めることがあります。また、投票の受付を予告なく停止・変更することがあります。",
-              {
-                id: "vote-privacy",
-                content: (
-                  <>
-                    投票の情報の扱いは、
-                    <Link href={routes.privacy()} className="underline">
-                      プライバシーポリシー
-                    </Link>
-                    に定めます。
-                  </>
-                ),
-              },
-            ]}
-          />
-        </section>
+      <section className="space-y-4">
+        <LegalSectionTitle>第5条（禁止事項）</LegalSectionTitle>
+        <LegalParagraph>
+          利用者は、本サービスの利用にあたり、次の行為をしてはなりません。
+        </LegalParagraph>
+        <LegalList
+          items={[
+            "法令または公序良俗に反する行為",
+            "過度なアクセス、不正アクセス、脆弱性を突く行為など、本サービスの運営を妨げる行為",
+            "複数のブラウザや自動化したプログラムを使って、1人で何度も投票する行為",
+            "掲載情報を改変し、新宿区・新宿区議会または本サービスの公式な情報であるかのように示す行為",
+            "区民投票の結果を、新宿区・新宿区議会の公式の結果や、区民全体の意見であるかのように示す行為",
+            "その他、運営者が不適切と判断する行為",
+          ]}
+        />
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>第5条（禁止事項）</LegalSectionTitle>
-          <LegalParagraph>
-            利用者は、本サービスの利用にあたり、次の行為をしてはなりません。
-          </LegalParagraph>
-          <LegalList
-            items={[
-              "法令または公序良俗に反する行為",
-              "過度なアクセス、不正アクセス、脆弱性を突く行為など、本サービスの運営を妨げる行為",
-              "複数のブラウザや自動化したプログラムを使って、1人で何度も投票する行為",
-              "掲載情報を改変し、新宿区・新宿区議会または本サービスの公式な情報であるかのように示す行為",
-              "区民投票の結果を、新宿区・新宿区議会の公式の結果や、区民全体の意見であるかのように示す行為",
-              "その他、運営者が不適切と判断する行為",
-            ]}
-          />
-        </section>
+      <section className="space-y-4">
+        <LegalSectionTitle>第6条（ソースコードとライセンス）</LegalSectionTitle>
+        <LegalParagraph>
+          本サービスのソースコードは、AGPL-3.0 ライセンスで
+          <Link
+            href={EXTERNAL_LINKS.GITHUB_REPO}
+            target="_blank"
+            rel="noreferrer"
+            className="underline"
+          >
+            公開しています
+          </Link>
+          。本サービスは、AGPL-3.0 で公開されている
+          <Link
+            href={EXTERNAL_LINKS.ORIGINAL_REPO}
+            target="_blank"
+            rel="noreferrer"
+            className="underline"
+          >
+            オープンソースのソフトウェア
+          </Link>
+          をもとに作成しています。
+        </LegalParagraph>
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>
-            第6条（ソースコードとライセンス）
-          </LegalSectionTitle>
-          <LegalParagraph>
-            本サービスのソースコードは、AGPL-3.0 ライセンスで
-            <Link
-              href={EXTERNAL_LINKS.GITHUB_REPO}
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              公開しています
-            </Link>
-            。本サービスは、AGPL-3.0 で公開されている
-            <Link
-              href={EXTERNAL_LINKS.ORIGINAL_REPO}
-              target="_blank"
-              rel="noreferrer"
-              className="underline"
-            >
-              オープンソースのソフトウェア
-            </Link>
-            をもとに作成しています。
-          </LegalParagraph>
-        </section>
+      <section className="space-y-4">
+        <LegalSectionTitle>第7条（サービスの変更・停止）</LegalSectionTitle>
+        <LegalParagraph>
+          運営者は、事前の通知なく本サービスの内容を変更し、または提供を停止することがあります。
+        </LegalParagraph>
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>第7条（サービスの変更・停止）</LegalSectionTitle>
-          <LegalParagraph>
-            運営者は、事前の通知なく本サービスの内容を変更し、または提供を停止することがあります。
-          </LegalParagraph>
-        </section>
+      <section className="space-y-4">
+        <LegalSectionTitle>第8条（規約の変更）</LegalSectionTitle>
+        <LegalParagraph>
+          運営者は必要に応じて本規約を変更します。変更後の規約は、本ページに掲載した時点から適用します。
+        </LegalParagraph>
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>第8条（規約の変更）</LegalSectionTitle>
-          <LegalParagraph>
-            運営者は必要に応じて本規約を変更します。変更後の規約は、本ページに掲載した時点から適用します。
-          </LegalParagraph>
-        </section>
+      <section className="space-y-4">
+        <LegalSectionTitle>第9条（準拠法・管轄）</LegalSectionTitle>
+        <LegalParagraph>
+          本規約は日本法に準拠し、本サービスに関して紛争が生じた場合は、東京地方裁判所を第一審の専属的合意管轄裁判所とします。
+        </LegalParagraph>
+      </section>
 
-        <section className="space-y-4">
-          <LegalSectionTitle>第9条（準拠法・管轄）</LegalSectionTitle>
-          <LegalParagraph>
-            本規約は日本法に準拠し、本サービスに関して紛争が生じた場合は、東京地方裁判所を第一審の専属的合意管轄裁判所とします。
-          </LegalParagraph>
-        </section>
-
-        <section className="space-y-4">
-          <LegalSectionTitle>お問い合わせ</LegalSectionTitle>
-          <LegalParagraph>お問い合わせ窓口は現在準備中です。</LegalParagraph>
-        </section>
-      </Container>
+      <section className="space-y-4">
+        <LegalSectionTitle>お問い合わせ</LegalSectionTitle>
+        <LegalParagraph>お問い合わせ窓口は現在準備中です。</LegalParagraph>
+      </section>
     </LegalPageLayout>
   );
 }
