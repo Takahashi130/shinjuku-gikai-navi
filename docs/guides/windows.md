@@ -50,16 +50,22 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 1. Git・Node.js・GitHub CLI をインストールする
 2. Git を設定する（改行の扱い、長いファイル名への対応）
-3. pnpm を準備する
-4. GitHub にログインする
+3. pnpm を準備する（管理者権限なしで使えるよう、ユーザーのフォルダに入れる）
+4. GitHub にログインする（git の push・pull にも同じログインを使う）
 5. プロジェクトを `C:\dev\shinjuku-gikai-navi` にコピーする
 6. SSD から設定ファイルをコピーする
 7. アプリの部品をインストールする
 8. 型チェックで動作を確認する
 
+> **PowerShell では `pnpm` ではなく `pnpm.cmd` と打ってください。** `pnpm` だと「スクリプトの実行が無効」と止められることがあります（PowerShell の実行ポリシーのため。設定は変えなくてよい）。Claude の Code 画面から動かすときは `pnpm` のままで動きます。
+
 ### 2-3. 開発用の画面を開く
 
-`cd C:\dev\shinjuku-gikai-navi` で移動し、あとは [README の「最短の実行手順」](../../README.md#最短の実行手順) と同じです（開発サーバーは http://localhost:3000）。
+`cd C:\dev\shinjuku-gikai-navi` で移動し、あとは [README の「最短の実行手順」](../../README.md#最短の実行手順) と同じです（開発サーバーは http://localhost:3000）。PowerShell では `pnpm` を `pnpm.cmd` に置き換えます。
+
+```powershell
+pnpm.cmd exec dotenv -e .env -- pnpm --filter web dev
+```
 
 ## 3. 公開やデータの取り込みをする場合（必要なときだけ）
 
@@ -75,10 +81,10 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 | するとき | コマンド |
 |---|---|
 | 作業を始めるとき（最新を取り込む） | `git pull` |
-| 部品が増えたとき（pull の後にエラーが出たら） | `pnpm install` |
+| 部品が増えたとき（pull の後にエラーが出たら） | `pnpm.cmd install` |
 | 作業を保存するとき | `git add -A` → `git commit -m "やったこと"` → `git push` |
 
-Mac と Windows で同じ日に作業するときは、片方で push してから、もう片方で pull してください。
+Mac と Windows で同じ日に作業するときは、片方で push してから、もう片方で pull してください。push したら、どのコミットまで送ったかをもう一方に伝えます。2台での決まりは [HANDOFF の「Mac と Windows」](../HANDOFF.md#mac-と-windows) にまとめています。
 
 ## 5. うまくいかないとき
 

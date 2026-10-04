@@ -39,6 +39,9 @@
 | 症状 | 対処 |
 |---|---|
 | `winget がありません` と出る | Microsoft Store で「アプリ インストーラー」を更新して、もう一度実行する |
-| `pnpm` や `node` が見つからないと出る | PowerShell を閉じて開き直し、もう一度実行する（インストール直後は PATH が反映されていないことがある） |
+| `pnpm` や `node` が見つからないと出る | PowerShell を閉じて開き直し、もう一度実行する（インストール直後は PATH が反映されていないことがある。`setup-windows.ps1` は最初とインストールの後に PATH を読み直す） |
+| `pnpm` を打つと「スクリプトの実行が無効になっているため、pnpm.ps1 を読み込むことができません」 | `pnpm.cmd` と打つ（実行ポリシーの設定は変えなくてよい）。Claude の Code 画面からは `pnpm` のままで動く |
+| `corepack enable` が権限のエラーで止まる | 何も付けないと Node.js のフォルダ（Program Files）に書き込むので管理者権限が要る。`corepack enable --install-directory "$env:APPDATA\npm"` にする（`setup-windows.ps1` はこの形） |
+| `pnpm install` で「Ignored build scripts」の警告が出る | そのままでよい（2026-10-04 に Windows で、動作に問題が無いことを確認） |
 | スクリプトが文字化けする | スクリプトは UTF-8（BOM付き）で保存してある。手で編集した場合は、同じ形式で保存し直す |
 | 改行のせいで差分が大量に出る | `git config --global core.autocrlf false` を実行してから、プロジェクトをコピーし直す |
