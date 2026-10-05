@@ -16,15 +16,15 @@ export const BRAND_COLORS = {
    */
   headerSurface: "#ffffff",
   /** お知らせ帯・フッターなど濃色の帯（--brand-header） */
-  header: "#1b1f24",
+  header: "#111827",
   /** 濃色の帯の上の文字（--brand-on-header） */
   onHeader: "#ffffff",
   /** アクセント。地の色・塗りとして使う（--brand-accent） */
-  accent: "#2ec4b6",
+  accent: "#10c690",
   /** アクセント地の上の文字（--brand-on-accent） */
-  onAccent: "#1b1f24",
+  onAccent: "#062b1f",
   /** 白地のリンク・強調（--brand-link） */
-  link: "#0f766e",
+  link: "#047857",
 } as const;
 
 /** BRAND_COLORS のキーと、globals.css の CSS 変数の対応（白の headerSurface は除く）。 */

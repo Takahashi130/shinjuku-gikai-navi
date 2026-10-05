@@ -43,6 +43,16 @@ export type UpcomingFeature = {
   points: readonly string[];
   /** いまの代わりに見られるもの。 */
   links: readonly UpcomingFeatureLink[];
+  /** 仮に埋め込む YouTube の動画。機能ができるまでの見本。 */
+  video?: UpcomingFeatureVideo;
+};
+
+export type UpcomingFeatureVideo = {
+  youtubeId: string;
+  /** iframe の title（読み上げ用）と、動画の下の説明に使う。 */
+  title: string;
+  /** 動画の出どころ。 */
+  source: string;
 };
 
 export const UPCOMING_FEATURES: Record<UpcomingFeatureId, UpcomingFeature> = {
@@ -69,6 +79,11 @@ export const UPCOMING_FEATURES: Record<UpcomingFeatureId, UpcomingFeature> = {
         }),
       },
     ],
+    video: {
+      youtubeId: "1wBLplLxcAo",
+      title: "区長定例記者会見（令和8年第3回区議会定例会）",
+      source: "新宿区公式チャンネル（YouTube）",
+    },
   },
   impact: {
     id: "impact",

@@ -31,16 +31,13 @@ export function Footer() {
   }
 
   return (
-    <footer
-      data-surface="dark"
-      className="bg-brand-header text-brand-on-header"
-    >
+    <footer data-surface="dark" className="bg-brand-band text-white">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 pt-10 pb-10">
         <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:justify-between">
           <Link
             href={routes.home()}
             aria-label={`${SITE.NAME} トップページ`}
-            className="flex shrink-0 items-center gap-2.5 rounded-2xl bg-white px-4 py-2 text-mirai-text shadow-sm"
+            className="flex shrink-0 items-center gap-2.5 rounded-full bg-white px-4 py-2 text-mirai-text shadow-sm"
           >
             <Image src="/img/logo.svg" alt="" width={28} height={28} />
             <span className="flex flex-col leading-tight">
@@ -70,7 +67,7 @@ export function Footer() {
           ))}
         </ul>
 
-        <div className="flex flex-col items-center gap-1.5 border-brand-header-hover border-t pt-6 text-center text-xs leading-relaxed text-brand-on-header-muted">
+        <div className="flex flex-col items-center gap-1.5 border-brand-band-line border-t pt-6 text-center text-xs leading-relaxed text-brand-on-band-muted">
           <p>
             掲載している議案・議員の情報は、新宿区・新宿区議会が公開している資料をもとに整理したものです。新宿区・新宿区議会の公式サービスではありません。
           </p>
@@ -81,7 +78,7 @@ export function Footer() {
               href={EXTERNAL_LINKS.ORIGINAL_REPO}
               target="_blank"
               rel="noreferrer"
-              className="underline hover:text-brand-on-header"
+              className="underline hover:text-white"
             >
               オープンソースのソフトウェア（AGPL-3.0）
               <span className="sr-only">（新しいタブで開きます）</span>
@@ -92,7 +89,7 @@ export function Footer() {
           {/* ヘッダーに id="top" を付けている */}
           <a
             href="#top"
-            className="mt-3 inline-flex min-h-11 items-center gap-1 rounded-full px-3 font-bold text-brand-on-header hover:underline"
+            className="mt-3 inline-flex min-h-11 items-center gap-1 rounded-full px-3 font-bold text-white hover:underline"
           >
             <ArrowUp className="size-3.5" aria-hidden />
             ページの先頭へ
@@ -113,7 +110,7 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
       href={link.href as Route}
       target={link.external ? "_blank" : undefined}
       rel={link.external ? "noreferrer" : undefined}
-      className="inline-flex min-h-11 items-center gap-1 text-sm text-brand-on-header-muted hover:text-brand-on-header hover:underline sm:min-h-9"
+      className="inline-flex min-h-11 items-center gap-1 text-sm font-bold text-brand-on-band-muted hover:text-white hover:underline sm:min-h-9"
     >
       {link.label}
       {link.comingSoon && <ComingSoonTag tone="dark" />}

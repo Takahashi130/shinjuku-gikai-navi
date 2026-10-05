@@ -40,12 +40,12 @@ const WEB = join(ROOT, "web");
 const PALETTES = {
   // 案C「声とチェック」：区民の声が議会に届く
   c: {
-    header: "#1b1f24",
-    headerSub: "#2a3038",
-    accent: "#2ec4b6",
-    onAccent: "#1b1f24",
-    onHeaderMuted: "#c5cbd3",
-    pageBg: "#eaeded",
+    header: "#111827",
+    headerSub: "#1f2937",
+    accent: "#10c690",
+    onAccent: "#062b1f",
+    onHeaderMuted: "#cbd5e1",
+    pageBg: "#eaf6f1",
     mark: "message-square-check",
   },
   // 案A「投票箱」：ネイビー × オレンジ

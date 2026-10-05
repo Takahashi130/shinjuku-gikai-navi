@@ -25,7 +25,7 @@ export function ComingSoonTag({
       className={cn(
         "inline-flex shrink-0 items-center rounded-full px-2 py-px text-xs font-bold leading-4",
         tone === "dark"
-          ? "bg-brand-header-hover text-brand-on-header"
+          ? "bg-white/20 text-white"
           : "bg-mirai-surface-muted text-mirai-text-secondary",
         className
       )}

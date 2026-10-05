@@ -98,9 +98,10 @@ function HeaderLogo({ compact }: { compact: boolean }) {
     <Link
       href={routes.home()}
       aria-label={`${SITE.NAME} トップページ`}
-      className="group flex min-w-0 items-center gap-2 rounded-2xl sm:gap-3"
+      className="group flex min-w-0 items-center gap-3 rounded-full"
     >
-      <span className="flex shrink-0 items-center justify-center rounded-2xl border-2 border-brand-header bg-white p-1 shadow-xs">
+      {/* ロゴとサービス名を緑の枠のピルで囲む */}
+      <span className="flex shrink-0 items-center gap-2 rounded-full border-2 border-brand-accent bg-white py-1 pr-1 pl-1 shadow-xs group-hover:bg-brand-accent-tint sm:pr-4">
         <Image
           src="/img/logo.svg"
           alt=""
@@ -109,25 +110,25 @@ function HeaderLogo({ compact }: { compact: boolean }) {
           priority
           className="size-7 md:size-8"
         />
+        <span
+          className={cn(
+            "whitespace-nowrap text-base font-extrabold tracking-wide text-brand-link md:text-lg",
+            compact ? "hidden sm:inline" : "inline"
+          )}
+        >
+          {SITE.NAME}
+        </span>
       </span>
       <span
         className={cn(
           "min-w-0 flex-col leading-tight",
-          compact ? "hidden sm:flex" : "flex"
+          compact ? "hidden" : "hidden min-[360px]:flex"
         )}
       >
-        <span className="flex items-center gap-1.5">
-          <span className="whitespace-nowrap text-base font-extrabold tracking-wide text-mirai-text group-hover:text-brand-link md:text-lg">
-            {SITE.NAME}
-          </span>
-          <LabelPill
-            tone="accent"
-            className="hidden h-5 px-2 min-[360px]:inline-flex"
-          >
-            β版
-          </LabelPill>
-        </span>
-        <span className="truncate text-xs text-mirai-text-muted">
+        <LabelPill tone="accent" className="h-5 w-fit px-2">
+          β版
+        </LabelPill>
+        <span className="mt-0.5 hidden truncate text-xs text-mirai-text-muted md:block">
           {SITE.CATCHPHRASE}
         </span>
       </span>
@@ -167,7 +168,10 @@ function HeaderTabs({ pathname }: { pathname: string }) {
   }, [activeId]);
 
   return (
-    <nav aria-label="サービスの切り替え" className="border-line-soft border-t">
+    <nav
+      aria-label="サービスの切り替え"
+      className="border-line-soft border-t bg-brand-accent-tint/60"
+    >
       <div
         ref={scrollerRef}
         className="scrollbar-hide scroll-fade-right relative mx-auto max-w-6xl overflow-x-auto px-4 py-1"
@@ -185,8 +189,8 @@ function HeaderTabs({ pathname }: { pathname: string }) {
                   className={cn(
                     "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-[13px] font-bold focus-visible:-outline-offset-2",
                     active
-                      ? "bg-brand-header text-brand-on-header shadow-sm"
-                      : "text-mirai-text-secondary hover:bg-mirai-surface hover:text-mirai-text"
+                      ? "bg-brand-band text-white shadow-sm"
+                      : "text-mirai-text-secondary hover:bg-white hover:text-brand-link"
                   )}
                 >
                   <Icon className="size-4" aria-hidden />
@@ -210,18 +214,15 @@ function HeaderTabs({ pathname }: { pathname: string }) {
 /** 全幅のお知らせ帯。いまの会期の状況と、その会期の議案へのリンク。 */
 function NoticeBand({ notice }: { notice: SessionNotice }) {
   return (
-    <div
-      data-surface="dark"
-      className="bg-brand-header px-4 py-2.5 text-brand-on-header"
-    >
+    <div data-surface="dark" className="bg-brand-band px-4 py-2.5 text-white">
       <div className="mx-auto flex max-w-6xl items-start gap-2 text-xs font-bold leading-relaxed sm:items-center sm:justify-center md:text-[13px]">
         <span
           aria-hidden
           className={cn(
             "mt-[7px] size-2 shrink-0 rounded-full sm:mt-0",
             notice.status === "open"
-              ? "bg-brand-accent"
-              : "bg-brand-on-header-muted"
+              ? "bg-brand-accent-light"
+              : "bg-brand-on-band-muted"
           )}
         />
         <p className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
@@ -229,7 +230,7 @@ function NoticeBand({ notice }: { notice: SessionNotice }) {
           {/* 押せる範囲は上下に広げ（44px）、帯の高さは変えない */}
           <Link
             href={notice.link.href}
-            className="-my-[11px] inline-flex min-h-11 items-center gap-1 text-brand-accent underline-offset-4 hover:underline"
+            className="-my-[11px] inline-flex min-h-11 items-center gap-1 text-white underline underline-offset-4 hover:text-brand-on-band-muted"
           >
             {notice.link.label}
             <ArrowRight className="size-3.5" aria-hidden />

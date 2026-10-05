@@ -65,7 +65,9 @@ export function HomeHero({
             >
               {/* 狭い画面では「、」のあとで折り返し、語の途中で切らない */}
               <span className="inline-block">政治のズレ、</span>
-              <span className="inline-block">見える化。</span>
+              <span className="inline-block">
+                <span className="text-brand-link">見える化</span>。
+              </span>
             </h1>
             <p className="max-w-2xl text-sm leading-relaxed text-mirai-text-secondary md:text-base">
               区議会でいま何が審議され、会派がどう賛成・反対したのかを、議案ごとにまとめています。区民投票（参考値）で賛成・反対を示し、議会の議決とのズレを見比べられます。

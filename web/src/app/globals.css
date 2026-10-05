@@ -75,6 +75,10 @@
   --color-brand-accent-tint: var(--brand-accent-tint);
   /* アクセント地の上の文字 */
   --color-brand-on-accent: var(--brand-on-accent);
+  /* 緑の帯（お知らせ帯・フッター・選択中のタブ）と、その上の文字 */
+  --color-brand-band: var(--brand-band);
+  --color-brand-band-line: var(--brand-band-line);
+  --color-brand-on-band-muted: var(--brand-on-band-muted);
   /* 白地のリンク・強調（白地で 4.5:1 以上） */
   --color-brand-link: var(--brand-link);
   --color-brand-link-hover: var(--brand-link-hover);
@@ -197,25 +201,34 @@
  * - アクセント地の上の文字は --brand-on-accent
  */
 :root {
-  --brand-header: #1b1f24;
-  --brand-header-sub: #2a3038;
-  --brand-header-deep: #121519;
-  --brand-header-hover: #3a414b;
+  /* 濃色の面（強調の数字のカードなど）はネイビー */
+  --brand-header: #111827;
+  --brand-header-sub: #1f2937;
+  --brand-header-deep: #0b1220;
+  --brand-header-hover: #374151;
   --brand-on-header: #ffffff;
-  --brand-on-header-muted: #c5cbd3;
-  --brand-accent: #2ec4b6;
-  --brand-accent-hover: #5fd3c8;
-  --brand-accent-light: #a8e8e1;
-  --brand-accent-tint: #e6f7f5;
-  --brand-on-accent: #1b1f24;
-  --brand-link: #0f766e;
-  --brand-link-hover: #115e59;
+  --brand-on-header-muted: #cbd5e1;
+  /* アクセントはエメラルド。塗り・バー・点に使う（白地の文字には使わない） */
+  --brand-accent: #10c690;
+  --brand-accent-hover: #34d3a3;
+  --brand-accent-light: #a7ecd3;
+  --brand-accent-tint: #e7f8f1;
+  --brand-on-accent: #062b1f;
+  --brand-link: #047857;
+  --brand-link-hover: #065f46;
   /*
-   * 地は白に近いごく薄いグレー（色味を付けない）。白いカード（rounded-3xl）を
-   * 淡い枠（--line-soft）で浮かせる。
+   * 緑の帯（お知らせ帯・フッター・選択中のタブ）。白い文字を載せるので、
+   * アクセントより濃い緑にしている（白文字で 5.5:1）。
    */
-  --page-bg: #f6f7f8;
-  --line-soft: #e3e6ea;
+  --brand-band: #047857;
+  --brand-band-line: #1a8f6f;
+  --brand-on-band-muted: #d1fae5;
+  /*
+   * 地はごく薄いミント。白いカード（rounded-3xl）をミントの淡い枠
+   * （--line-soft）で浮かせる。
+   */
+  --page-bg: #f3faf7;
+  --line-soft: #d4ede3;
 }
 
 /* 案A：投票箱（ネイビー × オレンジ） */
