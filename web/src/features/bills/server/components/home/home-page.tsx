@@ -31,6 +31,7 @@ import { getFeaturedTags } from "../../loaders/get-featured-tags";
 import { getSplitVoteExample } from "../../loaders/get-split-vote-example";
 import { HomeCitizenVotePanel } from "./home-citizen-vote-panel";
 import { HomeComparisonCard } from "./home-comparison-card";
+import { HomeGreenBand } from "./home-green-band";
 import { HomeHero } from "./home-hero";
 import { HomeInterviewBand } from "./home-interview-band";
 import { HomeSessionChips } from "./home-session-chips";
@@ -107,6 +108,21 @@ export async function HomePage() {
         />
       )}
 
+      <HomeGreenBand
+        title="議案を確かめて、あなたの1票を。"
+        description="審議中の議案に、賛成・反対で意思を示せます（参考値・1つのブラウザから議案ごとに1票）。"
+        links={[
+          {
+            href:
+              openVotesHref ??
+              billsListHref(DEFAULT_BILLS_LIST_PARAMS, {
+                status: "deliberating",
+              }),
+            label: "投票できる議案を見る",
+          },
+        ]}
+      />
+
       {view.featured.bills.length > 0 && (
         <section
           aria-labelledby="featured-title"
@@ -148,6 +164,19 @@ export async function HomePage() {
       <HomeSessionChips
         sessions={recentSessions}
         currentSessionId={currentSession?.id ?? null}
+      />
+
+      <HomeGreenBand
+        align="center"
+        title="これはまだ第一歩。議会の見える化に向けて、アップデートを続けます。"
+        description="区議会の公開資料をもとに、議案の解説・会派の賛否・区民投票を少しずつ増やしていきます。"
+        links={[
+          {
+            href: billsListHref(DEFAULT_BILLS_LIST_PARAMS, {}),
+            label: "議案をさがす",
+          },
+          { href: routes.membersList() as Route, label: "議員カルテを見る" },
+        ]}
       />
     </div>
   );

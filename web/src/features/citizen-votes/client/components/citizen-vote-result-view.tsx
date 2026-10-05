@@ -130,7 +130,7 @@ export function CitizenVoteResultView({
     >
       {/* 狭い画面では、見出しを折り返さずにピルを次の行へ送る */}
       <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5">
-        <Heading className="flex items-center gap-1.5 text-sm font-bold text-mirai-text">
+        <Heading className="flex w-fit items-center gap-1.5 rounded-full border border-brand-accent-light bg-white px-3 py-1 text-sm font-bold text-mirai-text">
           <Users className="size-4 text-mirai-text-muted" aria-hidden />
           区民の意思（区民投票）
         </Heading>

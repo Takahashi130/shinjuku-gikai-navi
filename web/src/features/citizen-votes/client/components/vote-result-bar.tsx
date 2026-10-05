@@ -39,10 +39,10 @@ export function VoteResultBar({ label, tally, className }: VoteResultBarProps) {
         {total > 0 && (
           <>
             <div
-              className="h-full bg-stance-for"
+              className="h-full bg-stance-for-bar"
               style={{ width: `${percent.for}%` }}
             />
-            <div className="h-full flex-1 bg-stance-against" />
+            <div className="h-full flex-1 bg-stance-against-bar" />
           </>
         )}
       </div>

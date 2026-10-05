@@ -10,7 +10,8 @@ export type LabelPillTone =
   | "on-dark"
   | "for"
   | "against"
-  | "split";
+  | "split"
+  | "alert";
 
 /**
  * 色の組み合わせ。どれも文字と地で 4.5:1 以上になる組み合わせにしている。
@@ -25,8 +26,10 @@ const TONE_CLASS: Record<LabelPillTone, string> = {
   // 濃色の帯の上に置くピル
   "on-dark": "bg-brand-header-hover text-brand-on-header",
   // 賛成・可決（緑系）／反対・否決（赤系）。会派の賛否と同じ系統の色
-  for: "bg-stance-for-bg text-stance-for-strong",
-  against: "bg-stance-against-bg text-stance-against",
+  for: "border border-emerald-200 bg-stance-for-bg text-stance-for-strong",
+  against: "border border-rose-200 bg-stance-against-bg text-stance-against",
+  // 目を引く赤の塗り（開会中・ズレなど、注意を向けたいところだけ）
+  alert: "bg-stance-against text-white",
   // 「会派の賛否が分かれた」。賛成・反対のどちらにも見えない中立の色
   split: "bg-stance-neutral-badge-bg text-vote-split",
 };

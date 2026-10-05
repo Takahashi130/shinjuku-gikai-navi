@@ -193,7 +193,14 @@ function HeaderTabs({ pathname }: { pathname: string }) {
                       : "text-mirai-text-secondary hover:bg-white hover:text-brand-link"
                   )}
                 >
-                  <Icon className="size-4" aria-hidden />
+                  <Icon
+                    className={cn(
+                      "size-4",
+                      // 見本どおり、中継のタブだけ赤い印にする
+                      tab.id === "live" && !active && "text-stance-against"
+                    )}
+                    aria-hidden
+                  />
                   <span>
                     <span aria-hidden>#</span>
                     {tab.label}

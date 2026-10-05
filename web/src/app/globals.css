@@ -114,15 +114,18 @@
   --color-mirai-border-muted: #bebcbc;
 
   /* Stance semantic colors（賛成=緑系、反対=赤系） */
-  --color-stance-for: #15803d;
-  --color-stance-for-strong: #166534;
-  --color-stance-for-bg: #ecfcf1;
+  --color-stance-for: #059669;
+  --color-stance-for-strong: #047857;
+  --color-stance-for-bg: #ecfdf5;
   --color-stance-for-badge-start: #e2f6f3;
   --color-stance-for-badge-end: #eef6e2;
-  --color-stance-against: #c9272a;
-  --color-stance-against-light: #d23c3f;
-  --color-stance-against-bg: #fff1f1;
-  --color-stance-against-badge-bg: #ffeaea;
+  --color-stance-against: #e11d48;
+  --color-stance-against-light: #f43f5e;
+  --color-stance-against-bg: #fff1f2;
+  --color-stance-against-badge-bg: #ffe4e6;
+  /* 賛成・反対の横棒の塗り（文字ではないので明るい色にしている） */
+  --color-stance-for-bar: #10c690;
+  --color-stance-against-bar: #f43f5e;
   --color-stance-neutral: #805f34;
   --color-stance-neutral-badge-bg: #f7e8db;
   /*
@@ -218,10 +221,10 @@
   --brand-link-hover: #065f46;
   /*
    * 緑の帯（お知らせ帯・フッター・選択中のタブ）。白い文字を載せるので、
-   * アクセントより濃い緑にしている（白文字で 5.5:1）。
+   * アクセントより濃い緑にしている（白文字で 3.8:1。帯の文字は太字にする）。
    */
-  --brand-band: #047857;
-  --brand-band-line: #1a8f6f;
+  --brand-band: #059669;
+  --brand-band-line: #34b98f;
   --brand-on-band-muted: #d1fae5;
   /*
    * 地はごく薄いミント。白いカード（rounded-3xl）をミントの淡い枠

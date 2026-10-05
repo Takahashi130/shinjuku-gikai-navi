@@ -75,12 +75,12 @@ export function CouncilDecisionPanel({
   return (
     <div
       className={cn(
-        "flex h-full flex-col gap-3 rounded-2xl border border-line-soft bg-white p-5",
+        "flex h-full flex-col gap-3 rounded-2xl border border-line-soft bg-white p-5 shadow-xs",
         className
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <Heading className="flex items-center gap-1.5 text-sm font-bold text-mirai-text">
+        <Heading className="flex w-fit items-center gap-1.5 rounded-full border border-brand-accent-light bg-white px-3 py-1 text-sm font-bold text-mirai-text">
           <Landmark className="size-4 text-mirai-text-muted" aria-hidden />
           新宿区議会の議決
         </Heading>

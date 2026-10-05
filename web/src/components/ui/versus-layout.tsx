@@ -44,7 +44,7 @@ export function VersusLayout({
         className="flex items-center justify-center self-stretch"
         aria-hidden
       >
-        <span className="flex size-11 items-center justify-center rounded-full border-4 border-white bg-brand-header font-lexend text-xs font-bold text-brand-on-header shadow-sm">
+        <span className="flex h-9 items-center justify-center rounded-full border-4 border-white bg-gradient-to-r from-orange-500 to-rose-600 px-4 font-lexend text-xs font-bold text-white shadow-md">
           {label}
         </span>
       </div>

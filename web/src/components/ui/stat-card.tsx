@@ -15,6 +15,8 @@ interface StatCardProps {
   note?: ReactNode;
   /** 名前の右に添える小さなピル。 */
   badge?: ReactNode;
+  /** 数字の色。accent は緑（区民の側の数字など）。 */
+  valueTone?: "default" | "accent";
   /** dark は濃色の面（強調したい1枚だけに使う）。 */
   tone?: "dark" | "light";
   /** 数字の中身の一覧などへ送るとき。カード全体がリンクになる。 */
@@ -40,6 +42,7 @@ export function StatCard({
   note,
   badge,
   tone = "light",
+  valueTone = "default",
   href,
   linkLabel = "一覧を見る",
   className,
@@ -65,7 +68,11 @@ export function StatCard({
         <span
           className={cn(
             "font-lexend text-4xl font-bold leading-none tracking-tight md:text-5xl",
-            dark ? "text-brand-accent" : "text-mirai-text"
+            dark
+              ? "text-white"
+              : valueTone === "accent"
+                ? "text-brand-link"
+                : "text-mirai-text"
           )}
         >
           {displayValue}
@@ -111,8 +118,8 @@ export function StatCard({
   const cardClass = cn(
     "flex h-full flex-col gap-3 rounded-3xl p-5",
     dark
-      ? "bg-brand-header text-brand-on-header"
-      : "border border-line-soft bg-white text-mirai-text shadow-xs",
+      ? "bg-brand-header text-brand-on-header shadow-lg"
+      : "border border-brand-accent-light/70 bg-white text-mirai-text shadow-sm",
     className
   );
 

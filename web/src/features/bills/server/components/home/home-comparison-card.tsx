@@ -32,7 +32,11 @@ export function HomeComparisonCard({
   const title = bill.bill_content?.title || bill.name;
 
   return (
-    <RoundCard asChild padding="lg" className="flex flex-col gap-5">
+    <RoundCard
+      asChild
+      padding="lg"
+      className="flex flex-col gap-5 border-brand-accent-light/70 bg-[radial-gradient(ellipse_at_bottom_left,var(--color-stance-against-bg),white_45%)] shadow-md"
+    >
       <section aria-labelledby="comparison-title">
         <SectionHeading
           id="comparison-title"
@@ -42,11 +46,11 @@ export function HomeComparisonCard({
 
         <Link
           href={routes.billDetail(bill.id)}
-          className="group flex flex-col gap-2 rounded-2xl bg-mirai-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+          className="group flex flex-col gap-3 rounded-2xl border border-brand-accent-light bg-brand-accent-tint px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
         >
           <span className="flex min-w-0 flex-col gap-1.5">
             <span className="flex flex-wrap items-center gap-1.5">
-              <LabelPill tone="dark">例</LabelPill>
+              <LabelPill tone="alert">賛否が分かれた議案</LabelPill>
               {billNumber && <LabelPill tone="outline">{billNumber}</LabelPill>}
               {bill.submitted_date && (
                 <span className="text-xs text-mirai-text-muted">
@@ -58,7 +62,7 @@ export function HomeComparisonCard({
               <BillTitleText title={title} />
             </span>
           </span>
-          <span className="inline-flex shrink-0 items-center gap-1 text-sm font-bold text-brand-link">
+          <span className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1 rounded-full bg-brand-band px-5 text-sm font-bold text-white shadow-sm group-hover:bg-brand-link">
             議案を見る
             <ArrowRight className="size-4" aria-hidden />
           </span>

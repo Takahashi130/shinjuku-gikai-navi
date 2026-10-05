@@ -51,9 +51,13 @@ export function HomeHero({
     billsListHref(DEFAULT_BILLS_LIST_PARAMS, patch);
 
   return (
-    <RoundCard asChild padding="lg" className="flex flex-col gap-6 md:gap-8">
+    <RoundCard
+      asChild
+      padding="lg"
+      className="flex flex-col gap-6 border-brand-accent-light/70 bg-[radial-gradient(ellipse_at_top_right,var(--brand-accent-tint),white_55%)] shadow-md md:gap-8"
+    >
       <section aria-labelledby="home-hero-title">
-        <div className="flex flex-col gap-4 border-line-soft border-b pb-6 md:flex-row md:items-start md:justify-between md:pb-8">
+        <div className="flex flex-col gap-4 border-brand-accent-light/60 border-b pb-6 md:flex-row md:items-start md:justify-between md:pb-8">
           <div className="flex flex-col gap-3">
             <LabelPill tone="accent" size="md">
               <Landmark aria-hidden />
@@ -91,6 +95,9 @@ export function HomeHero({
           <li>
             <StatCard
               tone="dark"
+              badge={
+                sessionNote ? <LabelPill tone="alert">開会中</LabelPill> : null
+              }
               label="審議中の議案"
               value={deliberatingCount}
               unit="件"
@@ -107,6 +114,8 @@ export function HomeHero({
             <li>
               <StatCard
                 label="区民投票を受付中の議案"
+                badge={<LabelPill tone="accent">受付中</LabelPill>}
+                valueTone="accent"
                 value={openVotes.count}
                 unit="件"
                 note={formatOpenVotesNote(openVotes, new Date())}
@@ -132,6 +141,7 @@ export function HomeHero({
           <li>
             <StatCard
               label="会派の賛否が分かれた議案"
+              badge={<LabelPill tone="against">ズレに注目</LabelPill>}
               value={splitCount}
               unit="件"
               note="全会一致ではなかった議案"
