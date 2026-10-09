@@ -9,6 +9,7 @@ import { LabelPill } from "@/components/ui/label-pill";
 import { RoundCard } from "@/components/ui/round-card";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
+import { ImpactSamplePanel } from "./impact-sample-panel";
 import { UPCOMING_FEATURE_ICONS } from "../../shared/utils/upcoming-feature-icons";
 import {
   UPCOMING_FEATURES,
@@ -35,7 +36,7 @@ export function UpcomingFeaturePage({
     <div
       className={cn(
         "mx-auto flex w-full flex-col gap-6 px-4 py-6 md:py-10",
-        feature.video ? "max-w-6xl" : "max-w-4xl"
+        feature.video || featureId === "impact" ? "max-w-6xl" : "max-w-4xl"
       )}
     >
       <Breadcrumb
@@ -62,7 +63,7 @@ export function UpcomingFeaturePage({
           </p>
         </div>
 
-        {!feature.video && (
+        {!feature.video && featureId !== "impact" && (
           <ComingSoonCard
             icon={Icon}
             radius="md"
@@ -73,6 +74,8 @@ export function UpcomingFeaturePage({
           />
         )}
       </RoundCard>
+
+      {featureId === "impact" && <ImpactSamplePanel />}
 
       {feature.video && (
         <div className="grid gap-6 pc:grid-cols-[minmax(0,1fr)_320px]">

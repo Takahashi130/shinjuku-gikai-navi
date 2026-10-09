@@ -34,7 +34,7 @@ export function MemberCard({
   const view = buildMemberCardView(member, termStart);
 
   return (
-    <article className="group relative flex h-full flex-col gap-4 rounded-3xl border border-line-soft bg-white p-5 shadow-xs transition-shadow hover:border-brand-link/40 hover:shadow-md has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-primary has-[a:focus-visible]:outline-offset-2">
+    <article className="group relative flex h-full flex-col gap-4 rounded-3xl border border-brand-accent-light/70 bg-white p-5 shadow-sm transition-shadow hover:border-brand-link/50 hover:shadow-md has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-primary has-[a:focus-visible]:outline-offset-2">
       <div className="flex items-start gap-3">
         <MemberInitialIcon name={member.name} />
         <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -50,7 +50,7 @@ export function MemberCard({
             </Link>
           </h3>
           <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-            <LabelPill tone="outline" className="max-w-full">
+            <LabelPill tone="accent" className="max-w-full">
               <span className="min-w-0 truncate">
                 {factionName ?? "会派なし"}
               </span>
@@ -79,7 +79,7 @@ export function MemberCard({
         </div>
       )}
 
-      <dl className="mt-auto grid grid-cols-2 gap-2">
+      <dl className="mt-auto grid grid-cols-2 divide-x divide-line-soft rounded-2xl border border-line-soft bg-page">
         <SmallFigure
           label="本会議の質問"
           value={
@@ -113,9 +113,9 @@ function SmallFigure({
   note: string;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded-2xl bg-mirai-surface px-3 py-2.5">
-      <dt className="text-xs font-bold text-mirai-text-secondary">{label}</dt>
-      <dd className="text-mirai-text">{value}</dd>
+    <div className="flex flex-col items-center gap-1 px-3 py-3 text-center">
+      <dt className="text-xs font-bold text-mirai-text-muted">{label}</dt>
+      <dd className="text-brand-link">{value}</dd>
       <dd className="break-phrase text-xs leading-snug text-mirai-text-muted">
         {note}
       </dd>

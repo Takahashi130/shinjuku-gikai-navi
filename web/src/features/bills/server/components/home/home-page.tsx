@@ -32,6 +32,7 @@ import { getSplitVoteExample } from "../../loaders/get-split-vote-example";
 import { HomeCitizenVotePanel } from "./home-citizen-vote-panel";
 import { HomeComparisonCard } from "./home-comparison-card";
 import { HomeGreenBand } from "./home-green-band";
+import { HomeSpotlightStrip } from "./home-spotlight-strip";
 import { HomeHero } from "./home-hero";
 import { HomeInterviewBand } from "./home-interview-band";
 import { HomeSessionChips } from "./home-session-chips";
@@ -105,6 +106,19 @@ export async function HomePage() {
         <HomeComparisonCard
           example={example}
           citizenVote={<HomeCitizenVotePanel snapshot={exampleVote} />}
+        />
+      )}
+
+      {deliberating && view.featured.bills[0] && (
+        <HomeSpotlightStrip
+          billId={view.featured.bills[0].id}
+          title={
+            view.featured.bills[0].bill_content?.title ||
+            view.featured.bills[0].name
+          }
+          voteOpen={(featuredBadges[view.featured.bills[0].id] ?? []).some(
+            (badge) => badge.kind === "vote_open"
+          )}
         />
       )}
 

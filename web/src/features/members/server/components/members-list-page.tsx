@@ -75,7 +75,11 @@ export async function MembersListPage({
         ]}
       />
 
-      <RoundCard asChild padding="lg" className="flex flex-col gap-6">
+      <RoundCard
+        asChild
+        padding="lg"
+        className="flex flex-col gap-6 border-brand-accent-light/70 bg-[radial-gradient(ellipse_at_top_right,var(--brand-accent-tint),white_55%)] shadow-md"
+      >
         <section aria-labelledby="members-title">
           <div className="flex flex-col gap-4 border-line-soft border-b pb-6 md:flex-row md:items-start md:justify-between">
             <div className="flex flex-col gap-3">
@@ -291,7 +295,7 @@ function FactionPill({
       className={cn(
         "flex h-11 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm font-bold",
         active
-          ? "border-brand-header bg-brand-header text-brand-on-header"
+          ? "border-brand-band bg-brand-band text-white"
           : "border-line-soft bg-white text-mirai-text hover:border-brand-link/40 hover:text-brand-link"
       )}
     >
@@ -299,7 +303,7 @@ function FactionPill({
       <span
         className={cn(
           "text-xs",
-          active ? "text-brand-on-header-muted" : "text-mirai-text-muted"
+          active ? "text-white/85" : "text-mirai-text-muted"
         )}
       >
         <span className="font-lexend">{count}</span>人

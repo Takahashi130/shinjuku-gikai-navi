@@ -46,23 +46,24 @@ export function HomeComparisonCard({
 
         <Link
           href={routes.billDetail(bill.id)}
-          className="group flex flex-col gap-3 rounded-2xl border border-brand-accent-light bg-brand-accent-tint px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+          data-surface="dark"
+          className="group flex flex-col gap-4 rounded-2xl bg-brand-header px-5 py-4 text-white shadow-md sm:flex-row sm:items-center sm:justify-between sm:gap-6"
         >
           <span className="flex min-w-0 flex-col gap-1.5">
             <span className="flex flex-wrap items-center gap-1.5">
               <LabelPill tone="alert">賛否が分かれた議案</LabelPill>
-              {billNumber && <LabelPill tone="outline">{billNumber}</LabelPill>}
+              {billNumber && <LabelPill tone="solid">{billNumber}</LabelPill>}
               {bill.submitted_date && (
-                <span className="text-xs text-mirai-text-muted">
+                <span className="text-xs text-brand-on-header-muted">
                   {formatDateWithDots(bill.submitted_date)} 提出
                 </span>
               )}
             </span>
-            <span className="text-base font-bold leading-snug text-mirai-text group-hover:text-brand-link group-hover:underline">
+            <span className="text-lg font-extrabold leading-snug text-white group-hover:underline">
               <BillTitleText title={title} />
             </span>
           </span>
-          <span className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1 rounded-full bg-brand-band px-5 text-sm font-bold text-white shadow-sm group-hover:bg-brand-link">
+          <span className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1 rounded-full bg-brand-accent px-5 text-sm font-bold text-brand-on-accent shadow-sm group-hover:bg-brand-accent-hover">
             議案を見る
             <ArrowRight className="size-4" aria-hidden />
           </span>
