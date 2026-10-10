@@ -8,8 +8,8 @@ import { EXPLAINER_VIDEOS } from "../../shared/utils/explainer-videos";
  * 事前解説の動画。動画がある議案だけに出す（無ければ何も出さない）。
  * 動画の上に、何がわかる動画なのかを3行ほどで書く。
  */
-export function ExplainerVideo({ billId }: { billId: string }) {
-  const video = EXPLAINER_VIDEOS[billId];
+export function ExplainerVideo({ slug }: { slug: string | null }) {
+  const video = slug ? EXPLAINER_VIDEOS[slug] : undefined;
   if (!video) return null;
 
   return (

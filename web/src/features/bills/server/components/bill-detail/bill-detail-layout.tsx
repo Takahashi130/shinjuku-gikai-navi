@@ -134,7 +134,7 @@ export async function BillDetailLayout({
               topicCount={topics.length}
             />
 
-            <ExplainerVideo billId={bill.id} />
+            <ExplainerVideo slug={bill.slug} />
 
             <BillExplainerSlot>
               <Suspense
