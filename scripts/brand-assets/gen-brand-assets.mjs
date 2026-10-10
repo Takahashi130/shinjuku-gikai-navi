@@ -46,6 +46,8 @@ const PALETTES = {
     onAccent: "#062b1f",
     onHeaderMuted: "#cbd5e1",
     pageBg: "#eaf6f1",
+    // アプリアイコン（ファビコン）は緑の地に白い円、濃い緑の線
+    icon: { bg: "#059669", circle: "#ffffff", stroke: "#047857" },
     mark: "message-square-check",
   },
   // 案A「投票箱」：ネイビー × オレンジ
@@ -252,11 +254,17 @@ writeFileSync(
 );
 
 // ---- アプリアイコン：濃色の地にロゴ。マスカブルの安全領域（半径40%）に収める ----
+// 配色に icon があれば、その色の地・円・線にする
+const iconInner = C.icon
+  ? markInner
+      .replace(`fill="${C.accent}"`, `fill="${C.icon.circle}"`)
+      .replace(`stroke="${C.onAccent}"`, `stroke="${C.icon.stroke}"`)
+  : markInner;
 for (const [name, size] of PWA_ICONS) {
   const r = size * 0.34;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">
-  <rect width="${size}" height="${size}" fill="${C.header}"/>
-  <g transform="translate(${size / 2 - r} ${size / 2 - r}) scale(${r / 24})">${markInner}</g>
+  <rect width="${size}" height="${size}" fill="${C.icon?.bg ?? C.header}"/>
+  <g transform="translate(${size / 2 - r} ${size / 2 - r}) scale(${r / 24})">${iconInner}</g>
 </svg>`;
   writeFileSync(join(OUT, `icons/pwa/${name}.png`), render(svg, size));
 }
@@ -303,7 +311,7 @@ for (const [slug, icon, c1, c2, color] of THUMBNAILS) {
 // ---- manifest.json のテーマカラー ----
 const manifestPath = join(OUT, "manifest.json");
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
-manifest.theme_color = C.header;
+manifest.theme_color = C.icon?.bg ?? C.header;
 manifest.background_color = C.pageBg;
 writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 

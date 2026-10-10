@@ -4,8 +4,8 @@
   "description": "新宿区議会でどんな議案が審議され、どの会派が賛成・反対したのかをわかりやすく伝えるアプリ",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#eaeded",
-  "theme_color": "#1b1f24",
+  "background_color": "#eaf6f1",
+  "theme_color": "#059669",
   "orientation": "portrait-primary",
   "icons": [
     {
