@@ -281,7 +281,20 @@ writeFileSync(
 );
 
 // ---- サイトの OGP 画像 1200x630 ----
-const ogp = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+// 配色に icon がある（緑の配色）ときは、サイトと同じミントの地・緑の帯にする
+const ogpLight = C.icon
+  ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f3faf7"/>
+  <circle cx="1140" cy="30" r="280" fill="#e7f8f1"/>
+  <rect y="540" width="1200" height="90" fill="${C.icon.bg}"/>
+  <g transform="translate(96 150) scale(${232 / 48})">${markInner}</g>
+  <text x="380" y="262" font-family="Noto Sans JP" font-size="92" font-weight="700" fill="#111827">${SITE.name}</text>
+  <text x="384" y="344" font-family="Noto Sans JP" font-size="46" font-weight="700" fill="${C.icon.stroke}">${SITE.catchphrase}</text>
+  <text x="386" y="412" font-family="Noto Sans JP" font-size="28" font-weight="400" fill="#374151">新宿区議会の議案と、会派ごとの賛否をわかりやすく</text>
+  <text x="96" y="597" font-family="Noto Sans JP" font-size="26" font-weight="700" fill="#ffffff">議案を知る　→　自分の考えをもつ　→　議会の議決と見比べる</text>
+</svg>`
+  : null;
+const ogp = ogpLight ?? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="${C.header}"/>
   <rect y="540" width="1200" height="90" fill="${C.headerSub}"/>
   <rect y="540" width="1200" height="6" fill="${C.accent}"/>
