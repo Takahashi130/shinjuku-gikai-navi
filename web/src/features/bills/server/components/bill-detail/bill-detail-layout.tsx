@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Breadcrumb, type BreadcrumbItem } from "@/components/ui/breadcrumb";
 import { RoundCard } from "@/components/ui/round-card";
 import { BillExplainerSection } from "@/features/bill-explainers/server/components/bill-explainer-section";
+import { ExplainerVideo } from "@/features/bill-explainers/server/components/explainer-video";
 import { ParticipationSkeleton } from "@/features/bill-participation/client/components/participation-skeleton";
 import { getDietSessionById } from "@/features/diet-sessions/server/loaders/get-diet-session-by-id";
 import { formatPendingSessionNote } from "@/features/diet-sessions/shared/utils/session-notice";
@@ -132,6 +133,8 @@ export async function BillDetailLayout({
               opinionCount={topicAnalysis?.total_opinions ?? 0}
               topicCount={topics.length}
             />
+
+            <ExplainerVideo billId={bill.id} />
 
             <BillExplainerSlot>
               <Suspense
